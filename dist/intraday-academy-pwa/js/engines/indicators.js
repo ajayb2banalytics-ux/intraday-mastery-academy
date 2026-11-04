@@ -266,7 +266,7 @@
     let lo = Infinity, hi = -Infinity; c.forEach((b) => { lo = Math.min(lo, b.l); hi = Math.max(hi, b.h); });
     const step = (hi - lo) / bins || 1, vol = new Array(bins).fill(0);
     c.forEach((b) => {
-      const a = Math.min(bins - 1, Math.floor((b.l - lo) / step)), z = Math.min(bins - 1, Math.floor((b.h - lo) / step));
+      const a = Math.min(bins - 1, Math.floor((b.l - lo) / step + 1e-9)), z = Math.max(a, Math.min(bins - 1, Math.ceil((b.h - lo) / step - 1e-9) - 1));
       for (let i = a; i <= z; i++) vol[i] += b.v / (z - a + 1);
     });
     let poc = 0; vol.forEach((v, i) => { if (v > vol[poc]) poc = i; });

@@ -2,6 +2,8 @@
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'self'; manifest-src 'self'">
+  <meta name="referrer" content="no-referrer">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0b0f14">
   <meta name="description" content="Offline, mobile-first intraday trading academy: lessons, chart lab, simulators, backtesting, journal and risk tools. Educational only.">
@@ -18,6 +20,7 @@
   <noscript>This app needs JavaScript.</noscript>
   <div id="boot" style="padding:40px;font-family:system-ui;color:#8696a7">Loading Intraday Mastery…</div>
   <script src="js/engines/specs.js"></script>
+  <script src="js/engines/specs-sources.js"></script>
   <script src="js/engines/indicators.js"></script>
   <script src="js/engines/risk.js"></script>
   <script src="js/engines/options.js"></script>
@@ -34,6 +37,7 @@
   <script src="js/content/lessons-l3a.js"></script>
   <script src="js/content/lessons-l3b.js"></script>
   <script src="js/content/lessons-l4.js"></script>
+  <script src="js/content/lessons-p2.js"></script>
   <script src="js/content/indicators-lib.js"></script>
   <script src="js/content/strategies.js"></script>
   <script src="js/content/patterns.js"></script>
@@ -57,6 +61,6 @@
   <script src="js/modules/misc.js"></script>
   <script src="js/modules/data.js"></script>
   <script src="js/modules/concepts.js"></script>
-  <script>IA.VERSION = '1.0.0'; IA.start();</script>
+  <script src="js/boot.js"></script>
 </body>
 </html>

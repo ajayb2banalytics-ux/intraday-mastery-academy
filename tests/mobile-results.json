@@ -1,0 +1,124 @@
+{
+ "base": "http://localhost:8765/",
+ "profiles": [
+  {
+   "name": "Android phone (Pixel 7 emulation)",
+   "routes": 37,
+   "overflow": [],
+   "smallTargets": 0,
+   "navOK": true,
+   "drawerSections": 19,
+   "errors": [],
+   "ok": true
+  },
+  {
+   "name": "iPhone 14 viewport (Chromium emulation, not Safari)",
+   "routes": 37,
+   "overflow": [],
+   "smallTargets": 0,
+   "navOK": true,
+   "drawerSections": 19,
+   "errors": [],
+   "ok": true
+  },
+  {
+   "name": "Small phone 360\u00d7740",
+   "routes": 37,
+   "overflow": [],
+   "smallTargets": 0,
+   "navOK": true,
+   "drawerSections": 19,
+   "errors": [],
+   "ok": true
+  },
+  {
+   "name": "Tablet 820\u00d71180",
+   "routes": 37,
+   "overflow": [],
+   "smallTargets": 0,
+   "navOK": true,
+   "drawerSections": 19,
+   "errors": [],
+   "ok": true
+  },
+  {
+   "name": "Laptop 1366\u00d7768",
+   "routes": 37,
+   "overflow": [],
+   "smallTargets": 0,
+   "navOK": true,
+   "drawerSections": null,
+   "errors": [],
+   "ok": true
+  },
+  {
+   "name": "Desktop 1920\u00d71080",
+   "routes": 37,
+   "overflow": [],
+   "smallTargets": 0,
+   "navOK": true,
+   "drawerSections": null,
+   "errors": [],
+   "ok": true
+  }
+ ],
+ "axe": {
+  "Android phone (Pixel 7 emulation)": {
+   "dashboard": [],
+   "academy": [],
+   "lesson/l1-position-sizing": [],
+   "chartlab": [],
+   "data": [],
+   "concepts/ob": [],
+   "markets/clock": [],
+   "derivatives/payoff": [],
+   "risk": [],
+   "simulator/replay": [],
+   "simulator/paper": [],
+   "journal/add": [],
+   "quant/backtest": [],
+   "calculators/position-size": [],
+   "assessments": [],
+   "settings": []
+  },
+  "Laptop 1366\u00d7768": {
+   "dashboard": [],
+   "academy": [],
+   "lesson/l1-position-sizing": [],
+   "chartlab": [],
+   "data": [],
+   "concepts/ob": [],
+   "markets/clock": [],
+   "derivatives/payoff": [],
+   "risk": [],
+   "simulator/replay": [],
+   "simulator/paper": [],
+   "journal/add": [],
+   "quant/backtest": [],
+   "calculators/position-size": [],
+   "assessments": [],
+   "settings": []
+  }
+ },
+ "install": {
+  "errors": [],
+  "manifestUrl": "http://localhost:8765/manifest.webmanifest",
+  "manifestErrors": [],
+  "serviceWorkerActive": true,
+  "ok": true
+ },
+ "persistence": {
+  "ok": true,
+  "detail": "journal row present after browser restart: 1"
+ },
+ "touch": {
+  "ok": true,
+  "detail": "Tap on chart canvas registered and graded"
+ },
+ "keyboard": {
+  "focusVisible": "12/12",
+  "replayShortcut": true,
+  "ok": true
+ },
+ "errors": []
+}

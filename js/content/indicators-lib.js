@@ -103,7 +103,7 @@ Sum = 337,550, WMA = 337,550 / 15 = **22,503.3**. On the same bar the 5-SMA was 
     interpretation: `Read it exactly like an SMA or EMA: slope gives direction, price relative to the line gives position. Because it responds faster, it turns earlier at real reversals and also at false ones.`,
     bullish: `Price above a rising WMA; a short WMA crossing above a longer one.`,
     bearish: `Price below a falling WMA; short WMA crossing below a longer one.`,
-    example: `On a Reliance 15-minute chart, a 20-WMA turns up a bar or so before the 20-SMA after a morning low. In a sideways Reliance session it flips direction more often than the SMA. The Chart Lab does not have a WMA overlay token, so compare it by computing values from the data table or by comparing against ema20 and sma20 visually.`,
+    example: `On a Reliance 15-minute chart, a 20-WMA turns up a bar or so before the 20-SMA after a morning low. In a sideways Reliance session it flips direction more often than the SMA. The Chart Lab has no WMA button, so compare it by computing values from the crosshair readout or by comparing against ema20 and sma20 visually.`,
     entryExit: `- Use as a trailing reference in strong trends: exit on a close beyond the WMA.
 - As a filter for pullback entries, as with the EMA.
 - Never as a stand-alone entry trigger in ranges.`,
@@ -168,7 +168,9 @@ MACD line = EMA(C, 12) - EMA(C, 26)
 Signal = EMA(MACD line, 9)
 Histogram = MACD line - Signal
 :::
-Units are price points, not a percentage, so values on Bank Nifty and on a ₹300 stock are not comparable. Warm-up: 26 bars for the line, 34 for the signal.`,
+Units are price points, not a percentage, so values on Bank Nifty and on a ₹300 stock are not comparable. Warm-up: 26 bars for the line, 34 for the signal. Each EMA (including the signal line) is seeded with an SMA, as described under EMA, so the first values can differ slightly from other platforms.
+
+The 12/26/9 construction is Gerald Appel's; the histogram was added later (commonly credited to Thomas Aspray, 1986). If you need values comparable across instruments, the Percentage Price Oscillator divides the MACD line by the slow EMA and multiplies by 100.`,
     calc: `A Nifty 5-minute bar closes at 22,580. Previous values: EMA12 = 22,500, EMA26 = 22,460, Signal = 30.
 
 - k12 = 2/13 = 0.1538. EMA12 = 0.1538 x 22,580 + 0.8462 x 22,500 = **22,512.3**
@@ -244,7 +246,7 @@ The step and max parameters strongly change behaviour: a higher step tightens fa
   },
   {
     id: 'supertrend', name: 'Supertrend', category: 'trend', engine: 'supertrend', params: 'n=10 (ATR), m=3', chart: 'st', evidence: 'mixed',
-    definition: `Supertrend draws a single line that sits a multiple of ATR below price in an uptrend and above price in a downtrend. The line only moves in the trend's favour, and it flips when price closes through it. It is very popular among Indian retail intraday traders.`,
+    definition: `Supertrend draws a single line that sits a multiple of ATR below price in an uptrend and above price in a downtrend. The line only moves in the trend's favour, and it flips when price closes through it. It is widely available on Indian retail charting platforms and commonly discussed by intraday traders.`,
     purpose: `A volatility-adjusted trailing stop and direction label.`,
     formula: `:::formula
 HL2 = (H + L) / 2
@@ -296,7 +298,7 @@ Its popularity makes it look like it "works" in screenshots, which select trendi
 DX = 100 x | +DI - -DI | / ( +DI + -DI )
 ADX = RMA(DX, n)
 :::
-RMA is Wilder smoothing (alpha = 1/n). Warm-up is about 2n bars (28 at defaults).`,
+RMA is Wilder smoothing (alpha = 1/n). Wilder himself smoothed running 14-bar **sums** of TR and DM rather than averages; because +DI and -DI are ratios, the result is identical. The engine seeds each average with the simple mean of the first n values, as Wilder did. Warm-up is about 2n bars (the first ADX value appears on bar 28 at defaults).`,
     calc: `Previous smoothed values (n = 14): TR 60, +DM 20, -DM 8, ADX 30. The new bar: TR 74, +DM 34, -DM 0.
 
 - TR = (60 x 13 + 74)/14 = **61.0**
@@ -307,7 +309,7 @@ RMA is Wilder smoothing (alpha = 1/n). Warm-up is about 2n bars (28 at defaults)
     interpretation: `Common thresholds: below 20 weak or no trend, above 25 trending, rising ADX means the trend is strengthening. ADX says nothing about direction; a falling market produces a high ADX too. Thresholds are conventions, not laws.`,
     bullish: `ADX rising above 20 to 25 while +DI is above -DI.`,
     bearish: `ADX rising while -DI is above +DI. Note "bearish" is about direction from the DIs, not from ADX.`,
-    example: `On a Bank Nifty 15-minute chart, ADX often stays below 20 in pre-event sessions (policy days, budget) and then climbs quickly after the announcement, by which time much of the move has happened.
+    example: `On a Bank Nifty 15-minute chart, ADX can stay below 20 in pre-event sessions (policy days, budget) and then climbs quickly after the announcement, by which time much of the move has happened.
 [[chart:BANKNIFTY:31:adx,ema20]]`,
     entryExit: `- Regime switch: trend tactics (pullbacks, breakouts) when ADX is above 25 and rising; mean-reversion tactics when it is below 20.
 - A turning down of ADX from a high level suggests the trend's strength is fading; tighten stops rather than reverse.`,
@@ -381,7 +383,7 @@ Senkou Span A = (Tenkan + Kijun) / 2, plotted 26 bars ahead
 Senkou Span B = (highest high + lowest low) / 2 over 52 bars, plotted 26 bars ahead
 Chikou Span = close, plotted 26 bars behind
 :::
-The engine returns spans unshifted with {{shift = 26}}; the chart must apply the displacement. Midpoints of ranges, not averages of closes, make Ichimoku step-shaped.`,
+The engine returns spans unshifted with {{shift = 26}}; the chart applies the displacement. Platforms count the displacement differently (some plot 26 bars ahead, others 25 because the current bar counts as one), so cloud edges can sit one bar apart between platforms. Midpoints of ranges, not averages of closes, make Ichimoku step-shaped.`,
     calc: `Nifty 15-minute. Over the last 9 bars: high 22,620, low 22,480. Over 26 bars: high 22,650, low 22,380. Over 52 bars: high 22,700, low 22,300.
 
 - Tenkan = (22,620 + 22,480)/2 = **22,550**
@@ -392,14 +394,14 @@ The engine returns spans unshifted with {{shift = 26}}; the chart must apply the
     interpretation: `Price above the cloud: uptrend by this system. Inside the cloud: no clear trend. Tenkan above Kijun: short-term momentum up. Thick cloud: wide past range, often treated as stronger support/resistance. Chikou above the price of 26 bars ago: confirms the trend.`,
     bullish: `Price above cloud, Tenkan above Kijun, Span A above Span B, Chikou above past price. A Tenkan/Kijun cross above the cloud is considered stronger than one below it.`,
     bearish: `The mirror image: price below cloud, Tenkan below Kijun, Span A below B, Chikou below past price.`,
-    example: `On a Nifty hourly chart, Ichimoku gives a cleaner read than on a 1-minute chart because 52 hourly bars cover about eight sessions. On USDJPY or Nikkei futures, where it is widely followed, traders often reference the Kijun as a pullback level. The Chart Lab has no Ichimoku token; compute Tenkan and Kijun from the data table and compare them with dc (Donchian), whose midline over 9 or 26 bars is the same quantity.`,
+    example: `On a Nifty hourly chart, Ichimoku gives a cleaner read than on a 1-minute chart because 52 hourly bars cover about seven to eight NSE sessions (roughly seven hourly bars per 09:15 to 15:30 session). On USDJPY or Nikkei futures, where it is widely followed, traders often reference the Kijun as a pullback level. The Chart Lab has an Ichimoku toggle that plots Tenkan, Kijun and the cloud shifted 26 bars ahead (the Chikou line is not drawn). Tenkan and Kijun are the same quantity as a 9-bar and a 26-bar Donchian midline; the dc overlay uses 20 bars, so compute the 9 and 26-bar midlines by hand to compare.`,
     entryExit: `- Trade only in the direction of price relative to the cloud.
 - Pullback entries towards the Kijun in a trend, with stops beyond the Kijun or the cloud edge.
 - Exit when price closes back inside the cloud or Tenkan crosses Kijun against you.`,
     bestConditions: `Trending markets on hourly and daily charts.`,
     weaknesses: `> [!warn] Every component is a lagging midpoint. The "future" cloud is not a forecast; it is past data drawn to the right. In ranges, price sits inside or around the cloud and signals conflict.
 
-The 9/26/52 settings came from a six-day trading week in 1930s to 1960s Japan; their relevance to 5-minute NSE bars is a convention, not a law. Many rules overlap, so "five confirmations" are not independent.
+The 9/26/52 settings are usually explained by the six-day trading week of Japan when Hosoda developed the method (he published it in the late 1960s); their relevance to 5-minute NSE bars is a convention, not a law. Many rules overlap, so "five confirmations" are not independent.
 
 > [!evidence] Mixed. Mechanically clear; systematic evidence of an edge is limited and parameter-dependent.`,
     mistakes: `- Treating the cloud as a prediction of where price will go.
@@ -407,7 +409,7 @@ The 9/26/52 settings came from a six-day trading week in 1930s to 1960s Japan; t
 - Counting Tenkan, Kijun and Span A as independent confirmations; Span A is built from the other two.`,
     timeframes: `Hourly to daily for context; 15-minute at the shortest for intraday.`,
     combinations: `Volume or VWAP for participation; ATR for stops. Redundant with Donchian midlines (Tenkan and Kijun are Donchian midlines) and with moving-average crossovers.`,
-    practice: `1. In the Chart Lab, load NIFTY with dc. Using the data table, compute Tenkan (9) and Kijun (26) for three bars and compare with Donchian midlines of the same length.
+    practice: `1. In the Chart Lab, load NIFTY with the Ichimoku toggle on. Using the crosshair readout, compute Tenkan (9) and Kijun (26) by hand as 9 and 26-bar high-low midpoints for three bars and compare with the plotted lines.
 2. Compute Span A and Span B for one bar and mark on paper where they would be drawn 26 bars ahead.
 3. Journal: list which Ichimoku signals are mathematically dependent on each other.`,
     refs: ['Goichi Hosoda — originator of Ichimoku Kinko Hyo', 'Nicole Elliott — Ichimoku Charts: An Introduction to Ichimoku Kinko Clouds (book)', 'Manesh Patel — Trading with Ichimoku Clouds (book)'],
@@ -454,7 +456,7 @@ RSI is driven only by closes, so intrabar ranges are ignored. Values depend heav
     practice: `1. Load BANKNIFTY seed 42 with rsi and vwap. Mark each RSI > 70 reading and record what happened over the next 10 bars when price was above vs below VWAP.
 2. Hand-compute three RSI steps from given AvgGain/AvgLoss values.
 3. Find a divergence and journal whether price structure confirmed it.`,
-    refs: ['J. Welles Wilder Jr. — New Concepts in Technical Trading Systems (book, 1978)', 'Andrew Cardwell — RSI range rules (seminars; paraphrased widely)', 'Constance Brown — Technical Analysis for the Trading Professional (book)'],
+    refs: ['J. Welles Wilder Jr. — New Concepts in Technical Trading Systems (book, 1978)', 'Andrew Cardwell — RSI range-shift concepts (taught in seminars; described in Constance Brown, below)', 'Constance Brown — Technical Analysis for the Trading Professional (book)'],
   },
   {
     id: 'stoch-rsi', name: 'Stochastic RSI', category: 'momentum', engine: 'stochRsi', params: 'rsi n=14, stoch n=14, k=3, d=3', chart: null, evidence: 'mixed',
@@ -465,14 +467,14 @@ Raw = 100 x ( RSI(t) - lowest RSI over 14 ) / ( highest RSI over 14 - lowest RSI
 %K = SMA(Raw, 3)
 %D = SMA(%K, 3)
 :::
-The engine returns Raw = 0 when the RSI range is flat (highest = lowest). Some platforms use 0 to 1 instead of 0 to 100. Warm-up is long: about 14 + 14 + 3 + 3 bars.`,
+The engine returns Raw = 0 when the RSI range is flat (highest = lowest). Chande and Kroll defined the raw value on a 0 to 1 scale with no smoothing; the 3-bar %K and %D smoothing and the 0 to 100 scale are later platform conventions that this engine follows. Warm-up is long: in the engine the first %K appears on bar 30 and the first %D on bar 32 at default settings.`,
     calc: `Nifty 5-minute. Over the last 14 bars, RSI ranged from 40 to 64. Current RSI = 55.
 
 - Raw = 100 x (55 - 40)/(64 - 40) = 100 x 15/24 = **62.5**
 
-Suppose the last three Raw values are 55, 61 and 67.25.
+Suppose the two previous Raw values were 55 and 61, and the current one is the 62.5 just computed.
 
-- %K = (55 + 61 + 67.25)/3 = **61.1**
+- %K = (55 + 61 + 62.5)/3 = **59.5**
 
 Notice that RSI at 55 is unremarkable, while a small RSI move from 55 to 64 would push Raw to 100.`,
     interpretation: `Above 80: RSI is at the top of its recent range. Below 20: at the bottom. Because it is so sensitive, it reaches extremes very often; a reading of 100 is common and does not mean price is extreme.`,
@@ -493,7 +495,7 @@ Results depend on four parameters, which invites curve fitting. When RSI is flat
 - Trading every cross on a 1-minute chart.`,
     timeframes: `5 to 60-minute charts. On very short timeframes, the noise overwhelms any use.`,
     combinations: `Trend filter (EMA, ADX) and price structure. Fully redundant with RSI; partially with Stochastic and Williams %R.`,
-    practice: `1. In the Chart Lab, load NIFTY with rsi. Pick a bar, note the last 14 RSI values from the data table, and compute Raw StochRSI by hand.
+    practice: `1. In the Chart Lab, load NIFTY with rsi. Pick a bar, note the last 14 RSI values from the crosshair readout, and compute Raw StochRSI by hand.
 2. Count how many times in one session RSI would have reached the top or bottom of its 14-bar range.
 3. Journal: decide whether StochRSI adds anything to your RSI process, and why.`,
     refs: ['Tushar Chande and Stanley Kroll — The New Technical Trader (book, 1994)', 'Robert W. Colby — The Encyclopedia of Technical Market Indicators (book)'],
@@ -507,7 +509,7 @@ Raw %K = 100 x ( C - lowest low over k ) / ( highest high over k - lowest low ov
 %K = SMA(Raw %K, smooth)   (smooth = 1 means %K = Raw)
 %D = SMA(%K, d)
 :::
-Engine defaults k = 14, d = 3, smooth = 1, which is the **fast** stochastic. The common "slow 14,3,3" is smooth = 3. If the range is flat, the engine returns 50.`,
+Engine defaults k = 14, d = 3, smooth = 1, which is the **fast** stochastic. The common "slow 14,3,3" is smooth = 3, and that slow version is what the app's stoch chart pane plots. If the range is flat, the engine returns 50.`,
     calc: `Reliance 15-minute. Over 14 bars the highest high is ₹1,512 and lowest low ₹1,472. Close = ₹1,502.
 
 - Raw %K = 100 x (1,502 - 1,472)/(1,512 - 1,472) = 100 x 30/40 = **75**
@@ -532,15 +534,15 @@ Parameter choice (5,3,3 vs 14,3,3) changes the character entirely. The default h
 - Shorting every reading above 80.
 - Treating Stochastic and Williams %R as separate signals; %R is the same quantity inverted.`,
     timeframes: `5 to 60-minute intraday; 15-minute is a common balance.`,
-    combinations: `Support/resistance, pivots or VWAP bands for location; ADX to decide range vs trend tactics. Redundant with Williams %R (exact transformation), StochRSI and largely RSI.`,
+    combinations: `Support/resistance, pivots or VWAP bands for location; ADX to decide range vs trend tactics. Redundant with Williams %R (an exact transformation of the fast version; the slow version is a smoothed copy), StochRSI and largely RSI.`,
     practice: `1. Load RELIANCE seed 27 with stoch and ema20. Identify a range and a trend segment; record the outcome of every extreme cross in each.
-2. Compute Raw %K for one bar by hand from the data table and confirm Williams %R for the same bar equals Raw %K minus 100.
+2. Compute Raw %K for one bar by hand from the crosshair readout and confirm Williams %R for the same bar equals Raw %K minus 100.
 3. Journal: write the condition under which you will not trade a Stochastic signal.`,
     refs: ['George C. Lane — Lane\'s Stochastics (Technical Analysis of Stocks and Commodities articles)', 'John J. Murphy — Technical Analysis of the Financial Markets (book)'],
   },
   {
     id: 'cci', name: 'CCI (Commodity Channel Index)', category: 'momentum', engine: 'cci', params: 'n=20', chart: null, evidence: 'mixed',
-    definition: `CCI, from Donald Lambert, measures how far the typical price has moved from its average, in units of mean absolute deviation. It is unbounded, but about 70 to 80% of values fall between -100 and +100 because of the 0.015 constant Lambert chose.`,
+    definition: `CCI, from Donald Lambert, measures how far the typical price has moved from its average, in units of mean absolute deviation. It is unbounded. Lambert chose the 0.015 constant so that roughly 70 to 80% of values would fall between -100 and +100 on the data he studied; the actual share varies by instrument and period.`,
     purpose: `To spot unusual deviation from the average: either the start of a strong move (breakout use) or stretched conditions (reversion use).`,
     formula: `:::formula
 TP = (H + L + C) / 3
@@ -559,7 +561,7 @@ The latest bar is well above the "normal" band of plus or minus 100.`,
     interpretation: `Above +100: price unusually high relative to its average; below -100: unusually low. Lambert originally treated a move above +100 as the start of a trend (buy), not as overbought. Both readings are used, which shows how interpretation-dependent it is.`,
     bullish: `Breakout use: CCI crosses above +100. Reversion use: CCI turns up from below -100 in an uptrend. Zero-line cross from below.`,
     bearish: `Breakout use: CCI crosses below -100. Reversion use: turns down from above +100 in a downtrend.`,
-    example: `On Nifty 15-minute, CCI often exceeds +150 on the first bar of an opening drive and stays above +100 while the drive continues. In a range afternoon, it oscillates between plus and minus 100. The Chart Lab has no CCI token; load rsi alongside bb to see a similar deviation idea, and compute CCI for a few bars by hand.`,
+    example: `On Nifty 15-minute, CCI often exceeds +150 on the first bar of an opening drive and stays above +100 while the drive continues. In a range afternoon, it oscillates between plus and minus 100. The Chart Lab has a CCI toggle (CCI 20, with lines at -100, 0 and +100); compute CCI for a few bars by hand to check you understand the mean-deviation step.`,
     entryExit: `- Pick one interpretation per strategy (breakout or reversion) and backtest it in the simulator; do not switch after the fact.
 - Breakout: enter on cross above +100 with a trend filter; exit on cross back below 0 or a structure stop.
 - Reversion: only in a range, with a stop beyond the range.`,
@@ -574,7 +576,7 @@ The 0.015 constant is a scaling choice, not a statistical law. Two opposite inte
 - Pairing CCI with RSI and Stochastic as independent votes.`,
     timeframes: `15-minute to daily. Short timeframes produce many extreme readings.`,
     combinations: `Trend filter (EMA slope, ADX) and price structure. Redundant with Bollinger %B and z-score ideas (deviation from a mean), and largely with RSI/Stochastic.`,
-    practice: `1. Using the Chart Lab data table on any NIFTY seed, compute CCI(5) for three bars as above.
+    practice: `1. Using the Chart Lab crosshair readout (the O, H, L, C, V legend) on any NIFTY seed, compute CCI(5) for three bars as above.
 2. Write two rules, one breakout and one reversion, and test each separately in the strategy simulator; compare results honestly.
 3. Journal how many times CCI exceeded 100 in a session and what that implies for a threshold rule.`,
     refs: ['Donald R. Lambert — Commodity Channel Index: Tools for Trading Cyclic Trends, Commodities magazine (1980)', 'Robert W. Colby — The Encyclopedia of Technical Market Indicators (book)'],
@@ -596,7 +598,7 @@ For Reliance, a ₹24 move from ₹1,480 gives ROC = 1.62% as well, so the two m
     interpretation: `Positive and rising: accelerating advance. Positive but falling: still up over n bars, but slowing. Zero cross: price back to where it was n bars ago. ROC is sensitive to what happened n bars ago (the "drop-off" effect).`,
     bullish: `ROC crosses above zero; rising ROC with rising price; bullish divergence.`,
     bearish: `ROC crosses below zero; bearish divergence.`,
-    example: `Comparing ROC(10) on 15-minute Nifty, Bank Nifty and a midcap index shows which is leading on a given morning. On a strong Bank Nifty day, its ROC often runs well ahead of Nifty's. The Chart Lab has no ROC token; macd behaves similarly and can stand in visually, but compute ROC from the data table for exact values.`,
+    example: `Comparing ROC(10) on 15-minute Nifty, Bank Nifty and a midcap index shows which is leading on a given morning. On a strong Bank Nifty day, its ROC often runs well ahead of Nifty's. The Chart Lab has a ROC toggle (ROC 10); compare it with macd on the same chart and compute one value from the crosshair readout to check it.`,
     entryExit: `- Relative-strength selection: trade the instrument with stronger ROC in the direction of the market.
 - Zero-line cross only with a trend filter.
 - Avoid using raw ROC thresholds across days with very different volatility.`,
@@ -611,7 +613,7 @@ Thresholds are not stable across volatility regimes. Like all momentum, it lags 
 - Using fixed thresholds without regard to volatility.`,
     timeframes: `Any. Intraday, n = 10 to 20 on 5 to 15-minute bars is common.`,
     combinations: `Redundant with Momentum (same quantity, different units), close to MACD and RSI. Pair with volatility (ATR) to normalise, or with volume.`,
-    practice: `1. From the Chart Lab data table, compute ROC(10) for NIFTY and BANKNIFTY at the same bar; decide which is stronger.
+    practice: `1. From the Chart Lab crosshair readout (the O, H, L, C, V legend), compute ROC(10) for NIFTY and BANKNIFTY at the same bar; decide which is stronger.
 2. Find a bar where ROC changed sharply because of the drop-off of an old bar.
 3. Journal whether ROC gave you anything MACD did not on the same chart.`,
     refs: ['Martin J. Pring — Technical Analysis Explained (book)', 'Jegadeesh and Titman — Returns to Buying Winners and Selling Losers, Journal of Finance (1993)', 'Moskowitz, Ooi, Pedersen — Time Series Momentum, Journal of Financial Economics (2012)'],
@@ -631,7 +633,7 @@ The engine returns -50 when the range is flat. Relationship: {{%R = Raw %K - 100
     interpretation: `Above -20: close near the top of the range ("overbought" by convention). Below -80: near the bottom. In trends, readings stay at extremes for long stretches; a string of readings near 0 during an uptrend describes strength, not weakness. Williams himself paid attention to how %R behaved on the bars after an extreme: a quick failure to stay above -20 can describe fading buying pressure, while repeated returns to -5 to 0 describe persistent strength.`,
     bullish: `%R rises from below -80 back above it in a range or uptrend; bullish divergence.`,
     bearish: `%R falls from above -20 back below it.`,
-    example: `On Reliance 15-minute, Williams %R and the fast Stochastic show identical turning points. Load stoch in the Chart Lab and subtract 100 from Raw %K to read %R, since there is no separate %R token.
+    example: `On Reliance 15-minute, Williams %R and the fast Stochastic show identical turning points. The Chart Lab has a %R toggle (14 bars). Note that the stoch toggle plots the slow 14,3,3 version, so its %K is smoothed and will not equal %R + 100 bar by bar; the exact identity holds only against the raw (fast) %K.
 [[chart:RELIANCE:27:stoch]]`,
     entryExit: `- Same uses as the Stochastic: fade extremes only in confirmed ranges; time pullbacks in trends.
 - Structure stops beyond the range or swing.
@@ -649,8 +651,8 @@ Parameter choice changes signals; there is nothing special about 14. Because it 
 - Ignoring the spike-bar effect after an opening gap.`,
     timeframes: `5 to 60-minute intraday. On 1-minute charts the reading flips between extremes every few minutes.`,
     combinations: `Fully redundant with fast Stochastic; largely with RSI and CCI. Combine instead with trend filters, VWAP or pivots.`,
-    practice: `1. Load RELIANCE seed 27 with stoch. For five bars, convert %K to %R and confirm the relationship.
-2. Hand-compute %R for one bar from the data table.
+    practice: `1. Load RELIANCE seed 27 with stoch and %R. For five bars, compute Raw %K by hand from the crosshair readout (the stoch pane shows the smoothed slow %K, so do not use it), convert to %R and compare with the %R pane.
+2. Hand-compute %R for one bar from the crosshair readout.
 3. Remove any duplicate oscillators from your checklist and note the change in your journal.`,
     refs: ['Larry Williams — How I Made One Million Dollars Last Year Trading Commodities (book, 1973)', 'Robert W. Colby — The Encyclopedia of Technical Market Indicators (book)'],
   },
@@ -687,7 +689,7 @@ It says nothing that ROC does not; scale makes it awkward across instruments and
 - Using a fixed threshold such as "+100 points" across months of very different volatility.`,
     timeframes: `Any; n = 10 to 20 bars is common.`,
     combinations: `Redundant with ROC and close to MACD. Pair with ATR (to normalise) and structure.`,
-    practice: `1. From the Chart Lab data table, compute Momentum(10) for ten consecutive bars and plot them on paper.
+    practice: `1. From the Chart Lab crosshair readout (the O, H, L, C, V legend), compute Momentum(10) for ten consecutive bars and plot them on paper.
 2. Compare the Momentum peak bar with the price peak bar; record the gap.
 3. Convert three Momentum values to ROC and confirm the relationship.`,
     refs: ['Martin J. Pring — Technical Analysis Explained (book)', 'John J. Murphy — Technical Analysis of the Financial Markets (book)'],
@@ -778,7 +780,7 @@ It becomes insensitive late in the session. Opening auction prints and block dea
     timeframes: `Intraday only (1 to 15-minute charts). On daily charts session VWAP is a single number per day.`,
     combinations: `Standard-deviation bands around VWAP, Volume Profile (POC and value area), opening range. Overlaps with a 20-EMA as a trend filter on many days. Anchored VWAP extends the idea to any start point.`,
     practice: `1. Load NIFTY seed 42 with vwap and vol. Count VWAP crosses before 11:00 and after 13:00.
-2. Recompute VWAP for the first three bars by hand from the data table.
+2. Recompute VWAP for the first three bars by hand from the crosshair readout.
 3. Journal every VWAP pullback entry you would have taken and the result.`,
     refs: ['Berkowitz, Logue, Noser — The Total Cost of Transactions on the NYSE, Journal of Finance (1988)', 'Barry Johnson — Algorithmic Trading and DMA (book)', 'Brian Shannon — Maximum Trading Gains with Anchored VWAP (book)'],
   },
@@ -794,13 +796,13 @@ The engine returns null before the anchor and does not reset by date.`,
     calc: `Anchor a Reliance chart at the 09:15 bar of results day; use the same bars as the VWAP example.
 
 - From bar 1: ₹1,450.00, ₹1,456.43, ₹1,459.67, identical to session VWAP because the anchor is the session start.
-- Next day bar 1: H 1,470, L 1,455, C 1,462, TP 1,462.33, V 2.5. Session VWAP resets to ₹1,462.33. AVWAP continues: (6,568.5 + 3,655.8)/(4.5 + 2.5) = 10,224.3/7.0 = **₹1,460.61**.
+- Next day bar 1: H 1,470, L 1,455, C 1,462, TP 1,462.33, V 2.5. Session VWAP resets to ₹1,462.33. AVWAP continues: (6,568.5 + 3,655.83)/(4.5 + 2.5) = 10,224.33/7.0 = **₹1,460.62**.
 
 The anchored line keeps the previous day's buyers in the average.`,
     interpretation: `Price above an AVWAP anchored at a low: the average participant since that low is in profit. A return to AVWAP is where that group is back at breakeven; some traders expect reactions there. The choice of anchor carries all the meaning.`,
     bullish: `Price holds above AVWAP from a significant low; reclaims AVWAP from an important high.`,
     bearish: `Price fails at AVWAP anchored from a major high; loses AVWAP from a swing low.`,
-    example: `Anchor AVWAP at a Nifty future's budget-day low on the 15-minute chart; over the following sessions, pullbacks towards it can be watched as reference points. Anchor at an NVDA earnings gap open for the US equivalent. The Chart Lab does not yet offer an anchor selection token; use vwap for a session anchor and compute multi-day AVWAP from the data table.`,
+    example: `Anchor AVWAP at a Nifty future's budget-day low on the 15-minute chart; over the following sessions, pullbacks towards it can be watched as reference points. Anchor at an NVDA earnings gap open for the US equivalent. The Chart Lab does not yet offer an anchor selection token; use vwap for a session anchor and compute multi-day AVWAP from the crosshair readout.`,
     entryExit: `- Anchor only at objective events (gap, results, macro release, clear swing extreme), decided before you look at subsequent price.
 - Pullback entries towards AVWAP in the trend direction, stop beyond it by a volatility buffer (for example 0.5 ATR).
 - Use several AVWAPs from opposing anchors to map where different groups are in profit or loss.`,
@@ -815,10 +817,10 @@ It becomes slow as cumulative volume grows. Like VWAP, it needs reliable volume.
 - Using spot index data.`,
     timeframes: `5-minute to hourly for multi-session swings; daily for longer anchors.`,
     combinations: `Session VWAP, Volume Profile, pivots, swing structure. Redundant with session VWAP when anchored at the open.`,
-    practice: `1. Pick an event bar in any Chart Lab RELIANCE seed; compute AVWAP for the next five bars by hand from the data table.
+    practice: `1. Pick an event bar in any Chart Lab RELIANCE seed; compute AVWAP for the next five bars by hand from the crosshair readout.
 2. Write down your anchor rule before looking at the chart, then apply it to three seeds and journal what happened at the line.
 3. Compare session vwap with your AVWAP on day two and explain the difference.`,
-    refs: ['Brian Shannon — Maximum Trading Gains with Anchored VWAP (book)', 'Paul Levine — originator of anchored VWAP use (described in Shannon)'],
+    refs: ['Brian Shannon — Maximum Trading Gains with Anchored VWAP (book)', 'Andrew Coles and David Hawkins — MIDAS Technical Analysis: A VWAP Approach to Trading and Investing in Today\'s Markets (book; describes Paul Levine\'s MIDAS method, the forerunner of anchored VWAP)'],
   },
   {
     id: 'obv', name: 'On-Balance Volume (OBV)', category: 'volume', engine: 'obv', params: 'none', chart: 'obv', evidence: 'mixed',
@@ -860,7 +862,7 @@ One huge-volume bar can shift OBV for the rest of the chart. Starting point affe
     timeframes: `15-minute to daily. On 1-minute charts the up/down classification is close to random.`,
     combinations: `Price structure and trend filters. Overlaps with A/D Line and CMF, which use close location within the bar instead of close-to-close change.`,
     practice: `1. Load BANKNIFTY seed 12 with obv and vol. Find one bearish and one bullish OBV divergence and record what followed.
-2. Recompute OBV for five bars from the data table.
+2. Recompute OBV for five bars from the crosshair readout.
 3. Compare OBV with the A/D line computed by hand on the same five bars.`,
     refs: ['Joseph Granville — Granville\'s New Key to Stock Market Profits (book, 1963)', 'John J. Murphy — Technical Analysis of the Financial Markets (book)'],
   },
@@ -872,7 +874,7 @@ One huge-volume bar can shift OBV for the rest of the chart. Starting point affe
 MFM = ( (C - L) - (H - C) ) / (H - L)    (between -1 and +1; 0 if H = L)
 CMF = Sum[ MFM x V ] / Sum[ V ]   over the last n bars
 :::
-MFM is +1 when the close equals the high, -1 when it equals the low, 0 at mid-range.`,
+MFM is +1 when the close equals the high, -1 when it equals the low, 0 at mid-range. Chaikin's original setting is often given as 21 bars; 20 is a common platform default and the engine's.`,
     calc: `Three Reliance bars (n = 3), from the VWAP example:
 
 | Bar | H | L | C | MFM | V | MFM x V |
@@ -885,7 +887,7 @@ MFM is +1 when the close equals the high, -1 when it equals the low, 0 at mid-ra
     interpretation: `Above 0: volume-weighted closes near highs. Below 0: near lows. Values beyond plus or minus 0.2 to 0.25 are often called strong; the threshold is a convention.`,
     bullish: `CMF crosses above 0 and stays there; CMF positive during a breakout.`,
     bearish: `CMF below 0 and falling; negative CMF while price rises (divergence).`,
-    example: `On Reliance 15-minute during a rally, CMF stays positive; if the stock begins closing near bar lows while drifting higher, CMF turns negative before price does. On SPY the same reading applies. The Chart Lab has no CMF token; load obv and vol, and compute CMF for a few bars from the data table.`,
+    example: `On Reliance 15-minute during a rally, CMF stays positive; if the stock begins closing near bar lows while drifting higher, CMF turns negative before price does. On SPY the same reading applies. The Chart Lab has a CMF toggle (CMF 20); load it beside obv and vol, and compute CMF for a few bars from the crosshair readout.`,
     entryExit: `- Filter: avoid longs when CMF(20) is negative; avoid shorts when positive.
 - Divergence as a warning for existing positions.`,
     bestConditions: `Liquid stocks; 15-minute and higher timeframes.`,
@@ -965,7 +967,7 @@ The engine uses plain sums over n bars (not Wilder smoothing), skips bars with u
     interpretation: `Above 80: strong positive money flow (overbought by convention). Below 20: oversold. Like RSI, MFI stays extreme in trends.`,
     bullish: `MFI recovering from below 20 in a range; bullish divergence.`,
     bearish: `MFI falling from above 80; bearish divergence.`,
-    example: `On Reliance 15-minute, a results-day rally pushes MFI above 90 for many bars; fading it would have lost. In a quiet range, MFI turns near 20 and 80 at range edges. No MFI token exists in the Chart Lab; compare rsi with vol to see where the two would differ.`,
+    example: `On Reliance 15-minute, a results-day rally pushes MFI above 90 for many bars; fading it would have lost. In a quiet range, MFI turns near 20 and 80 at range edges. The Chart Lab has an MFI toggle (MFI 14); load it beside rsi and vol to see where the two differ on volume-spike bars.`,
     entryExit: `- Same tactics as RSI: fade extremes only in ranges, use mid-range readings for pullback timing in trends.
 - Structure stops always.`,
     bestConditions: `Liquid stocks and futures with reliable volume, in ranges.`,
@@ -979,7 +981,7 @@ Positive/negative flow depends on the sign of the TP change only; a tiny rise wi
 - Ignoring expiry and block-deal volume spikes.`,
     timeframes: `15-minute to daily. On 1 to 5-minute bars, volume spikes dominate the reading.`,
     combinations: `Redundant with RSI (and partly with CMF). Pair with trend filters and price levels.`,
-    practice: `1. Compute MFI(3) for a short run of bars from the Chart Lab data table as in the calc.
+    practice: `1. Compute MFI(3) for a short run of bars from the Chart Lab crosshair readout (the O, H, L, C, V legend) as in the calc.
 2. Compare where MFI and RSI would differ on a bar with a volume spike.
 3. Journal one situation where you would prefer MFI over RSI.`,
     refs: ['Gene Quong and Avrum Soudack — Money Flow Index (Technical Analysis of Stocks and Commodities, 1989)', 'Steven B. Achelis — Technical Analysis from A to Z (book)'],
@@ -995,7 +997,7 @@ POC = midpoint of the highest-volume bin
 Value Area: start at POC, repeatedly add the larger neighbouring bin (above or below) until the area holds 70% of total volume
 VAH / VAL = top / bottom of the value area
 :::
-The engine uses 24 bins by default and spreads volume uniformly within each bar's high-low. Real volume-at-price data from ticks would be more precise.`,
+The engine uses 24 bins by default and spreads volume uniformly within each bar's high-low. It grows the value area one bin at a time (ties go upward); the traditional CBOT Market Profile method compares the next **two** price rows above with the next two below, so value-area edges can differ by a bin from other platforms. Real volume-at-price data from ticks would be more precise.`,
     calc: `Three Nifty futures bars, 6 bins of 20 points from 22,400 to 22,520:
 
 - Bar A: 22,400 to 22,440, 300 contracts, touches bins 0 to 2, 100 each.
@@ -1081,13 +1083,13 @@ The middle band is an SMA, so all moving-average lag applies. A squeeze says vol
 TR = max( H - L, |H - C(t-1)|, |L - C(t-1)| )
 ATR = RMA(TR, n) = ( ATR(t-1) x (n-1) + TR ) / n
 :::
-The engine uses H - L for the first bar and Wilder smoothing seeded by the SMA of the first n true ranges.`,
+The engine uses H - L for the first bar (it has no previous close) and Wilder smoothing seeded by the SMA of the first n true ranges, so the first ATR appears on bar n. Some platforms start from bar 2 instead; the difference fades within a few multiples of n.`,
     calc: `Nifty 5-minute: H 22,600, L 22,540, previous close 22,510.
 
 - H - L = 60; |22,600 - 22,510| = 90; |22,540 - 22,510| = 30. TR = **90** (a gap from the previous close made this bar's true range larger than its visible range).
 - Previous ATR(14) = 40. New ATR = (40 x 13 + 90)/14 = **43.57 points**.
 
-> [!india] Sizing: with ₹10,000 of risk per trade and a stop at 1.5 ATR (65 points), Nifty futures at 65 per lot risk 65 x 65 = ₹4,225 per lot, so 2 lots fit (₹8,450). Use the position-size calculator to check.
+> [!india] Sizing: with ₹10,000 of risk per trade and a stop at 1.5 ATR (65 points), Nifty futures at 65 per lot (lot size for contracts from Jan 2026, as of Nov 2026 — verify on NSE) risk 65 x 65 = ₹4,225 per lot, so 2 lots fit (₹8,450); a third lot would take risk to ₹12,675. Use the position-size calculator to check.
 [[widget:position-size]]`,
     interpretation: `High ATR: wide bars, more movement per bar, wider stops needed. Low ATR: compressed. ATR says nothing about direction. Rising ATR during a decline is common because falls are often faster than rises.`,
     bullish: `ATR is not directional. An expanding ATR in an uptrend shows growing range, which may accompany a strong move or a climax.`,
@@ -1110,13 +1112,13 @@ It is in price units, so compare across instruments using ATR as a percentage of
     timeframes: `Use the ATR of the chart you trade for stops; daily ATR for expected daily range.`,
     combinations: `Essential with every directional tool. Overlaps with Standard Deviation and Bollinger Bandwidth (all measure dispersion); ATR includes gaps and intrabar ranges, SD uses only closes.`,
     practice: `1. Load BANKNIFTY seed 5 with atr. Record ATR at 09:30, 12:30 and 15:00.
-2. Use the position-size calculator to size a Bank Nifty futures trade (30 per lot) with a 1.5 ATR stop at each of those times.
+2. Use the position-size calculator to size a Bank Nifty futures trade (30 per lot as of Nov 2026 — verify on NSE) with a 1.5 ATR stop at each of those times.
 3. Hand-compute two TR values including one with a gap.`,
     refs: ['J. Welles Wilder Jr. — New Concepts in Technical Trading Systems (book, 1978)', 'Van K. Tharp — Trade Your Way to Financial Freedom (position sizing) (book)'],
   },
   {
     id: 'keltner', name: 'Keltner Channels', category: 'volatility', engine: 'keltner', params: 'n=20 (EMA), m=2, ATR n=10', chart: 'kc', evidence: 'mixed',
-    definition: `Keltner Channels are bands placed a multiple of ATR above and below an EMA. The modern version, popularised by Linda Bradford Raschke, uses a 20-EMA and ATR; Chester Keltner's original used a 10-day average of typical price and average range.`,
+    definition: `Keltner Channels are bands placed a multiple of ATR above and below an EMA. The modern version, credited to Linda Bradford Raschke in the 1980s, uses a 20-EMA and ATR; Chester Keltner's original used a 10-day average of typical price and average range.`,
     purpose: `A smoother, ATR-based envelope than Bollinger Bands, used to identify trend strength (closes outside the channel), pullback zones and squeezes.`,
     formula: `:::formula
 Middle = EMA(C, 20)
@@ -1135,7 +1137,7 @@ A close at ₹1,501 is outside the upper channel, which describes an unusually s
     bearish: `Close below the lower channel; rallies failing at the middle EMA.`,
     example: `On a Reliance 15-minute chart, overlay kc and bb together; in quiet sessions the Bollinger Bands slip inside Keltner, then expand back outside on the breakout bar.
 [[chart:RELIANCE:21:kc,bb]]
-On GOLD futures the same squeeze tends to appear before scheduled US data.`,
+On GOLD futures a similar squeeze can appear before scheduled US data.`,
     entryExit: `- Trend pullback: in a rising channel, buy near the middle EMA, stop beyond the lower band or the swing low.
 - Breakout: close outside the channel after a squeeze, with volume.
 - Exit when price closes back on the opposite side of the middle line.`,
@@ -1153,7 +1155,7 @@ Parameter choices vary widely across platforms. The squeeze tells you that a bre
     practice: `1. Load RELIANCE seed 21 with kc and bb. Mark each squeeze (Bollinger inside Keltner) and the direction of the next breakout.
 2. Hand-compute channel values for one bar.
 3. Journal two trades: one pullback to the middle line, one channel breakout.`,
-    refs: ['Chester W. Keltner — How to Make Money in Commodities (book, 1960)', 'Linda Bradford Raschke and Laurence Connors — Street Smarts (book)', 'John Carter — Mastering the Trade (squeeze concept) (book)'],
+    refs: ['Chester W. Keltner — How to Make Money in Commodities (book, 1960)', 'StockCharts ChartSchool — Keltner Channels (stockcharts.com; credits the EMA/ATR version to Linda Raschke, default 20, 2.0, 10)', 'John Carter — Mastering the Trade (squeeze concept) (book)'],
   },
   {
     id: 'donchian', name: 'Donchian Channels', category: 'volatility', engine: 'donchian', params: 'n=20', chart: 'dc', evidence: 'mixed',
@@ -1174,7 +1176,7 @@ If the next bar's high is 22,662, the upper band rises to 22,662: a new 20-bar h
     interpretation: `Price at the upper band: making new n-bar highs. A flat upper band: no new highs. A narrowing channel: compressing range. The midline is a neutral reference.`,
     bullish: `New n-bar high (upper band rising) with volume; pullback holding above the midline.`,
     bearish: `New n-bar low; failure below the midline.`,
-    example: `On a Nifty 15-minute chart, a 20-bar Donchian channel captures the prior day and a half of range. A break above it in the morning session marks a clear range expansion.
+    example: `On a Nifty 15-minute chart, a 20-bar Donchian channel covers a little under one full session (an NSE session has 25 fifteen-minute bars). A break above it in the morning session marks a clear range expansion.
 [[chart:NIFTY:17:dc,vol]]
 On DAX, the first-hour high and low (an opening range) is a closely related idea.`,
     entryExit: `- Breakout: enter on a new n-bar high (or above the previous bar's upper band), stop at the midline or 2 ATR.
@@ -1234,7 +1236,7 @@ SD uses only closes, ignoring intrabar ranges and gaps. It lags like any rolling
 - Using SD and Bollinger width as separate signals.`,
     timeframes: `Any; n = 20 is common.`,
     combinations: `Redundant with Bollinger Bandwidth and closely related to ATR. Use one volatility measure plus directional tools.`,
-    practice: `1. Compute population and sample SD by hand for five bars from the Chart Lab data table.
+    practice: `1. Compute population and sample SD by hand for five bars from the Chart Lab crosshair readout (the O, H, L, C, V legend).
 2. Load NIFTY seed 21 with bb and convert the band width to SD for three bars.
 3. Journal how many z-score above 2 readings occurred in a session and what followed.`,
     refs: ['John Bollinger — Bollinger on Bollinger Bands (book)', 'Benoit Mandelbrot and Richard Hudson — The (Mis)Behaviour of Markets (fat tails) (book)'],
@@ -1264,7 +1266,7 @@ If the decline instead ran from 22,700 to 22,100 (downtrend), the 0.618 retracem
     interpretation: `Shallow pullbacks (to 0.236 to 0.382) are commonly associated with strong trends; deep ones (beyond 0.618) with weakening trends. Levels are zones, not lines. With five levels across a move, price will be near one of them most of the time, which is why "it bounced at a Fib" is weak evidence.`,
     bullish: `In an uptrend, price pulls back to a level that also coincides with other evidence (prior resistance turned support, VWAP, rising 20-EMA) and prints a bullish reversal bar.`,
     bearish: `In a downtrend, a rally stalls at a retracement level with a bearish reversal bar, ideally confluent with other resistance.`,
-    example: `On a Bank Nifty 15-minute chart after a strong morning drive, mark the drive's low and high. The afternoon pullback might hold near the 0.5 level, which also coincides with VWAP; the confluence, not the ratio alone, is what traders watch. The Chart Lab has no Fib token; take swing values from the data table, compute the levels, and compare them with vwap.
+    example: `On a Bank Nifty 15-minute chart after a strong morning drive, mark the drive's low and high. The afternoon pullback might hold near the 0.5 level, which also coincides with VWAP; the confluence, not the ratio alone, is what traders watch. The Chart Lab has no Fib token; take swing values from the crosshair readout, compute the levels, and compare them with vwap.
 [[chart:BANKNIFTY:44:vwap,ema20]]`,
     entryExit: `- Define the swing with an objective rule (for example, the session's high and low so far) before drawing.
 - Enter only on a price confirmation at a level (reversal bar, higher low), stop beyond the next level or the swing, and size with ATR.
@@ -1279,7 +1281,7 @@ Claims that markets obey the golden ratio are not supported by robust evidence. 
 - Treating each level as support without confirmation.
 - Stopping exactly at a Fib level where many others stop.`,
     timeframes: `Any; most useful on 15-minute and above where swings are clearer.`,
-    combinations: `VWAP, prior day high/low, pivots, Volume Profile for confluence. Overlaps with simple "half-back" (50%) retracement ideas and with pivot levels.`,
+    combinations: `VWAP, prior day high/low, pivots, Volume Profile for confluence. Keep the list short: with five Fib levels plus pivots, VWAP and profile levels on one chart, some "confluence" is almost guaranteed by chance. Overlaps with simple "half-back" (50%) retracement ideas and with pivot levels.`,
     practice: `1. In the Chart Lab, load BANKNIFTY seed 44; define swings with a written rule, compute the five levels and record which held.
 2. Repeat with random levels (for example 0.3, 0.45, 0.7) and compare how often price "reacted".
 3. Journal the result of the comparison honestly.`,
@@ -1308,7 +1310,7 @@ For a three-point version, if a pullback ended at 22,200, the 1.0 projection of 
     interpretation: `Extensions are only meaningful as targets, not as levels where reversals must happen. Most intraday swings do not reach 2.618, and many fail before 1.272. Think of them as a way to plan exits in advance rather than a forecast; a target fixed before entry protects you from the temptation to hold a winner until it turns into a loser.`,
     bullish: `Price breaking above the swing high and continuing towards 1.272 with volume.`,
     bearish: `Price breaking below the swing low towards the downside extensions.`,
-    example: `After a Reliance 15-minute pullback holds and the stock breaks its morning high, a trader might set the first target at the 1.272 extension and trail the rest. On SPY the same logic applies to the first-hour range. The Chart Lab has no Fib token; compute levels from the data table and mark them in your journal.`,
+    example: `After a Reliance 15-minute pullback holds and the stock breaks its morning high, a trader might set the first target at the 1.272 extension and trail the rest. On SPY the same logic applies to the first-hour range. The Chart Lab has no Fib token; compute levels from the crosshair readout and mark them in your journal.`,
     entryExit: `- Set a partial target at 1.272, trail the remainder with ATR or Supertrend.
 - Check the risk-reward of the target with the calculator before entering.
 [[widget:rr]]`,
@@ -1351,7 +1353,7 @@ For Reliance (H ₹1,500, L ₹1,470, C ₹1,492): P = ₹1,487.33, R1 = ₹1,50
     interpretation: `Open above P: bias up by convention; below P: down. R1/S1 are often reached on ordinary days; R2/S2 on wider days; R3/S3 only on trend days. Levels matter more when they coincide with other structure.`,
     bullish: `Price opens above P and holds it on pullbacks; break and hold above R1.`,
     bearish: `Open below P; rejection at P from below; break below S1.`,
-    example: `On a Nifty 5-minute chart, plot the day's pivots before 09:15. Price often reacts around P in the first hour, though on a gap day it may start beyond R1 and never return. The Chart Lab has no pivot token; compute from the prior day's high, low and close in the data table and compare with vwap.
+    example: `On a Nifty 5-minute chart, plot the day's pivots before 09:15. Price often reacts around P in the first hour, though on a gap day it may start beyond R1 and never return. The Chart Lab has no pivot toggle (the Technical analysis Structure tab draws classic P, R1 and S1 for the last day); compute the rest from the prior day's high, low and close in the crosshair readout and compare with vwap.
 [[chart:NIFTY:42:vwap,vol]]`,
     entryExit: `- Range days: fade R1/S1 back to P with a stop beyond the level by a buffer (0.5 ATR).
 - Trend days: buy the break and hold above R1 targeting R2.
@@ -1361,7 +1363,7 @@ For Reliance (H ₹1,500, L ₹1,470, C ₹1,492): P = ₹1,487.33, R1 = ₹1,50
 
 Previous session definition varies: some platforms include pre-open or use futures data, giving different values.
 
-> [!evidence] Mixed. Some studies report clustering of reactions at pivots in FX; others find little. Any effect is likely from wide usage.`,
+> [!evidence] Mixed. Research on support and resistance levels published by FX firms (for example Carol Osler, Federal Reserve Bank of New York, 2000) found that intraday trends were interrupted at those levels more often than at arbitrary ones, but that work did not test floor-trader pivots specifically. Any effect at pivots is most plausibly from wide usage and order clustering.`,
     mistakes: `- Expecting every level to hold.
 - Using spot and futures pivots interchangeably.
 - Ignoring a gap that places the market beyond all levels.`,
@@ -1370,7 +1372,7 @@ Previous session definition varies: some platforms include pre-open or use futur
     practice: `1. Compute pivots for a Chart Lab NIFTY seed from day one's H, L, C, and record how price behaved at each level on day two.
 2. Repeat on a gap day and note which levels were irrelevant.
 3. Journal day-type rules you would use before trading pivot fades.`,
-    refs: ['Kathy Lien — Day Trading and Swing Trading the Currency Market (book)', 'John Person — A Complete Guide to Technical Trading Tactics (book)'],
+    refs: ['Kathy Lien — Day Trading and Swing Trading the Currency Market (book)', 'Carol Osler — Support for Resistance: Technical Analysis and Intraday Exchange Rates, FRBNY Economic Policy Review (2000)', 'John Person — A Complete Guide to Technical Trading Tactics (book)'],
   },
   {
     id: 'camarilla', name: 'Camarilla Pivots', category: 'tool', engine: 'pivots', params: 'previous session H, L, C; returned as .camarilla', chart: null, evidence: 'mixed',
@@ -1395,7 +1397,7 @@ Compare classic R1 22,680; the Camarilla levels cluster close to yesterday's clo
     interpretation: `By convention: inside R3/S3, the day is in range; approaching R3 or S3 invites fades; acceptance beyond R4/S4 suggests a breakout.`,
     bullish: `Rejection of S3 and recovery (fade long); acceptance above R4 (breakout long).`,
     bearish: `Rejection of R3 (fade short); acceptance below S4 (breakout short).`,
-    example: `On a quiet Bank Nifty day, the session may stay within S3 to R3. On an event day, price breaks R4 in the first hour and continues. The Chart Lab has no Camarilla token; compute the levels from the prior session in the data table.
+    example: `On a quiet Bank Nifty day, the session may stay within S3 to R3. On an event day, price breaks R4 in the first hour and continues. The Chart Lab has no Camarilla token; compute the levels from the prior session in the crosshair readout.
 [[chart:BANKNIFTY:9:vwap,atr]]`,
     entryExit: `- Fade R3/S3 only with a reversal bar and a stop beyond R4/S4.
 - Breakout trade beyond R4/S4 with a stop back inside at R3/S3.
@@ -1449,7 +1451,7 @@ The invalidation level is the only objective part of this calculation.`,
 - Ignoring the hard rules when they break.
 - Holding a losing position through recount after recount.`,
     timeframes: `Mostly daily and weekly; intraday counts are especially ambiguous.`,
-    combinations: `Momentum divergence (RSI, MACD), Fibonacci ratios, volume. Overlaps with ordinary swing structure (higher highs, higher lows), which is objective.`,
+    combinations: `Momentum divergence (RSI, MACD) and volume. Fibonacci ratios are already built into the wave guidelines, so a Fib level agreeing with a wave target is the same assumption twice, not confirmation. Overlaps with ordinary swing structure (higher highs, higher lows), which is objective.`,
     practice: `1. Load NIFTY seed 52 with rsi. Write two different valid counts for the same move and note the invalidation level of each.
 2. Step forward and record which count survived and why.
 3. Journal how much your trade plan would have changed between the two counts.`,
@@ -1529,7 +1531,7 @@ The trade idea is a long near 22,128, stop below X (22,000). Risk 128 points.`,
 - Entering at D without confirmation.
 - Ignoring the trend; reversal patterns in strong trends fail often.`,
     timeframes: `15-minute and higher; on 1-minute charts swings are too noisy.`,
-    combinations: `Fibonacci retracements and extensions (the same ratios), RSI divergence, structure. Overlaps with ordinary double bottom and ABCD measured-move concepts.`,
+    combinations: `RSI divergence and price structure. Fibonacci retracements and extensions are not confirmation here: they are the same ratios the pattern is built from, so agreement is automatic. Overlaps with ordinary double bottom and ABCD measured-move concepts.`,
     practice: `1. On RELIANCE seed 66, label one XABCD candidate and compute the D zone before stepping forward.
 2. Record whether the pattern reversed, then label an alternative pattern from different swings and compare.
 3. Journal how much tolerance you used and how it affected your result.`,
@@ -1558,7 +1560,7 @@ A bullish example: swing lows at 22,410 (RSI 28) and 22,390 (RSI 35): lower low 
     bearish: `Regular bearish divergence at resistance followed by a break of the latest swing low.`,
     example: `On a Bank Nifty 5-minute chart late in a trending morning, RSI may diverge two or three times while price grinds higher. Only the divergence followed by a break of structure led to a pullback.
 [[chart:BANKNIFTY:42:rsi,macd]]
-On NVDA, the same pattern often appears around the US midday lull.`,
+On NVDA, the same pattern can appear around the US midday lull.`,
     entryExit: `- Treat divergence as a setup, not a trigger. The trigger is price structure: a lower low after bearish divergence, a higher high after bullish.
 - Stop beyond the extreme of the divergent swing.
 - Use for tightening stops on existing positions.`,

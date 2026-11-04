@@ -2,7 +2,7 @@
 (function (root) {
   const IA = (root.IA = root.IA || {});
   const { h, toast, num } = IA.ui;
-  const IND = [['vol', 'Volume'], ['vwap', 'VWAP'], ['ema9', 'EMA 9'], ['ema20', 'EMA 20'], ['ema50', 'EMA 50'], ['sma20', 'SMA 20'], ['sma50', 'SMA 50'], ['bb', 'Bollinger'], ['kc', 'Keltner'], ['dc', 'Donchian'], ['st', 'Supertrend'], ['psar', 'PSAR'], ['ichimoku', 'Ichimoku'], ['vp', 'Vol. profile'], ['rsi', 'RSI'], ['macd', 'MACD'], ['stoch', 'Stochastic'], ['atr', 'ATR'], ['adx', 'ADX/DMI'], ['obv', 'OBV'], ['cci', 'CCI'], ['mfi', 'MFI'], ['willr', '%R'], ['roc', 'ROC'], ['cmf', 'CMF']];
+  const IND = [['vol', 'Volume'], ['vwap', 'VWAP'], ['ema9', 'EMA 9'], ['ema20', 'EMA 20'], ['ema50', 'EMA 50'], ['sma20', 'SMA 20'], ['sma50', 'SMA 50'], ['bb', 'Bollinger'], ['kc', 'Keltner'], ['dc', 'Donchian'], ['st', 'Supertrend'], ['psar', 'PSAR'], ['ichimoku', 'Ichimoku'], ['vp', 'Vol. profile'], ['rsi', 'RSI'], ['macd', 'MACD'], ['stoch', 'Stochastic'], ['atr', 'ATR'], ['adx', 'ADX/DMI'], ['obv', 'OBV'], ['cci', 'CCI'], ['mfi', 'MFI'], ['willr', '%R'], ['roc', 'ROC'], ['cmf', 'CMF'], ['wma20', 'WMA 20'], ['vwma20', 'VWMA 20'], ['stochf', 'Fast Stoch'], ['stochrsi', 'StochRSI'], ['adl', 'A/D line'], ['sd', 'Std dev'], ['mom', 'Momentum']];
 
   IA.views.chartlab = async (el) => {
     const qs = IA.query || new URLSearchParams(); const st = { preset: qs.get('preset') || 'NIFTY', seed: +(qs.get('seed') || 42), tf: 5, days: 5, ind: (qs.get('ind') || 'vol,vwap,ema20').split(','), data: null, imported: null };

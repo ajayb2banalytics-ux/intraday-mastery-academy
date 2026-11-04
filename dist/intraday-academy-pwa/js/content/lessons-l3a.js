@@ -15,7 +15,7 @@
 
 Think of it as a running bet on the price, settled every night. If you are long one Nifty futures lot and Nifty futures close 100 points higher, roughly ₹6,500 (100 × 65) lands in your account that evening. If they close 100 lower, ₹6,500 leaves it. Nothing waits until expiry.
 
-Why this matters to an intraday trader: futures let you control a large exposure with a small deposit. One Nifty lot at 25,100 controls about ₹16.3 lakh of index exposure. That is both the attraction and the danger. A 1% move in the index is about a 8% move on a typical margin deposit.
+Why this matters to an intraday trader: futures let you control a large exposure with a small deposit. One Nifty lot at 25,100 controls about ₹16.3 lakh of index exposure. That is both the attraction and the danger. With an illustrative ₹2 lakh margin per lot (about 8× leverage), a 1% move in the index is about an 8% move on the margin deposit.
 
 > [!note] Futures are **symmetric**: every point up gains exactly what every point down loses. There is no time decay and no premium. Your risk is the full price move times the lot size, for as long as you hold.` },
       { h: 'Intermediate view', md: `### Reading a contract specification
@@ -31,11 +31,11 @@ Every exchange publishes a spec sheet. The fields that change your P&L:
 
 Indian **stock futures** are physically settled: if you hold to expiry you give or take delivery of the shares. Index futures are cash-settled.
 
-> [!warn] Lot sizes, tick sizes and expiry days are time-sensitive. As of Nov 2026 — verify on NSE (nseindia.com, F&O contract specifications) and CME Group.
+> [!warn] Lot sizes, tick sizes and expiry days are time-sensitive. Since April 2025 NSE sets index-futures tick sizes by index-level band (0.05 below 15,000; 0.10 from 15,000 to 30,000; 0.20 above 30,000) and reviews them periodically, so the ticks shown here follow from today's index levels. As of Nov 2026 — verify on NSE (nseindia.com, F&O contract specifications and circulars) and CME Group.
 
 ### Notional, margin and leverage
 - **Notional** = futures price × lot size. Nifty at 25,100 → 25,100 × 65 = ₹16,31,500.
-- **Initial margin** in India = SPAN margin + exposure margin, set by the clearing corporation (NSE Clearing) from a risk model. For index futures it has typically been in the region of 10–15% of notional, but it changes with volatility. Use your broker's margin calculator on the day.
+- **Initial margin** in India = SPAN margin + exposure margin, set by the clearing corporation (NSE Clearing) from a risk model. For index futures it has often been in the region of 10–15% of notional (illustrative range, not a fixed rule — verify on NSE Clearing), but it changes with volatility. Use your broker's margin calculator on the day.
 - **Leverage** = notional ÷ margin. With ₹2 lakh margin on ₹16.3 lakh notional, leverage is about 8.2×.
 
 [[widget:futures-exposure]]
@@ -85,7 +85,7 @@ Practical points for NSE futures:
 - **Expiry:** monthly contracts for both Nifty and Bank Nifty; the expiry weekday has changed more than once in recent years. Verify the current expiry day on NSE.
 - **Settlement price on expiry** is the closing value of the underlying index, so a position held into the close of expiry day is settled at the index close, not at the last futures trade.
 - **Stock futures** carry physical-settlement obligations at expiry. Brokers often square off open stock futures before expiry if you do not have funds or shares for delivery.
-- **F&O ban:** a stock enters ban when market-wide open interest crosses 95% of its limit; you can only reduce positions while it is in ban (see [[link:l1-circuits]]).` },
+- **F&O ban:** a stock enters ban when market-wide open interest crosses 95% of its market-wide position limit (MWPL); you can only reduce positions while it is in ban (see [[link:l1-circuits]]). SEBI has revised how open interest is measured for these limits since 2024 — as of Nov 2026, verify the current method on NSE.` },
       { h: 'US & global', md: `> [!us] **E-mini S&P 500 (ES)** at 6,000 has notional 6,000 × $50 = $300,000. The **Micro E-mini (MES)** is one-tenth: $5 per point, $30,000 notional. One ES point = $50; a 30-point day = $1,500 per contract.
 
 US futures trade nearly 23 hours a day on CME Globex, so overnight risk is continuous rather than a single gap at the open. Margin is set by CME (maintenance margin) plus broker add-ons; many brokers offer lower **day-trading margins** that revert to full overnight margin if you hold past the session — a position that is fine at 15:55 ET can trigger a margin call at 16:00 ET.
@@ -193,7 +193,7 @@ Commodities show the starkest curves. Crude oil, natural gas and agricultural co
 - **"Discount = bearish signal."** A stock future at a discount before a large dividend is simply pricing the dividend.
 - **"Roll cost is a fee."** It is the price difference between contracts; it converges away. It only "costs" if spot does not move to compensate.
 - **"Arbitrage is risk-free money."** Real arbitrage has execution risk, funding risk, costs and margin calls. The band of no-arbitrage is set by those frictions.` },
-      { h: 'When it fails', md: `**Losing example — the basis squeeze.** A trader is long Nifty spot exposure via ETF (₹16 lakh) and short 1 Nifty futures lot at a rich 25,180 vs fair 25,110, expecting to capture 70 points of excess basis. A sharp rally pushes futures premium even richer to 25,260 vs spot 25,050 the same day. The hedge is right in the long run (convergence at expiry), but intraday the trader is down on the basis (80 points × 65 = ₹5,200) and the broker charges extra MTM on the futures leg while the ETF gain is unrealised. If they panic and unwind, they lock in the loss.
+      { h: 'When it fails', md: `**Losing example — the basis squeeze.** A trader is long Nifty spot exposure via ETF (₹16 lakh) and short 1 Nifty futures lot at a rich 25,180 vs fair 25,110, expecting to capture 70 points of excess basis. A rally led by futures pushes the premium even richer: futures 25,260 vs spot 25,050 the same day (basis 210, up from about 180). The hedge is right in the long run (convergence at expiry), but today the futures leg is debited 80 points × 65 = ₹5,200 in cash MTM while the ETF gain (about 50 points, ≈ ₹3,200 on ₹16 lakh) is only on paper — a net basis loss of about 30 points (≈ ₹1,950) plus a cash outflow of ₹5,200. If they panic and unwind, they lock in the loss.
 
 Basis analysis also fails when: interest-rate assumptions are wrong, dividend estimates are wrong, or liquidity in the contract is thin enough that the quoted price is not tradable.` },
       { h: 'Exercise', md: `1. In your journal, record spot and near-month futures for Nifty at 09:20, 12:00 and 15:20 on three different days. Compute basis each time and compare with fair value from the formula.
@@ -221,7 +221,7 @@ Futures give you three tools:
 
 The habit to build first: **size by the money you are willing to lose if your stop is hit, not by how many lots your margin allows.** Margin tells you the maximum you are *allowed* to do. Your risk plan tells you what you *should* do.
 
-> [!warn] SEBI's study of individual F&O traders (published 2024, covering FY22–FY24) found that a large majority — around nine in ten — lost money. Leverage without a sizing rule is a central reason. This is not personal advice; paper trade first.` },
+> [!warn] SEBI's study of individual F&O traders (published 2024, covering FY22–FY24) reported that a large majority — around nine in ten — made net losses (source: SEBI, sebi.gov.in). Leverage without a sizing rule is a central reason. This is not personal advice; paper trade first.` },
       { h: 'Intermediate view', md: `### Sizing by risk
 :::formula
 Lots = (Capital × risk %) ÷ (stop distance in points × lot size)
@@ -244,7 +244,7 @@ Hedge lots = (Portfolio value × β) ÷ (Futures price × lot size)
 β is the portfolio's sensitivity to the index (estimated by regression of returns; see [[link:l4-correlation-regression]]).` },
       { h: 'Advanced view', md: `**Leverage is a portfolio property.** One Nifty lot plus one Bank Nifty lot plus long HDFC Bank stock is mostly one bet on Indian banks and large caps. Add notionals with their correlations, not lot counts.
 
-**Gap risk sets the real maximum leverage.** If a 3% overnight gap is plausible (it has happened in Indian indices around elections, budget days and global shocks), then at 8× leverage on margin a single gap is about 24% of margin. Professionals cap gross leverage so that a stress move — not a typical day — is survivable.
+**Gap risk sets the real maximum leverage.** If a 3% overnight gap is plausible (moves of that size have occurred in Indian indices around election results and global shocks), then at 8× leverage on margin a single gap is about 24% of margin. Professionals cap gross leverage so that a stress move — not a typical day — is survivable.
 
 **Hedge imperfections:**
 - **Basis risk**: futures vs spot changes ([[link:l3-basis]]).
@@ -309,7 +309,7 @@ Hedges fail when β shifts (a defensive portfolio that suddenly trades like the 
 - A **put** gives the buyer the right to sell the underlying at the strike.
 - The buyer pays a **premium** to the seller up front.
 
-Analogy: a call is like a refundable-only-by-luck booking fee on a flat at a fixed price. If prices rise, your booking is valuable. If they fall, you walk away and lose only the fee. The seller of that booking keeps the fee but must deliver at the fixed price however high the market goes.
+Analogy: a call is like a non-refundable booking fee that locks a flat's price. If prices rise, your booking is valuable. If they fall, you walk away and lose only the fee. The seller of that booking keeps the fee but must deliver at the fixed price however high the market goes.
 
 That asymmetry is the whole subject. The buyer's loss is capped at the premium but the probability of losing some or all of it is often high. The seller's gain is capped at the premium but the loss can be large — unlimited for a short call. **Neither side is "safe" and neither is "cheap risk".** They are different shapes of risk.
 
@@ -326,7 +326,7 @@ That asymmetry is the whole subject. The buyer's loss is capped at the premium b
 ### The four basic positions
 | Position | Max gain | Max loss | Breakeven at expiry | Margin | Vega | Theta |
 |---|---|---|---|---|---|---|
-| Long call | Unlimited | Premium paid | Strike + premium | Premium only | + | − |
+| Long call | Unlimited | Premium paid | Strike + premium | Premium paid upfront (no margin) | + | − |
 | Short call | Premium received | Unlimited | Strike + premium | Full SPAN + exposure | − | + |
 | Long put | Strike − premium (underlying to 0) | Premium paid | Strike − premium | Premium only | + | − |
 | Short put | Premium received | Strike − premium (large) | Strike − premium | Full SPAN + exposure | − | + |
@@ -338,10 +338,13 @@ That asymmetry is the whole subject. The buyer's loss is capped at the premium b
 ### European vs American
 - **European**: exercise only at expiry. All NSE index options (Nifty, Bank Nifty) are European and **cash-settled**.
 - **NSE stock options** are European but **physically settled**: an ITM stock option at expiry results in delivery of shares (long call → you buy shares at strike; short call → you deliver).
-- **American**: exercise any time up to expiry. US equity and ETF options (AAPL, SPY) are American, and the seller can be **assigned early**. SPX index options are European and cash-settled.` },
+- **American**: exercise any time up to expiry. US equity and ETF options (AAPL, SPY) are American, and the seller can be **assigned early**. SPX index options are European and cash-settled.
+
+### Exercise at expiry in India
+NSE options are not exercised by hand. At expiry the clearing corporation **automatically exercises** every ITM contract and lets OTM ones lapse. For stock options NSE offers a "do not exercise" instruction only for strikes close to the money (as of Nov 2026, verify the current rule on NSE). If you are long an ITM stock option, plan on delivery unless you close it.` },
       { h: 'Advanced view', md: `**Put–call parity** ties calls, puts and the forward together for European options: {{C − P = PV(F − K)}}. If parity breaks beyond costs, arbitrage (conversions and reversals) restores it. Practical use: if a call looks "cheap" while the put at the same strike looks "expensive", check the forward — it is usually the forward that has moved.
 
-**Exercise and STT in India.** As of Nov 2026 (verify on NSE and the Income Tax department), STT is 0.15% of premium when you sell an option, and an option **exercised** at expiry attracts STT of 0.15% on its **intrinsic (settlement) value**, payable by the buyer. For a cash-settled index option the two bases are similar at expiry, because premium has converged to intrinsic. The bigger traps are elsewhere: brokers may charge an exercise or delivery fee, and an ITM **stock** option turns into a share delivery obligation, with the full contract value of shares to fund and delivery-related charges on top. Many professionals close ITM options before the final minutes rather than leave them to exercise — compare the contract-note cost both ways with your broker.
+**Exercise and STT in India.** As of Nov 2026 (verify on NSE and the Income Tax department), STT is 0.15% of premium when you sell an option, and an option **exercised** at expiry attracts STT of 0.15% on its **intrinsic (settlement) value**, payable by the buyer. For a cash-settled index option the two bases are similar at expiry, because premium has converged to intrinsic. The bigger traps are elsewhere: brokers may charge an exercise or delivery fee, and an ITM **stock** option turns into a share delivery obligation, with the full contract value of shares to fund and delivery-related charges on top. How STT applies to the resulting share delivery (the delivery-equity rate on the full contract value or a different basis) has changed in past budgets and is not in this app's verified fact list — check the current treatment on your contract note or NSE before you rely on it. Many professionals close ITM options before the final minutes rather than leave them to exercise — compare the contract-note cost both ways with your broker.
 
 **Physical settlement of stock options.** A long ITM Reliance call at expiry obliges you to pay for the full lot of shares; a short ITM put obliges you to buy them. Brokers raise margins in the days before expiry and may square off positions you cannot fund.
 
@@ -379,7 +382,7 @@ SPY options are American and physically settled into ETF shares; SPX options are
 - **"Indian stock options settle in cash like Nifty."** They are physically settled at expiry if ITM.` },
       { h: 'When it fails', md: `**Long option failure.** You buy 1 lot Nifty 25,200 CE at ₹108 (₹7,020) expecting a breakout. Nifty rallies to 25,180 by expiry — you were right on direction — yet the option expires worthless. Direction was right; **magnitude and timing** were not enough.
 
-**Short option failure.** You sell 2 lots Nifty 24,600 PE at ₹40 (₹5,200 received) "because it is far OTM". An overnight shock gaps Nifty to 24,300 with IV jumping. The put now trades near ₹410. Loss ≈ (410 − 40) × 130 = ₹48,100 — over nine times the premium you collected.` },
+**Short option failure.** You sell 2 lots Nifty 24,600 PE at ₹40 (₹5,200 received) "because it is far OTM". An overnight shock gaps Nifty to 24,300 and IV jumps from 13% to about 20%. With 6 days left the put now trades near ₹410 (Black–Scholes). Loss ≈ (410 − 40) × 130 = ₹48,100 — over nine times the premium you collected.` },
       { h: 'Exercise', md: `1. In [[widget:options-payoff]], build a long 25,000 CE at ₹195 (lot 65) and a short 25,000 PE at ₹164. Read off breakeven and P&L at 24,400, 25,000 and 25,600.
 2. Repeat with AAPL 230 call at $7.74 (multiplier 100). Compare breakeven as % of spot with the Nifty example.
 3. On [[chart:NIFTY:12:atr]] estimate the average 5-day range. Is it larger than the breakeven distance of an ATM weekly option? Record in your journal.` },
@@ -442,9 +445,9 @@ An ATM straddle (call + put) costs roughly {{0.8 × S × σ × √T}}. This give
 - **Volatility is not constant**: it clusters and mean-reverts.
 - **Hedging is discrete and costly**: STT, spreads and gaps make continuous hedging impossible.
 
-**Forward, not spot.** For index options use the forward (or futures price) in place of spot with r = 0 discounting adjustments (the Black-76 form). Using spot with an incorrect dividend assumption mis-prices calls versus puts.
+**Forward, not spot.** For index options use the forward (or futures price) F in place of spot and discount the whole payoff at r — the Black-76 form: {{C = e^(−rT) × [F × N(d1) − K × N(d2)]}} with {{d1 = [ln(F ÷ K) + σ²T ÷ 2] ÷ (σ√T)}}. This removes the need to guess the dividend yield, because the futures price already embeds it. Using spot with an incorrect dividend assumption mis-prices calls versus puts. (The worked Nifty numbers in this module use spot with zero dividend yield for simplicity; with a 1.2% dividend yield the 7-day 25,000 CE would be about ₹192 instead of ₹195.)
 
-**American options.** US equity options can be exercised early, so they are priced with binomial trees or similar methods; for non-dividend-paying stocks an American call equals a European call, but American puts are worth slightly more.
+**American options.** US equity options can be exercised early, so they are priced with binomial trees or similar methods; for non-dividend-paying stocks an American call is worth the same as a European call (early exercise is never optimal), while an American put is worth at least as much as the European put and usually slightly more.
 
 > [!evidence] Established: the Black–Scholes formula and its no-arbitrage derivation (Black, Scholes, Merton, 1973). Empirically mixed: how well it fits — skew and term structure show the market systematically adjusts for its limitations.` },
       { h: 'The maths', md: `### Worked Black–Scholes — Nifty 25,000 CE, 7 days
@@ -463,7 +466,7 @@ P = C − S + K e^(−rT) = 195 − 25,000 + 24,968.8 = ₹164
 :::
 
 ### Sensitivity checks
-- IV up from 13% to 16%: call ≈ ₹237 (+₹42 per unit, ₹2,730 per lot).
+- IV up from 13% to 16%: call ≈ ₹237 (+₹41 per unit, about ₹2,690 per lot).
 - Same option with 35 days left: ≈ ₹483. Five times the time does not give five times the price — value scales with √T.
 - 1 day left: ≈ ₹70. Time value is concentrated near expiry, which is why weekly ATM options lose value fastest in their last days.
 
@@ -567,7 +570,7 @@ On weekly Nifty expiry day (Tuesday, as of Nov 2026 — verify), ATM gamma is se
 - **"Delta-neutral means no risk."** It means no risk to tiny moves right now. Gamma and vega remain.
 - **"Theta is a guaranteed daily income for sellers."** Theta is earned only if spot and IV stay put. It is compensation for gamma risk.
 - **"High theta means a good trade."** It means a large exposure to movement on the other side.` },
-      { h: 'When it fails', md: `**Losing example — short gamma on expiry day.** At 09:30 on expiry day a trader sells 3 lots Nifty 25,000 straddle at ₹38 + ₹37 = ₹75 (₹14,625 received), delta near zero. By 14:00 Nifty is 25,220. The call is worth about ₹225, the put ₹2. Loss ≈ (225 + 2 − 75) × 195 = ₹29,640 — double the premium. The position's delta went from 0 to about −170 units (≈ 2.6 short futures lots) as gamma did its work.` },
+      { h: 'When it fails', md: `**Losing example — short gamma on expiry day.** At 09:30 on expiry day a trader sells 3 lots Nifty 25,000 straddle at ₹38 + ₹37 = ₹75 (₹14,625 received), delta near zero. By 14:00 Nifty is 25,220. With about 90 minutes left the call is worth about ₹220 (almost all intrinsic) and the put close to ₹0. Loss ≈ (220 − 75) × 195 = ₹28,275 — nearly double the premium. The position's delta went from 0 to about −195 units (the full 3 lots, ≈ 3 short futures lots) as gamma did its work.` },
       { h: 'Exercise', md: `1. In [[widget:greeks]] enter Nifty 25,000 CE, 7 days, IV 13%. Then change days to 1. Record how gamma and theta change.
 2. Build the two-leg position from The maths in [[widget:options-payoff]] and check the delta sign at 25,000 and at 25,500.
 3. Use [[widget:futures-exposure]] to convert your position delta into futures-lot equivalents.
@@ -620,7 +623,7 @@ Before a scheduled event IV rises because one day's move could be large. After t
 
 **Event IV extraction.** If the expiry containing results has IV σ1 and the next expiry σ2, you can back out the IV attributable to the event day. The simpler retail heuristic: ATM straddle price ≈ expected move. Compare it with the stock's historical post-results moves (from your own data).
 
-**India VIX mechanics.** NSE computes India VIX using a methodology adapted from CBOE's VIX: near and next-month Nifty option prices across strikes, interpolated to 30 days. It is model-free (not Black–Scholes IV of one strike). Key behaviours:
+**India VIX mechanics.** NSE computes India VIX using a methodology adapted from CBOE's VIX: out-of-the-money Nifty option prices across strikes from two expiries, combined into a variance estimate for each and interpolated to a constant 30 calendar days, then expressed as an annualised percentage (square root of variance × 100). It is model-free (not Black–Scholes IV of one strike). Which expiries are used, and how weekly contracts are treated, is set in NSE's methodology document — verify the current version on NSE (as of Nov 2026). Key behaviours:
 - It tends to rise when Nifty falls sharply (negative correlation), and to drift lower in steady rallies.
 - It is mean-reverting over months but can stay elevated during regimes of stress.
 - It is not tradable directly in India in a liquid form; it is a gauge.
@@ -650,7 +653,7 @@ The call buyer was **right on direction and still lost** because the move (+$2) 
 
 ### India example
 Nifty 25,000 CE, 7 days. IV 16% before an RBI policy day: ≈ ₹237. Next day, Nifty unchanged, 6 days left, IV back to 13%: ≈ ₹180 (approximate). Loss ≈ ₹57 × 65 = ₹3,705 per lot from vega and theta.` },
-      { h: 'India', md: `> [!india] **Reading India VIX.** As a rough frame (not a rule), single-digit to low-teens readings have accompanied calm periods; readings in the 20s and above have accompanied stress such as March 2020. Use VIX to scale position size: at VIX 20 the expected daily Nifty move is about 1.26% (≈ 315 points at 25,000) versus about 0.82% at VIX 13.
+      { h: 'India', md: `> [!india] **Reading India VIX.** As a rough frame (not a rule), readings around 10 to the low teens have accompanied calm periods; readings in the 20s and above have accompanied stress such as March 2020. Use VIX to scale position size: at VIX 20 the expected daily Nifty move is about 1.26% (≈ 315 points at 25,000) versus about 0.82% at VIX 13.
 
 Practical points:
 - Option sellers' margins rise with volatility because SPAN scenarios widen.
@@ -738,7 +741,7 @@ Nifty 25,200 CE bid ₹107.5 / ask ₹109. Crossing both ways on 2 lots: 1.5 × 
       { h: 'India', md: `> [!india] On the NSE chain for Nifty weekly options, OI at round strikes (25,000, 25,500) is usually largest. Bank Nifty has monthly options only, so its chain concentrates more OI in fewer expiries. Change-in-OI columns refresh during the day; participant-wise OI is published after the close on NSE.
 
 - Use limit orders; market orders in thin strikes can fill several rupees away.
-- SEBI's framework on index derivatives (from late 2024) raised contract sizes, limited weekly expiries to one index per exchange and added extra margin on expiry day; check NSE circulars for the current rules.` },
+- SEBI's circular of 1 Oct 2024 on index derivatives: higher minimum contract size (new contracts from 20 Nov 2024), weekly expiries on only one benchmark index per exchange (from 20 Nov 2024), an extra 2% extreme-loss margin on short index options on expiry day (from 20 Nov 2024), upfront collection of option premium from buyers, removal of the calendar-spread margin benefit on the expiry day of the expiring leg (from 10 Feb 2025), and intraday monitoring of position limits (from Apr 2025). Later changes may apply — as of Nov 2026, verify on SEBI and NSE circulars.` },
       { h: 'US & global', md: `> [!us] US chains show OI updated once a day (from OCC), plus intraday volume. SPY and SPX have daily expiries and some of the tightest spreads in the world; single stocks vary widely. A $0.05 spread on a $1 option is 5% — costly for frequent trading.` },
       { h: 'Common misconceptions', md: `- **"High call OI at a strike is resistance."** It may be, or it may be covered-call overwriting, spreads or hedges. Direction of OI is unknown.
 - **"PCR above 1 is bullish."** It is read both ways. Without context it is not a signal.
@@ -846,7 +849,7 @@ US specifics: the short leg is American and can be assigned early, most often a 
 - **"High-probability credit spreads are an edge."** High win rate comes with a low reward-to-risk; expectancy is what matters.
 - **"I'll leg in to get a better price."** Legging adds directional risk between fills and, if the short leg fills first, a naked short with full margin.
 - **"Max loss at expiry is all I need to know."** Mark-to-market losses before expiry can be close to max loss and trigger exits or margin calls earlier.` },
-      { h: 'When it fails', md: `**Losing example — credit spread through a gap.** You sell 3 lots of the Nifty 24,800/24,600 bull put for ₹47 (₹9,165 received). Overnight a global sell-off opens Nifty at 24,520. Both puts are ITM; the spread is near its ₹200 width. Loss ≈ (200 − 47) × 195 = **₹29,835**, about three times the premium. Your planned stop "if Nifty breaks 24,800" never had a chance to fill.
+      { h: 'When it fails', md: `**Losing example — credit spread through a gap.** You sell 3 lots of the Nifty 24,800/24,600 bull put for ₹47 (₹9,165 received). Overnight a global sell-off opens Nifty at 24,520. Both puts are ITM. With about 6 days left the spread marks near ₹124 (Black–Scholes, IV 16–20%), so the open-mark loss is ≈ (124 − 47) × 195 = ₹15,015. If Nifty is still below 24,600 at expiry, the spread settles at its full ₹200 width: loss (200 − 47) × 195 = **₹29,835**, about three times the premium. Your planned stop "if Nifty breaks 24,800" never had a chance to fill.
 
 **Losing example — debit spread decay.** You buy the 25,000/25,200 bull call for ₹87 expecting a rally. Nifty drifts sideways at 25,020 for six days. At expiry the spread is worth ₹20. Loss ≈ ₹67 × 65 = ₹4,355 — the direction was barely right but not enough.` },
       { h: 'Exercise', md: `1. In [[widget:options-payoff]] build all four Nifty spreads from The maths. Record max gain, max loss and breakeven, and check them against the formulas.
@@ -902,7 +905,7 @@ The core trade-off: **short-volatility positions win small and often; long-volat
 
 **Butterflies = cheap gamma near the centre at expiry.** A butterfly has small Greeks far from expiry and large ones near it. Its theoretical max gain is rarely realised because price must settle exactly at the middle strike.
 
-**Iron fly ≡ butterfly.** By put–call parity, a short iron fly (short straddle plus long wings) has the same payoff as a long call butterfly with the same strikes, offset by the width — a useful check on your arithmetic.
+**Iron fly ≡ butterfly.** By put–call parity, a short iron fly (short straddle plus long wings) has the same payoff shape at expiry as a long call butterfly with the same strikes, and its credit should be about the wing width minus the butterfly's debit (here 200 − 35 = 165 vs a ₹164 credit; the gap is interest and rounding) — a useful check on your arithmetic.
 
 > [!evidence] Established: payoffs and Greeks. Mixed: the volatility risk premium as a retail edge after costs, slippage and tail events.` },
       { h: 'The maths', md: `### Nifty, 7 days, IV 13% (illustrative)
@@ -926,7 +929,7 @@ The 25,000 straddle at 7 days ≈ ₹359; at 6 days with spot and IV unchanged �
 
 India-specific:
 - **India VIX** lets you compare the IV you pay or receive with the market's 30-day gauge.
-- Weekly Nifty expiry (Tuesday as of Nov 2026 — verify on NSE) concentrates theta and gamma. SEBI added extra margin on short options on expiry day from late 2024.
+- Weekly Nifty expiry (Tuesday as of Nov 2026 — verify on NSE) concentrates theta and gamma. SEBI's 1 Oct 2024 circular added a 2% extreme-loss margin on short index options on expiry day (from 20 Nov 2024) — as of Nov 2026, verify on NSE.
 - Iron condors involve four legs: four brokerage charges per side, STT on sold premiums and exchange charges. On a ₹102 credit, costs can absorb a significant share — compute with [[widget:charges-india]].` },
       { h: 'US & global', md: `> [!us] **SPY 600 straddle, 30 days, IV 15%.** Call $11.29 + put $9.32 = $20.61 → $2,061 max loss for the long; BE $579.39 / $620.61.
 **SPY 590/610 short strangle**: put $5.31 + call $6.85 = $12.16 → max gain $1,216, BE $577.84 / $622.16, unlimited upside risk, assignment risk on whichever leg goes ITM. Earnings-season straddles on single stocks like AAPL are pure IV-crush trades: see [[link:l3-iv]].` },
@@ -995,7 +998,7 @@ Value at the front expiry (back leg then has 28 days):
 | 25,300 | ₹612 | −₹300 | ₹312 | +₹1,625 |
 | 25,600 | ₹834 | −₹600 | ₹234 | −₹3,445 |
 
-Approximate breakevens ≈ 24,725 and 25,395 if IV is unchanged. Max loss ≈ the debit (if spot moves so far that both legs converge to intrinsic).
+Approximate breakevens ≈ 24,730 and 25,380 if IV is unchanged (solved numerically with Black–Scholes). Max loss ≈ the debit (if spot moves so far that both legs converge to intrinsic).
 
 ### Diagonal — buy 35-day 24,800 CE ₹600, sell 7-day 25,200 CE ₹108 → debit ₹492
 At front expiry: Nifty 25,000 → back ₹542, front 0 → +₹50 × 65 = +₹3,250. Nifty 25,300 → back ₹753 − front ₹100 = ₹653 → +₹10,465. Nifty 24,400 → back ₹231 → −₹16,965.
@@ -1009,7 +1012,7 @@ Net **credit** 2 × 108 − 195 = ₹21.
       { h: 'India', md: `> [!india] Nifty's weekly (Tuesday) plus monthly expiries make Nifty calendars straightforward; **Bank Nifty has monthly options only**, so a Bank Nifty calendar spans at least a month between legs.
 
 India practicalities:
-- Margin benefit across expiries depends on SPAN and on your broker; some brokers remove the hedge benefit when the near leg is in its expiry week. Check before you trade.
+- Margin benefit across expiries depends on SPAN and on your broker. Under SEBI's Oct 2024 measures (effective 10 Feb 2025), **no calendar-spread margin benefit is given on the expiry day of the expiring leg** — the short front leg needs full margin that day, plus the expiry-day extreme-loss margin on short index options. Some brokers remove the benefit earlier in expiry week. As of Nov 2026, verify on NSE and with your broker.
 - Avoid holding the front leg into its expiry if it is ITM — the settlement of an index option is cash, but your back leg stays open with a different delta overnight.
 - For stock-option calendars the ITM front leg becomes a delivery obligation at its expiry.` },
       { h: 'US & global', md: `> [!us] **SPY 600 call calendar (IV 15%)**: sell 7-day $5.20, buy 37-day $12.66 → debit $7.46 ($746). At the front expiry (back has 30 days): SPY 600 → back $11.29 → +$383; SPY 585 → back $4.93 → −$253; SPY 615 → back $21.02 − front $15 → −$144.
@@ -1020,7 +1023,7 @@ In the US the short front leg can be assigned early (dividends, deep ITM puts), 
 - **"A ratio spread for a credit cannot lose."** It can lose without limit beyond the upper breakeven.
 - **"The payoff diagram at expiry is exact."** For time spreads it depends on the back-month IV at the front expiry.
 - **"Rolling the short leg every week is free income."** Each roll carries costs, slippage and the risk of the short leg being run over.` },
-      { h: 'When it fails', md: `**Losing example — the ratio on budget day.** A trader sells the Nifty 1×2 25,000/25,200 ratio (3 sets) for a ₹21 credit, expecting a gentle rally. A policy surprise gaps Nifty to 25,750 at the open on expiry day. Position at expiry ≈ 750 − 2 × 550 + 21 = −329 points → −329 × 65 × 3 = **−₹64,155**. The "free" trade lost about 47 times its credit.
+      { h: 'When it fails', md: `**Losing example — the ratio on budget day.** A trader sells the Nifty 1×2 25,000/25,200 ratio (3 sets) for a ₹21 credit, expecting a gentle rally. A policy surprise gaps Nifty to 25,750 at the open on expiry day. Position at expiry ≈ 750 − 2 × 550 + 21 = −329 points → −329 × 65 × 3 = **−₹64,155**. The "free" trade lost about 16 times its credit (₹64,155 against ₹4,095 received).
 
 **Losing example — calendar and IV.** You buy the 25,000 calendar for ₹287. Spot stays at 25,000, but after a calm week back-month IV falls from 13% to 11%. The back leg is worth about ₹370 instead of ₹424; the trade makes ₹83 instead of ₹137 — and if IV falls further or spot drifts 300 points, it loses.` },
       { h: 'Exercise', md: `1. In [[widget:greeks]] price the 7-day and 35-day 25,000 calls, then compute calendar vega and theta.
@@ -1063,7 +1066,8 @@ Three things change on expiry day:
 ### Expiry-day timeline (NSE)
 - 09:15–15:30 normal market. Index settles to the closing value of the index.
 - Brokers often block fresh positions in expiring contracts after a cut-off and square off stock-option positions that may go to delivery. Learn your broker's policy before the day.
-- SEBI's measures from late 2024 added an extra margin on short index options on expiry day and limited weekly expiries to one benchmark index per exchange.
+- SEBI's measures (circular of 1 Oct 2024) added an extra 2% extreme-loss margin on short index options on expiry day (from 20 Nov 2024), limited weekly expiries to one benchmark index per exchange, required option premium to be collected upfront from buyers, and removed the calendar-spread margin benefit on the expiring leg's expiry day (from 10 Feb 2025). As of Nov 2026 — verify current rules on SEBI and NSE circulars.
+- Exercise is automatic: NSE Clearing exercises every ITM option at expiry and lets OTM options lapse. For stock options a "do not exercise" instruction has been allowed only for strikes close to the money — verify the current rule on NSE.
 
 [[widget:greeks]]` },
       { h: 'Advanced view', md: `**Gamma, quantified.** A Nifty 25,000 CE on expiry morning (≈ 0.3 day of model time, IV 13%) has gamma ≈ 0.0043 per point — five times its 7-day value. A 50-point move changes its delta by about 0.21. A seller of 5 lots of the ATM straddle (325 units, call and put both contributing gamma) sees delta swing by about 140 units — more than two futures lots — for each 50-point move.
@@ -1096,7 +1100,7 @@ Long 4 lots Nifty 25,050 CE, delta 0.30, Nifty 25,000 (260 units). Delta-equival
 Long 1 lot Nifty 25,000 CE; index settles at 25,300. Intrinsic = 300 × 65 = ₹19,500. Exercise STT = 0.15% × 19,500 = ₹29.25. Selling at ₹300 just before close: STT = 0.15% × 19,500 = ₹29.25 too. For index options the cost is similar; the decision usually rests on liquidity, broker fees and the risk of the final minutes.
 
 ### Stock option delivery
-Hypothetical NSE stock at ₹1,400, lot 500. A short 1,420 PE that settles ITM at ₹1,380 obliges you to buy 500 shares at ₹1,420: **₹7,10,000** of funds, plus delivery STT 0.1% (₹710) and stamp duty — and you now hold the shares with a ₹20,000 mark-to-market loss (500 × 40) before the premium you received.
+Hypothetical NSE stock at ₹1,400, lot 500. A short 1,420 PE that settles ITM at ₹1,380 obliges you to buy 500 shares at ₹1,420: **₹7,10,000** of funds, plus delivery-type charges (brokers commonly apply the equity-delivery STT rate of 0.1% to physically settled contracts, ≈ ₹710 here — verify on your contract note) and stamp duty — and you now hold the shares with a ₹20,000 mark-to-market loss (500 × 40) before the premium you received.
 
 ### US gap
 Short 2 AAPL 225 puts at $1.70 (3 days, IV 45%) before earnings. Stock gaps to $210. Puts ≈ $15 → loss ≈ (15 − 1.70) × 200 = **$2,660**. Assignment would give you 200 shares at $225 = $45,000 of stock.` },
@@ -1115,7 +1119,7 @@ Bank Nifty 56,000 CE in its last day carries large rupee gamma per lot (30 × hi
 - **"My stop will protect me overnight."** Gaps skip stops.` },
       { h: 'When it fails', md: `**Losing example — the last-hour short.** At 14:15 on expiry day a trader sells 10 lots Nifty 25,100 CE at ₹6 (₹3,900 received). A late rally takes Nifty to 25,190 by the close. Settlement = 90 points → loss (90 − 6) × 650 = **₹54,600** — fourteen times the premium.
 
-**Losing example — forgotten stock option.** A long stock call bought "for a quick trade" is left ITM into expiry. The broker's auto square-off misses it near the close and the trader is obliged to buy the full lot. Insufficient funds lead to a short delivery penalty or forced sale the next day at a gap down.` },
+**Losing example — forgotten stock option.** A long stock call bought "for a quick trade" is left ITM into expiry. The broker's auto square-off misses it near the close, the option is auto-exercised, and the trader is obliged to pay for the full lot. With insufficient funds the broker can charge interest or penalties on the shortfall and sell the shares the next day — possibly after a gap down.` },
       { h: 'Exercise', md: `1. In [[widget:greeks]] price the Nifty 25,000 CE at 7, 2, 1 and 0.3 days. Record theta and gamma, and plot them in your journal.
 2. In [[widget:options-payoff]] build a 3-lot short straddle at ₹75 and stress it at ±60, ±120 and ±180 points.
 3. Write your expiry-day checklist: broker cut-offs, positions at risk of delivery, maximum lots, exit time, and what you will do if a short strike is touched.
@@ -1152,13 +1156,13 @@ Bank Nifty 56,000 CE in its last day carries large rupee gamma per lot (30 × hi
     {"id":"L3-M2-q05","module":"L3-M2","d":2,"q":"An option has theta −₹15 per unit per day. Over 3 days, with spot and IV unchanged, approximately how much does 1 Nifty lot lose?","o":["₹2,925","₹8,775","₹45","₹975"],"a":0,"why":"15 × 3 × 65 = ₹2,925. Theta accelerates near expiry, so this is an approximation."},
     {"id":"L3-M2-q06","module":"L3-M2","d":2,"q":"A Nifty option has vega ₹13.8 per unit per IV point. IV falls from 17% to 13% after an event. Change per lot from vega (spot unchanged)?","o":["+₹3,588","−₹55","−₹897","−₹3,588"],"a":3,"why":"−4 × 13.8 × 65 ≈ −₹3,588 for a long option. This is IV crush."},
     {"id":"L3-M2-q07","module":"L3-M2","d":2,"q":"India VIX is 20 and Nifty is 25,000. Approximate 1σ daily move?","o":["About 1,250 points","About 80 points","About 315 points","About 500 points"],"a":2,"why":"25,000 × 0.20 ÷ √252 ≈ 5,000 ÷ 15.87 ≈ 315 points."},
-    {"id":"L3-M2-q08","module":"L3-M2","d":3,"q":"AAPL $230, 30-day IV 28%. Using 0.8 × S × σ × √T, the expected move to expiry is about:","o":["$5.20","$14.60","$51.50","$64.40"],"a":1,"why":"0.8 × 230 × 0.28 × √(30/365) = 51.52 × 0.2867 ≈ $14.77; the model straddle is $14.72. The closest option is about $14.60."},
+    {"id":"L3-M2-q08","module":"L3-M2","d":3,"q":"AAPL $230, 30-day IV 28%. Using 0.8 × S × σ × √T, the expected move to expiry is about:","o":["$5.20","$14.80","$51.50","$64.40"],"a":1,"why":"0.8 × 230 × 0.28 × √(30/365) = 51.52 × 0.2867 ≈ $14.77; the model straddle is $14.72. $51.50 forgets the √T term."},
     {"id":"L3-M2-q09","module":"L3-M2","d":3,"q":"Theta −₹24 and gamma 0.0002 for a Bank Nifty ATM option. Daily move needed for a delta-hedged long option to break even?","o":["About 490 points","About 1,200 points","About 49 points","About 120 points"],"a":0,"why":"√(2 × 24 ÷ 0.0002) = √240,000 ≈ 490 points."},
     {"id":"L3-M2-q10","module":"L3-M2","d":2,"q":"Total put OI 2.4 lakh lots, total call OI 1.6 lakh lots. PCR, and what can you conclude from it alone?","o":["1.5 — the market will rise to the highest put OI strike","1.5 — clearly bullish","0.67 — clearly bearish","1.5 — ambiguous, because OI does not show who is long or short"],"a":3,"why":"PCR = 2.4 ÷ 1.6 = 1.5. It is read both ways; without knowing direction of positions it is not a reliable signal."},
     {"id":"L3-M2-q11","module":"L3-M2","d":2,"q":"Which NSE contract is physically settled if ITM at expiry?","o":["Nifty weekly options","Bank Nifty monthly options","Stock options such as Reliance","Nifty futures"],"a":2,"why":"NSE stock derivatives are physically settled. Index derivatives are cash-settled."},
     {"id":"L3-M2-q12","module":"L3-M2","d":2,"q":"Before results AAPL's 230 straddle costs $7.48. After results the stock is at $232 and the straddle is worth $3.79. P&L for one long straddle?","o":["+$200","−$369","−$748","+$379"],"a":1,"why":"(3.79 − 7.48) × 100 = −$369. The stock moved the right way for the call, but the move was smaller than the premium and IV crushed."},
     {"id":"L3-M2-q13","module":"L3-M2","d":2,"q":"Nifty 24,800 PE costs ₹87 with spot at 25,000. Intrinsic and time value?","o":["0 and 87","87 and 0","200 and 87","200 and −113"],"a":0,"why":"A put is OTM when strike < spot, so intrinsic is 0 and all ₹87 is time value."},
-    {"id":"L3-M2-q14","module":"L3-M2","d":3,"q":"Using put–call parity for European options with r ≈ 0 for a short period, if the 25,000 CE is ₹195 and the forward is 25,031, the 25,000 PE should be about:","o":["₹195","₹226","₹31","₹164"],"a":3,"why":"C − P ≈ F − K = 31 → P ≈ 195 − 31 = ₹164. Using spot instead of the forward misreads which option is expensive."},
+    {"id":"L3-M2-q14","module":"L3-M2","d":3,"q":"Using put–call parity for European options (C − P = PV(F − K), and over 7 days discounting is negligible), if the 25,000 CE is ₹195 and the forward is 25,031, the 25,000 PE should be about:","o":["₹195","₹226","₹31","₹164"],"a":3,"why":"C − P ≈ F − K = 31 → P ≈ 195 − 31 = ₹164. Using spot instead of the forward misreads which option is expensive."},
     {"id":"L3-M3-q01","module":"L3-M3","d":2,"q":"Nifty bull call spread 25,000/25,200 for a ₹87 debit (lot 65). Max gain, max loss and breakeven?","o":["₹5,655; ₹7,345; 25,113","Unlimited; ₹5,655; 25,087","₹7,345; ₹5,655; 25,087","₹13,000; ₹5,655; 25,200"],"a":2,"why":"Max gain = (200 − 87) × 65 = ₹7,345; max loss = 87 × 65 = ₹5,655; BE = lower strike + debit = 25,087."},
     {"id":"L3-M3-q02","module":"L3-M3","d":2,"q":"Nifty bull put spread 24,800/24,600 for ₹47 credit. Nifty settles at 24,700. P&L per lot?","o":["+₹3,055","−₹3,445","−₹9,945","+₹6,500"],"a":1,"why":"Short 24,800 PE intrinsic 100; long 24,600 PE 0. Loss = 100 − 47 = 53 × 65 = −₹3,445."},
     {"id":"L3-M3-q03","module":"L3-M3","d":3,"q":"Short Bank Nifty 56,000 straddle for ₹1,613 (lot 30). Bank Nifty settles at 58,100. P&L?","o":["−₹14,610","−₹63,000","−₹48,390","+₹48,390"],"a":0,"why":"Call intrinsic 2,100; put 0. Loss = 2,100 − 1,613 = 487 × 30 = −₹14,610. A further 1,000 points would add −₹30,000 — risk is unlimited."},

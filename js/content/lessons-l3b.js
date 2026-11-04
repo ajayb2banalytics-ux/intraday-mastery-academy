@@ -55,10 +55,10 @@ Professionals think about **liquidity as a cost**, not a signal. A desk that nee
 
 :::formula
 Expected stop slippage ≈ half-spread + impact + gap risk
-Impact ≈ k × σ × √(order size ÷ typical volume per minute)
+Impact ≈ k × σ × √(order size ÷ volume traded over the same horizon)
 :::
 
-The square-root form is a widely used empirical approximation, not a law; treat k as something you estimate from your own fills.
+Here σ is volatility over the same horizon as the volume (e.g. daily σ with daily volume). The square-root form is a widely used empirical approximation, not a law; treat k as something you estimate from your own fills.
 
 **Worked example.** You short 3 lots of Nifty futures (65 × 3 = 195 units) with the stop at 24,152, just above an obvious equal-high at 24,140. In your journal, stops at that time of day have slipped 4 points on average, with occasional 12-point fills on news. Planned risk was 24,152 − 24,110 = 42 points × 195 = ₹8,190. Realistic risk is (42 + 4) × 195 = ₹8,970 on a normal day and (42 + 12) × 195 = ₹10,530 on a bad one. If your per-trade risk cap is ₹9,000, you are fine on average but over budget on the tail — so either trim to 2 lots or accept that the cap will occasionally be breached and account for it.` },
       { h: 'India', md: `> [!india] NSE runs a continuous limit order book with price-time priority. Stop-loss orders (SL and SL-M) are accepted for equities; SEBI and exchanges have restricted market-type orders in some segments at times, and brokers may convert or block SL-M for options. Verify current order-type availability with your broker and on nseindia.com (as of Nov 2026).
@@ -80,9 +80,9 @@ Clusters appear at the same kinds of places — prior day high/low, the opening 
 4. Journal entry: write one sentence describing a sweep *without* using the words "smart money", "institutions" or "hunt".` },
     ],
     check: [
-      { q: "Price pierces yesterday's low by 15 points on a volume spike and closes back above it within two bars. What can you reasonably conclude?", o: ["Institutions accumulated at that low", "Liquidity (including triggered stops) was available below the level and the move did not continue in that instance", "The low is now guaranteed support for the day", "A market maker deliberately targeted retail stops"], a: 1, why: "The bar shows that orders were filled below the level and price recovered. It does not identify who traded, and it guarantees nothing about later behaviour." },
-      { q: "Your logical stop is 60 points away but your risk budget only fits a 30-point stop at your normal size. What is the professional adjustment?", o: ["Move the stop to 30 points", "Halve the position size and keep the stop where the idea is invalid", "Skip the stop and use a mental stop", "Double the size to recover faster"], a: 1, why: "Stops belong where the trade idea is wrong; size is the variable you adjust to fit risk. Tightening into obvious clusters raises the chance of being swept." },
-      { q: "Why do stop orders tend to accelerate a break of an obvious level?", o: ["They are hidden limit orders that add liquidity", "They convert into market orders in the direction of the move at the moment price is already moving that way", "Exchanges widen circuit limits when stops trigger", "They cancel resting orders on the opposite side"], a: 1, why: "A triggered sell stop becomes a sell order just as price falls, adding demand for liquidity in the same direction." },
+      { q: "Price pierces yesterday's low by 15 points on a volume spike and closes back above it within two bars. What can you reasonably conclude?", o: ["Liquidity (including triggered stops) was available below the level and the move did not continue in that instance","Institutions accumulated at that low","The low is now guaranteed support for the day","A market maker deliberately targeted retail stops"], a: 0, why: "The bar shows that orders were filled below the level and price recovered. It does not identify who traded, and it guarantees nothing about later behaviour." },
+      { q: "Your logical stop is 60 points away but your risk budget only fits a 30-point stop at your normal size. What is the professional adjustment?", o: ["Move the stop to 30 points","Skip the stop and use a mental stop","Halve the position size and keep the stop where the idea is invalid","Double the size to recover faster"], a: 2, why: "Stops belong where the trade idea is wrong; size is the variable you adjust to fit risk. Tightening into obvious clusters raises the chance of being swept." },
+      { q: "Why do stop orders tend to accelerate a break of an obvious level?", o: ["They are hidden limit orders that add liquidity","Exchanges widen circuit limits when stops trigger","They cancel resting orders on the opposite side","They convert into market orders in the direction of the move at the moment price is already moving that way"], a: 3, why: "A triggered sell stop becomes a sell order just as price falls, adding demand for liquidity in the same direction." },
     ],
     refs: ['Larry Harris — Trading and Exchanges: Market Microstructure for Practitioners (book)', "Maureen O'Hara — Market Microstructure Theory (book)", 'Carol Osler — Currency Orders and Exchange-Rate Dynamics: An Explanation for the Predictive Success of Technical Analysis (Journal of Finance, 2003)', 'Albert Kyle — Continuous Auctions and Insider Trading (Econometrica, 1985)', 'NSE — Trading system and order types (nseindia.com)'],
   },
@@ -184,8 +184,8 @@ When using SMC labels on Nifty options, remember that option premiums move non-l
     ],
     check: [
       { q: "Which statement about order blocks is honest?", o: ["They mark the price at which banks entered", "They are a label for the last opposite candle before an impulse; any edge must be shown by testing a fixed definition", "They work on every timeframe because institutions trade all timeframes", "They are proven by academic microstructure research"], a: 1, why: "The label is mechanical. Claims about institutions are unverifiable, and there is no robust independent evidence of an edge." },
-      { q: "Bar 1 high 512.0, bar 2 range 511–524, bar 3 low 518.5. What is the bullish FVG zone?", o: ["511.0–524.0", "512.0–518.5", "518.5–524.0", "No FVG exists"], a: 1, why: "Bar 3 low (518.5) is above bar 1 high (512.0), so the gap is 512.0–518.5." },
-      { q: "Why is \"the FVG eventually filled\" a weak confirmation of the concept?", o: ["Because gaps never fill", "Because most prices are revisited eventually anyway, so filling needs to be compared with a base rate and a time limit", "Because only daily gaps count", "Because filling is a bearish signal"], a: 1, why: "Without a time window and a control, a high fill rate may simply reflect normal price wandering." },
+      { q: "Bar 1 high 512.0, bar 2 range 511–524, bar 3 low 518.5. What is the bullish FVG zone?", o: ["512.0–518.5","511.0–524.0","518.5–524.0","No FVG exists"], a: 0, why: "Bar 3 low (518.5) is above bar 1 high (512.0), so the gap is 512.0–518.5." },
+      { q: "Why is \"the FVG eventually filled\" a weak confirmation of the concept?", o: ["Because gaps never fill","Because only daily gaps count","Because most prices are revisited eventually anyway, so filling needs to be compared with a base rate and a time limit","Because filling is a bearish signal"], a: 2, why: "Without a time window and a control, a high fill rate may simply reflect normal price wandering." },
     ],
     refs: ['Larry Harris — Trading and Exchanges (book)', 'Al Brooks — Trading Price Action Trends (book) — swing-structure description', 'SEBI — Investor cautions on unregistered investment advice (sebi.gov.in)', 'David Aronson — Evidence-Based Technical Analysis (book)'],
   },
@@ -249,7 +249,9 @@ Stop = L − b × ATR
 Risk per share = Entry − Stop
 :::
 
-**Worked example.** Reliance 15-min range ₹2,940–₹3,010 for two sessions. A 5-min bar dips to ₹2,926 and closes at ₹2,945. ATR(14) on 5-min = ₹6. You buy at ₹2,948 on the next bar's break of the spring bar high. Stop = 2,926 − 0.5 × 6 = ₹2,923. Risk per share ₹25. With a ₹5,000 risk budget: 200 shares (Reliance cash). First target mid-range ₹2,975 (+₹27, about 1.1R), second target ₹3,005 (+₹57, about 2.3R). If half is taken at target 1 and the rest at target 2, average gain is about 1.7R before costs.` },
+**Worked example.** A large-cap NSE stock (illustrative prices) has a 15-min range ₹1,470–₹1,505 for two sessions. A 5-min bar dips to ₹1,463 and closes at ₹1,472.50. ATR(14) on 5-min = ₹3. You buy at ₹1,474 on the next bar's break of the spring bar high. Stop = 1,463 − 0.5 × 3 = ₹1,461.50. Risk per share ₹12.50. With a ₹5,000 risk budget: 400 shares (cash, intraday). First target mid-range ₹1,487.50 (+₹13.50, about 1.1R), second target ₹1,502.50 (+₹28.50, about 2.3R). If half is taken at target 1 and the rest at target 2, average gain is about 1.7R before costs. Intraday charges on this size are roughly ₹260 round trip (about 0.05R) — check with [[widget:charges-india]].
+
+> [!note] A Wyckoff purist would also want the spring to occur after Phase A and B events have defined the range; a coded "failed break of a 20-bar range" is a simplification that makes the idea testable, not the full method.` },
       { h: 'India', md: `> [!india] Wyckoff is popular with Indian swing and positional traders on daily charts of mid-caps. On intraday charts of large F&O stocks, many ranges are too short for a full schematic; reduce your expectations to "range, failed break, test".
 
 Be careful with small-caps in the T2T or ASM frameworks and stocks near price bands: a "spring" into a lower circuit cannot be exited until the circuit lifts.` },
@@ -260,13 +262,13 @@ Be careful with small-caps in the T2T or ASM frameworks and stocks near price ba
       { h: 'When it fails', md: `The spring setup fails when the range resolves downward after a temporary recovery — a frequent outcome in markets with a downward higher-timeframe trend.
 
 **Losing example.** An NSE mid-cap ranges ₹612–₹640. It springs to ₹606, closes at ₹615. You buy at ₹617, stop ₹603, 350 shares, risk ₹4,900. Price rallies to ₹624, then a block sale headline hits and price falls through ₹603; the stop fills at ₹600. Loss ₹5,950 plus costs. With hindsight one might relabel the range as distribution and the "spring" as a failed test — but that relabelling was not available at entry.` },
-      { h: 'Exercise', md: `1. In the Chart Lab, load Reliance and find three ranges of at least 20 bars on the 15-min.
+      { h: 'Exercise', md: `1. In the Chart Lab, load the RELIANCE preset (a synthetic large-cap NSE stock) and find three ranges of at least 20 bars on the 15-min.
 2. For each, mark support and resistance *before* scrolling forward. Then reveal the outcome. Did any break below and recover (spring by your coded rule)? What happened next?
 3. Record effort versus result for the five biggest-volume bars in each range: was the range of the bar large or small?
 4. Use [[widget:rr]] to compute the R multiple of the spring trades you found, including a ₹40 round-trip cost estimate.` },
     ],
     check: [
-      { q: "A stock breaks below its range low by 1% and is still trading there. In Wyckoff terms, what is it?", o: ["A spring, so you should buy", "Undetermined — a spring is only confirmed by a recovery back inside the range", "Phase E markup", "An upthrust"], a: 1, why: "A spring is defined by its failure to continue. Until price closes back inside the range, it is just a breakdown." },
+      { q: "A stock breaks below its range low by 1% and is still trading there. In Wyckoff terms, what is it?", o: ["A spring, so you should buy","Phase E markup","An upthrust","Undetermined — a spring is only confirmed by a recovery back inside the range"], a: 3, why: "A spring is defined by its failure to continue. Until price closes back inside the range, it is just a breakdown." },
       { q: "A 5-min bar trades three times the average volume but has a range one-third of normal. Effort versus result suggests…", o: ["Absorption — heavy trading without progress — worth noting but not proof of who traded", "Institutions are definitely accumulating", "A guaranteed breakout next bar", "Volume data is wrong"], a: 0, why: "High effort with little result is the classic absorption observation; identity of traders cannot be inferred." },
       { q: "Which part of Wyckoff is the most straightforward to turn into a testable rule?", o: ["Identifying the Composite Operator", "Labelling Phase B", "A failed break of a defined range (spring) with fixed parameters", "Deciding whether a range is accumulation or re-distribution"], a: 2, why: "A spring can be coded with fixed range length, break size and recovery window; the others are interpretive." },
     ],
@@ -323,7 +325,9 @@ Profile traders classify days (normal, normal variation, trend, double distribut
 4. VAH = highest bin included; VAL = lowest bin included
 :::
 
-**Worked example.** Seven 10-point bins of Nifty futures volume (lots, thousands): 24,100: 4; 24,110: 9; 24,120: 15; 24,130: 22 (POC); 24,140: 18; 24,150: 10; 24,160: 2. Total 80; target 56. Start 22. Neighbours 15 (below) vs 18 (above) → add 18 → 40. Next neighbours 15 vs 10 → add 15 → 55. Next 9 vs 10 → add 10 → 65 ≥ 56. VA = 24,120–24,150, POC 24,130.` },
+**Worked example.** Seven 10-point bins of Nifty futures volume (lots, thousands): 24,100: 4; 24,110: 9; 24,120: 15; 24,130: 22 (POC); 24,140: 18; 24,150: 10; 24,160: 2. Total 80; target 56. Start 22. Neighbours 15 (below) vs 18 (above) → add 18 → 40. Next neighbours 15 vs 10 → add 15 → 55. Next 9 vs 10 → add 10 → 65 ≥ 56. VA = 24,120–24,150, POC 24,130.
+
+> [!note] This single-bin method is the one the app's volume-profile engine uses. The original CBOT Market Profile procedure compares the *sum of the next two* rows above with the next two below and adds the larger pair; platforms differ (bin size, TPO vs volume, single vs dual rows), so the same session can show slightly different VAH/VAL on different software. Fix the method before testing any value-area rule.` },
       { h: 'India', md: `> [!india] Nifty and Bank Nifty futures provide volume for profiles; the indices themselves do not. Initial balance is often taken as 09:15–10:15 IST. Expiry days for Nifty options (Tuesday, as of Nov 2026 — verify on NSE) can distort profiles because of hedging flows around large open-interest strikes.
 
 Example: if Bank Nifty futures accept above the prior day's VAH for the first two 30-min periods on rising volume, AMT says do not fade it simply because RSI is high.` },
@@ -343,9 +347,9 @@ Example: if Bank Nifty futures accept above the prior day's VAH for the first tw
     check: [
       { q: "Nifty futures open above yesterday's VAH and hold there through the first hour with an upward IB extension. What does AMT suggest?", o: ["Fade the move back to POC", "The market is accepting higher prices; trend-following is the base case and fading is lower-probability", "A gap always fills by noon", "Profile is invalid on gap days"], a: 1, why: "Acceptance outside prior value indicates a search for new value; fading accepted moves is the classic AMT mistake." },
       { q: "Bins: 100:5, 101:12, 102:20(POC), 103:14, 104:6, 105:3. Total 60, 70% target 42. Which is the value area?", o: ["101–103", "102–104", "100–104", "101–104"], a: 0, why: "Start 20; add 14 (103) → 34; then 12 (101) vs 6 (104) → add 12 → 46 ≥ 42. VA = 101–103." },
-      { q: "How should you treat a book's claim that price fills the value area 80% of the time after re-entry?", o: ["As an established law of markets", "As a hypothesis to test on your instrument and period", "As false by definition", "As relevant only to options"], a: 1, why: "Such percentages are not independently established; your own sample is the evidence." },
+      { q: "How should you treat a book's claim that price fills the value area 80% of the time after re-entry?", o: ["As a hypothesis to test on your instrument and period","As an established law of markets","As false by definition","As relevant only to options"], a: 0, why: "Such percentages are not independently established; your own sample is the evidence." },
     ],
-    refs: ['J. Peter Steidlmayer & Kevin Koy — Markets and Market Logic (book)', 'James F. Dalton, Eric T. Jones & Robert B. Dalton — Mind Over Markets (book)', 'James F. Dalton — Markets in Profile (book)', 'CME Group — Market Profile educational material (cmegroup.com)'],
+    refs: ['J. Peter Steidlmayer & Kevin Koy — Markets and Market Logic (book)', 'James F. Dalton, Eric T. Jones & Robert B. Dalton — Mind Over Markets (book)', 'James F. Dalton, Robert B. Dalton & Eric T. Jones — Markets in Profile (book)', 'CME Group — Market Profile educational material (cmegroup.com)'],
   },
 
   /* ===================== L3-M5 Fundamentals and macro for intraday ===================== */
@@ -366,11 +370,12 @@ An analogy: before you drive on a road, you want to know whether it has potholes
       { h: 'Intermediate view', md: `### The core metrics
 | Metric | Formula | What it tells you | Intraday use |
 |---|---|---|---|
-| EPS | Net profit ÷ shares outstanding | Profit per share | Results surprise is measured against expected EPS |
-| P/E | Price ÷ EPS (trailing or forward) | How much the market pays per ₹1 of earnings | High P/E stocks can react more violently to misses |
-| ROE | Net profit ÷ shareholders' equity | Return on owners' money | Quality filter; ROE inflated by debt is a warning |
-| ROCE | EBIT ÷ (equity + debt), i.e. capital employed | Return on all capital | Better than ROE for leveraged firms |
-| D/E | Total debt ÷ equity | Leverage | High D/E raises refinancing and downgrade risk |
+| EPS | Net profit attributable to equity shareholders ÷ weighted average shares outstanding (diluted EPS also counts options, convertibles) | Profit per share | Results surprise is measured against expected EPS |
+| P/E | Price ÷ EPS (trailing twelve months or forward) | How much the market pays per ₹1 of earnings | High P/E stocks can react more violently to misses |
+| ROE | Net profit ÷ shareholders' equity (ideally average of opening and closing equity) | Return on owners' money | Quality filter; ROE inflated by debt is a warning |
+| ROCE | EBIT ÷ capital employed; capital employed = total assets − current liabilities, often approximated as equity + debt | Return on all capital, pre-tax | Better than ROE for leveraged firms |
+| D/E | Total borrowings (short- plus long-term debt) ÷ shareholders' equity | Leverage | High D/E raises refinancing and downgrade risk |
+| Interest coverage | EBIT ÷ interest expense | Ability to service debt | Below about 2× is a stress signal |
 | Promoter holding | % of shares owned by promoters | Alignment and free float | Low free float can mean thin books |
 | Pledged shares | % of promoter holding pledged to lenders | Forced-selling risk | High pledges are a red flag for gap risk |
 
@@ -410,7 +415,9 @@ A stock on a P/E of 80 is priced for sustained high growth. A small miss can for
 - D/E: A = 0.25; B = 3.0.
 - ROCE: A = 1,900 ÷ 7,500 = 25.3%; B = 800 ÷ 5,000 = 16%.
 
-B's headline ROE looks better, but it is driven by debt; its ROCE is lower and its P/E higher. For an intraday trader, B carries more event and gap risk.` },
+B's headline ROE looks better, but it is driven by debt; its ROCE is lower and its P/E higher. For an intraday trader, B carries more event and gap risk.
+
+Note the like-for-like caveat: ROE uses profit *after* interest and tax, ROCE uses EBIT (*before* interest and tax). That is why A's ROE (20%) can sit below its ROCE (25.3%) — tax and interest come out of the ROE numerator. A big gap the other way (ROE far above ROCE, as for B) is the leverage signal. Use the same definitions across companies and years; data sites differ (EBIT vs operating profit, average vs closing equity).` },
       { h: 'India', md: `> [!india] Shareholding patterns (promoter, FII, DII, public) are filed quarterly with NSE/BSE; pledge disclosures are filed under SEBI's takeover regulations. Free sources: company filings on nseindia.com and bseindia.com, and annual reports. As of Nov 2026, verify current disclosure formats on the exchange sites.
 
 Practical: a stock where promoters hold 70% and FIIs/DIIs another 20% has a small free float; such names can move sharply on modest flows. A stock with promoter pledge above, say, a third of their holding deserves a size haircut and a wider stop or a pass.` },
@@ -428,9 +435,9 @@ Practical: a stock where promoters hold 70% and FIIs/DIIs another 20% has a smal
 4. Use [[widget:position-size]] to see how the multiplier changes your quantity for the same stop distance.` },
     ],
     check: [
-      { q: "Company X has ROE 28% and ROCE 12%. What is the most likely explanation?", o: ["It has no debt", "Its equity base is small relative to its debt, so leverage is inflating ROE", "It is a bank", "Its EBIT is negative"], a: 1, why: "A large gap between ROE and ROCE usually means returns on equity are boosted by borrowed capital." },
+      { q: "Company X has ROE 28% and ROCE 12%. What is the most likely explanation?", o: ["It has no debt","It is a bank","Its equity base is small relative to its debt, so leverage is inflating ROE","Its EBIT is negative"], a: 2, why: "A large gap between ROE and ROCE usually means returns on equity are boosted by borrowed capital." },
       { q: "Net profit ₹500 crore, 25 crore shares, price ₹800. What is the P/E?", o: ["20", "32", "40", "16"], a: 2, why: "EPS = 500 ÷ 25 = ₹20; P/E = 800 ÷ 20 = 40." },
-      { q: "Why is a rising promoter pledge a concern even for an intraday trader?", o: ["It increases dividend payout", "Falling prices can trigger lender selling, raising gap and crash risk", "It reduces brokerage charges", "It guarantees an upper circuit"], a: 1, why: "Pledged shares can be sold by lenders if collateral value falls, creating forced selling and gaps." },
+      { q: "Why is a rising promoter pledge a concern even for an intraday trader?", o: ["It increases dividend payout","It reduces brokerage charges","It guarantees an upper circuit","Falling prices can trigger lender selling, raising gap and crash risk"], a: 3, why: "Pledged shares can be sold by lenders if collateral value falls, creating forced selling and gaps." },
     ],
     refs: ['Aswath Damodaran — Damodaran on Valuation (book)', 'Benjamin Graham & David Dodd — Security Analysis (book)', 'NSE — Corporate filings: shareholding pattern and pledge disclosures (nseindia.com)', 'SEBI — Substantial Acquisition of Shares and Takeovers Regulations (sebi.gov.in)', 'SEC — EDGAR company filings (sec.gov)'],
   },
@@ -458,13 +465,13 @@ Simple rule of thumb: on a stock's event day, your normal stop is not your real 
 ### Corporate actions
 | Action | Price adjustment | Effect on F&O |
 |---|---|---|
-| Cash dividend | Price drops roughly by the dividend on the ex-date | Exchanges adjust contracts only for dividends above a threshold (as of Nov 2026 — verify on NSE) |
+| Cash dividend | Price drops roughly by the dividend on the ex-date | NSE adjusts F&O contracts only for extraordinary dividends (those at or above 5% of the share's market value under the current circulars — as of Nov 2026, verify on NSE); ordinary dividends are left to futures pricing |
 | Split (e.g. 1:5) | Price divides by 5, shares multiply by 5 | Strike and lot size adjusted |
 | Bonus (e.g. 1:1) | Price roughly halves | Strike and lot adjusted |
 | Buyback | No mechanical adjustment; tender offer can support price | Usually none |
 | Rights issue | Adjustment factor based on the theoretical ex-rights price | Adjusted |` },
       { h: 'Advanced view', md: `### Expected move from options
-Before results, the price of the at-the-money straddle approximates the market's expected absolute move. If a ₹1,000 stock's nearest-expiry ATM straddle costs ₹48, the market is pricing a move of roughly ±4.8% by expiry, most of it from the event. Use it to set realistic stops and to decide whether your intraday target is achievable.
+Before results, the price of the at-the-money straddle approximates the market's expected absolute move to expiry (under a normal-distribution model the ATM straddle is about 0.8 × σ√T × price, and the expected absolute move is also about 0.8 × σ√T × price, which is why the shortcut works). If a ₹1,000 stock's nearest-expiry ATM straddle costs ₹48, the market is pricing a move of roughly ±4.8% by expiry, most of it from the event. Two cautions: the straddle also contains ordinary time value for the non-event days (so subtract a normal-day straddle estimate if expiry is far away), and it is an *average* absolute move — actual moves of one and a half to two times the straddle occur. Use it to set realistic stops and to decide whether your intraday target is achievable.
 
 ### Post-earnings drift
 Academic work since the late 1960s (Ball and Brown; Bernard and Thomas) documented a tendency for prices to keep drifting in the direction of an earnings surprise for weeks. Later studies suggest the effect has weakened in large, liquid US stocks. For intraday traders, the relevant observation is narrower: a strong surprise often produces a trend day, and fading it early is risky.
@@ -488,9 +495,9 @@ N = existing shares, P = cum-rights price, R = rights shares, S = subscription p
 1-for-4 rights at ₹400 on a ₹500 stock: TERP = (4 × 500 + 1 × 400) ÷ 5 = ₹480.
 
 **Gap-adjusted sizing.** Normal stop 1.2% → risk ₹5,000 → ₹4.17 lakh notional. Expected event move 5%: to keep gap risk at ₹5,000, notional = 5,000 ÷ 0.05 = ₹1 lakh, about a quarter of normal.` },
-      { h: 'India', md: `> [!india] Companies must give the exchanges prior notice of board meetings to consider results (verify current SEBI LODR timelines). Results calendars are published on NSE and BSE. Stocks often enter the F&O ban list around large events if open interest crosses the market-wide position limit; in ban, you can only reduce positions. NSE publishes corporate-action adjustment circulars for F&O.
+      { h: 'India', md: `> [!india] Companies must give the exchanges prior notice of board meetings to consider results (verify current SEBI LODR timelines). Results calendars are published on NSE and BSE. Stocks enter the F&O ban period when open interest crosses 95% of the market-wide position limit (MWPL; SEBI revised the OI computation in 2025 — verify current rules on NSE); in ban, you can only reduce positions. NSE publishes corporate-action adjustment circulars for F&O.
 
-Intraday note: many Indian results land between 13:00 and 17:00 IST, so a stock can turn from calm to volatile mid-session. Check the board-meeting date every morning for the names on your watchlist.` },
+Intraday note: Indian companies can and do announce results during market hours (board meetings often conclude in the afternoon), so a stock can turn from calm to volatile mid-session. Check the board-meeting date every morning for the names on your watchlist.` },
       { h: 'US & global', md: `> [!us] US earnings season clusters in the weeks after each quarter-end. Pre-market (from 04:00 ET at many brokers) and after-hours sessions show the initial reaction on thin liquidity; spreads are wide and prints can be misleading. Mega-cap results (e.g. NVDA) can move the whole index and spill into global futures overnight.` },
       { h: 'Common misconceptions', md: `- **"Good results mean the stock goes up."** The reaction depends on expectations and guidance.
 - **"Ex-dividend falls are selling pressure."** They are a mechanical adjustment.
@@ -504,8 +511,8 @@ Intraday note: many Indian results land between 13:00 and 17:00 IST, so a stock 
     ],
     check: [
       { q: "A ₹800 stock declares a 1:1 bonus. You hold 50 shares. After the ex-date, assuming no other change, you hold…", o: ["50 shares at ₹800", "100 shares at about ₹400", "100 shares at ₹800", "25 shares at ₹1,600"], a: 1, why: "A 1:1 bonus doubles shares and roughly halves price; total value is unchanged." },
-      { q: "A stock's ATM straddle before results costs ₹60 on a ₹1,200 stock. What move is the market roughly pricing?", o: ["±0.5%", "±5%", "±10%", "±60%"], a: 1, why: "Straddle ÷ price = 60 ÷ 1,200 = 5%." },
-      { q: "You buy calls the afternoon before results and the stock rises 2% the next day, yet the calls lose value. The most likely reason is…", o: ["The exchange adjusted the strike", "Implied volatility collapsed after the event, offsetting delta gains", "STT on exercise", "The stock went ex-dividend"], a: 1, why: "IV typically drops after the event (IV crush); if the move is smaller than priced, vega losses can exceed delta gains." },
+      { q: "A stock's ATM straddle before results costs ₹60 on a ₹1,200 stock. What move is the market roughly pricing?", o: ["±5%","±0.5%","±10%","±60%"], a: 0, why: "Straddle ÷ price = 60 ÷ 1,200 = 5%." },
+      { q: "You buy calls the afternoon before results and the stock rises 2% the next day, yet the calls lose value. The most likely reason is…", o: ["The exchange adjusted the strike","STT on exercise","Implied volatility collapsed after the event, offsetting delta gains","The stock went ex-dividend"], a: 2, why: "IV typically drops after the event (IV crush); if the move is smaller than priced, vega losses can exceed delta gains." },
     ],
     refs: ['Ray Ball & Philip Brown — An Empirical Evaluation of Accounting Income Numbers (Journal of Accounting Research, 1968)', 'Victor Bernard & Jacob Thomas — Post-Earnings-Announcement Drift (Journal of Accounting Research, 1989)', 'NSE — Corporate actions and F&O adjustment circulars (nseindia.com)', 'SEBI — Listing Obligations and Disclosure Requirements Regulations (sebi.gov.in)', 'Sheldon Natenberg — Option Volatility and Pricing (book)'],
   },
@@ -526,8 +533,8 @@ Analogy: the central bank is the thermostat. Traders do not react to the tempera
       { h: 'Intermediate view', md: `### The main central banks
 | Bank | Committee | Policy rate | Meets |
 |---|---|---|---|
-| RBI | Monetary Policy Committee (6 members) | Repo rate | Typically six times a year; decision announced around 10:00 IST |
-| US Federal Reserve | FOMC | Federal funds target range | Eight scheduled meetings a year; statement 14:00 ET, press conference 14:30 ET |
+| RBI | Monetary Policy Committee (6 members: 3 from RBI including the Governor, 3 external; Governor has a casting vote on a tie) | Repo rate | RBI Act requires at least four meetings a year; in practice six (bi-monthly); decision announced around 10:00 IST |
+| US Federal Reserve | FOMC (12 voting members: 7 Board governors, the New York Fed president and 4 rotating Reserve Bank presidents) | Federal funds target range (a 25 bp band) | Eight scheduled meetings a year, four with a Summary of Economic Projections (dot plot); statement 14:00 ET, press conference 14:30 ET; minutes three weeks later |
 | ECB | Governing Council | Deposit facility rate | About every six weeks |
 | Bank of Japan | Policy Board | Short-term policy rate | Eight meetings a year; decision timing varies around midday JST |
 
@@ -562,7 +569,7 @@ The first move is often a knee-jerk by algorithms reading headlines; a second mo
 Real policy rate ≈ nominal policy rate − expected inflation
 :::
 
-If the repo rate is 5.50% and expected CPI inflation is 4.0%, the real rate is about 1.5%.
+Illustration (not the current rate — check rbi.org.in): if the repo rate were 5.50% and expected CPI inflation 4.0%, the real rate would be about 1.5%. RBI's inflation target is 4% CPI with a 2–6% tolerance band under the flexible inflation-targeting framework (verify the current target on rbi.org.in).
 
 **Duration sensitivity (why yields move stocks and bonds).**
 
@@ -590,9 +597,9 @@ ECB and BoJ decisions affect EUR/USD, USD/JPY and global risk appetite. A sharp 
 4. Decide your rule: size multiplier and earliest entry time after a policy release.` },
     ],
     check: [
-      { q: "The market fully expects a 25 bp Fed cut. The Fed cuts 25 bp but signals no further cuts this year. A likely reaction is…", o: ["A large rally because a cut happened", "Yields rise and equities weaken because the guidance is more hawkish than priced", "No reaction is possible", "The dollar must fall"], a: 1, why: "When the decision is priced, the surprise is in the guidance. A hawkish path can push yields up and equities down." },
+      { q: "The market fully expects a 25 bp Fed cut. The Fed cuts 25 bp but signals no further cuts this year. A likely reaction is…", o: ["A large rally because a cut happened","No reaction is possible","The dollar must fall","Yields rise and equities weaken because the guidance is more hawkish than priced"], a: 3, why: "When the decision is priced, the surprise is in the guidance. A hawkish path can push yields up and equities down." },
       { q: "A bond has modified duration 6. Yields rise 20 bp. Approximate price change?", o: ["−0.6%", "−1.2%", "−2.0%", "+1.2%"], a: 1, why: "−6 × 0.20% = −1.2%." },
-      { q: "Why might Bank Nifty react more than Nifty IT to an RBI decision?", o: ["IT stocks are not listed on NSE", "Bank earnings and bond portfolios are directly sensitive to policy rates and liquidity", "RBI sets IT export prices", "Bank Nifty has a larger lot size"], a: 1, why: "Banks' margins, funding costs and treasury income depend on rates and liquidity; IT is more linked to US demand and the rupee." },
+      { q: "Why might Bank Nifty react more than Nifty IT to an RBI decision?", o: ["Bank earnings and bond portfolios are directly sensitive to policy rates and liquidity","IT stocks are not listed on NSE","RBI sets IT export prices","Bank Nifty has a larger lot size"], a: 0, why: "Banks' margins, funding costs and treasury income depend on rates and liquidity; IT is more linked to US demand and the rupee." },
     ],
     refs: ['Reserve Bank of India — Monetary Policy statements and MPC resolutions (rbi.org.in)', 'Federal Reserve — FOMC meeting calendars and statements (federalreserve.gov)', 'European Central Bank — Monetary policy decisions (ecb.europa.eu)', 'Bank of Japan — Monetary Policy Meetings (boj.or.jp)', 'CME Group — FedWatch Tool (cmegroup.com)', 'Frederic Mishkin — The Economics of Money, Banking and Financial Markets (book)'],
   },
@@ -616,9 +623,9 @@ For most developing traders, the best answer is usually (1) or (2). Trying to pr
 |---|---|---|---|
 | CPI inflation | India (MoSPI) | Around the 12th, 16:00 IST | Drives RBI expectations |
 | WPI inflation | India | Mid-month, 12:00 IST | Input-cost pressure |
-| IIP, GDP | India | IIP monthly; GDP quarterly (end of month after quarter) | Growth picture |
+| IIP, GDP | India (MoSPI) | IIP monthly; GDP quarterly, about two months after quarter-end (typically the last working day of the second month), 16:00 IST | Growth picture |
 | RBI MPC decision | India | ~10:00 IST on decision day | Rates, liquidity, Bank Nifty |
-| Nonfarm payrolls (NFP) | US (BLS) | First Friday, 08:30 ET (18:00 or 19:00 IST) | Labour market, Fed path |
+| Nonfarm payrolls (NFP) | US (BLS) | Usually first Friday, 08:30 ET (18:00 or 19:00 IST) | Labour market, Fed path |
 | CPI | US (BLS) | Mid-month, 08:30 ET | Inflation, Fed path |
 | PPI | US (BLS) | Mid-month, 08:30 ET | Producer prices |
 | FOMC decision | US | 14:00 ET; presser 14:30 ET | Rates, dollar, global risk |
@@ -662,16 +669,16 @@ Practical: on a US NFP Friday, Indian markets are closed by the time it lands; t
 - **"I can scalp the spike."** Spreads, slippage and algorithm speed make the first seconds an unfavourable place for manual traders.
 - **"Calendar flags are reliable."** Generic impact ratings are a start; your own log is better.
 - **"Releases don't affect my stock."** Index-heavy names move with the index on macro days.` },
-      { h: 'When it fails', md: `**Losing example.** On US CPI day you short SPY at $598.40 at 08:29 ET pre-market with 200 shares, stop $599.40 (risk $200), hoping for a hot print. CPI comes in cooler than consensus; SPY gaps to $601.10 in seconds and your stop fills at $600.95. Loss $510 — 2.5× your plan — plus a wide spread. The "plan" was a prediction, not a risk-managed trade.` },
+      { h: 'When it fails', md: `**Losing example.** On US CPI day you short SPY at $598.40 at 08:29 ET pre-market with 200 shares, stop $599.40 (risk $200), hoping for a hot print. CPI comes in cooler than consensus; SPY gaps to $601.10 in seconds and your stop fills at $600.95. Loss $510 — 2.5× your plan — plus a wide spread. The "plan" was a prediction, not a risk-managed trade. Worse, many US brokers do not trigger standard stop orders outside the regular session at all, so in reality the stop may not have fired until 09:30 ET — check your broker's extended-hours order rules before relying on any pre-market stop.` },
       { h: 'Exercise', md: `1. Create a calendar for the coming month with all high-impact India and US releases in IST, including the US daylight-saving shift.
 2. For each release, write your rule: stand aside, trade the reaction, or hold with gap-aware size.
 3. After three releases, fill in the log: consensus, actual, surprise, 5/15/60-minute moves in Nifty futures or GIFT Nifty.
 4. Use [[widget:position-size]] to compute gap-aware sizes using your logged reaction ranges.` },
     ],
     check: [
-      { q: "US CPI prints 0.4% month-on-month versus 0.2% consensus. What is the more useful framing?", o: ["The number is positive, so buy", "It is a hawkish surprise relative to expectations; watch yields and the dollar for confirmation", "CPI does not matter to equities", "Wait for the next CPI"], a: 1, why: "The reaction is driven by surprise relative to consensus and its implications for policy, not the level." },
+      { q: "US CPI prints 0.4% month-on-month versus 0.2% consensus. What is the more useful framing?", o: ["The number is positive, so buy","CPI does not matter to equities","It is a hawkish surprise relative to expectations; watch yields and the dollar for confirmation","Wait for the next CPI"], a: 2, why: "The reaction is driven by surprise relative to consensus and its implications for policy, not the level." },
       { q: "Your risk budget is ₹6,000. Normal stop 30 points; logged release spike 75 points. How many Nifty lots (65 units) fit if you hold through?", o: ["3 lots", "2 lots", "1 lot", "0 lots — even 1 lot exceeds"], a: 2, why: "6,000 ÷ 75 = 80 units; 1 lot of 65 fits, 2 lots (130) would risk about ₹9,750." },
-      { q: "Why do many professionals avoid trading the first one or two minutes after a high-impact release?", o: ["Exchanges halt trading by rule", "Spreads widen, depth thins and algorithms dominate, so fills are poor and direction often reverses", "Data is published only after two minutes", "Brokers charge double brokerage"], a: 1, why: "Execution quality is worst immediately after release; the initial move can reverse as details are digested." },
+      { q: "Why do many professionals avoid trading the first one or two minutes after a high-impact release?", o: ["Exchanges halt trading by rule","Data is published only after two minutes","Brokers charge double brokerage","Spreads widen, depth thins and algorithms dominate, so fills are poor and direction often reverses"], a: 3, why: "Execution quality is worst immediately after release; the initial move can reverse as details are digested." },
     ],
     refs: ['US Bureau of Labor Statistics — Release calendar (bls.gov)', 'Ministry of Statistics and Programme Implementation — Press releases calendar (mospi.gov.in)', 'Reserve Bank of India — MPC schedule (rbi.org.in)', 'Federal Reserve — FOMC calendar (federalreserve.gov)', 'NSE International Exchange — GIFT Nifty trading hours (nseix.com)'],
   },
@@ -721,8 +728,10 @@ Compare with a baseline: random entries with the same stop and target rules, or 
       { h: 'The maths', md: `**Expectancy in R.**
 
 :::formula
-Expectancy (R) = (Win rate × Average win in R) − (Loss rate × Average loss in R)
+Expectancy (R) = (Win rate × Average win in R) − (Loss rate × Average loss in R) − average costs in R
 :::
+
+(If your average win and loss are already measured net of costs, drop the last term — do not subtract costs twice.)
 
 **Worked example.** Your draft rules produce, in a small manual sample, 42% winners averaging +1.9R and 58% losers averaging −1.0R, with costs of 0.08R per trade.
 
@@ -742,7 +751,7 @@ Translate the decision rule into numbers: with a per-trade standard deviation of
     ],
     check: [
       { q: "Which is a testable hypothesis?", o: ["Gaps usually reverse in the right conditions", "When Nifty futures open >0.8% below prior close, buying at 09:30 with stop at the session low and exit at 15:15 yields mean R > 0 after costs", "Smart money buys gap-downs", "Bank Nifty is bullish this month"], a: 1, why: "It specifies the setup, entry, stop, exit and success measure, so it can be falsified." },
-      { q: "When should you set your success criteria (e.g. minimum mean R and t-stat)?", o: ["After seeing the equity curve", "Before running the test", "Only after live trading", "Never; criteria limit creativity"], a: 1, why: "Deciding afterwards lets you move the goalposts, which is a form of data snooping." },
+      { q: "When should you set your success criteria (e.g. minimum mean R and t-stat)?", o: ["Before running the test","After seeing the equity curve","Only after live trading","Never; criteria limit creativity"], a: 0, why: "Deciding afterwards lets you move the goalposts, which is a form of data snooping." },
       { q: "Win rate 40%, average win 2.2R, average loss 1R, costs 0.1R. Expectancy?", o: ["+0.18R", "+0.28R", "+0.38R", "−0.02R"], a: 0, why: "0.40 × 2.2 − 0.60 × 1.0 − 0.1 = 0.88 − 0.60 − 0.10 = +0.18R." },
     ],
     refs: ['David Aronson — Evidence-Based Technical Analysis (book)', 'Ernest Chan — Quantitative Trading (book)', 'Robert Pardo — The Evaluation and Optimization of Trading Strategies (book)', 'Karl Popper — The Logic of Scientific Discovery (book)'],
@@ -803,16 +812,16 @@ After a backtest, run the rules in paper trading or with minimum size for a pre-
 R multiple = (Exit − Entry − costs per unit) ÷ (Entry − Stop)   (for a long)
 :::
 
-**Worked example.** Long Nifty futures 1 lot (65): entry 24,210, stop 24,170 (risk 40 points = ₹2,600). Exit 24,290. Gross 80 points = ₹5,200. Round-trip costs and slippage estimated at ₹300 (about 4.6 points). Net R = (80 − 4.6) ÷ 40 = **1.885R**.
+**Worked example.** Long Nifty futures 1 lot (65): entry 24,210, stop 24,170 (risk 40 points = ₹2,600). Exit 24,290. Gross 80 points = ₹5,200. Round-trip statutory and broker charges from [[widget:charges-india]] are about ₹940 (as of Nov 2026; STT on the sell side alone is about ₹790), i.e. about 14.5 points; add 1 point of entry slippage. Net R = (80 − 1 − 14.5) ÷ 40 = **+1.61R**.
 
-A loser stopped at 24,170 with 3 points of slippage: (−40 − 3 − 4.6) ÷ 40 = **−1.19R**. Notice how costs and slippage make losers bigger than −1R and winners smaller; ignoring them can turn a backtest from negative to positive.` },
+A loser stopped at 24,170 with 3 more points of stop slippage: (−40 − 1 − 3 − 14.5) ÷ 40 = **−1.46R**. Notice how costs and slippage make losers bigger than −1R and winners smaller. On a 40-point stop, charges alone are over a third of R; ignoring them can turn a losing backtest into an apparently winning one.` },
       { h: 'India', md: `> [!india] For NSE backtests, use historical contract specifications: lot sizes, expiry days and STT rates have all changed (STT on futures 0.05% on sell and options 0.15% on premium sell from 1 Apr 2026 — as of Nov 2026). Exchange transaction charges also changed on 1 Mar 2026. Apply the correct rate for each trade date. Remove market holidays and special sessions (e.g. Muhurat trading) or treat them separately.` },
       { h: 'US & global', md: `> [!us] For US equities, use split- and dividend-adjusted data and include delisted symbols to avoid survivorship bias. Account for SEC fees and FINRA TAF on sells, and realistic spreads in pre-market and after-hours sessions if your strategy trades them.` },
       { h: 'Common misconceptions', md: `- **"Automated backtests are objective."** They are objective about the assumptions you coded — including the wrong ones.
 - **"If a limit price was touched, I was filled."** Often not.
 - **"Manual backtesting is enough."** It is a screen; hindsight bias is strong.
 - **"A good backtest means I can trade it at full size."** Live execution, psychology and regime change usually reduce results.` },
-      { h: 'When it fails', md: `**Example.** An automated test of a 1-min Bank Nifty scalping rule shows +0.25R per trade. The code filled limit orders whenever the bar's low touched the limit price, and ignored slippage on stops. Re-run with trade-through fills and 1 point slippage per side: −0.06R. Live results matched the second number.` },
+      { h: 'When it fails', md: `**Illustrative example.** An automated test of a 1-min Bank Nifty scalping rule shows +0.25R per trade. The code filled limit orders whenever the bar's low touched the limit price, and ignored slippage on stops. Re-run with trade-through fills and 1 point slippage per side: −0.06R. Live results matched the second number. And that re-run still understates costs if it omits charges: one Bank Nifty futures lot (30) costs roughly 30 points round trip in charges at current STT (as of Nov 2026 — check with [[widget:charges-india]]), which on a typical 1-min scalping stop is a large fraction of R.` },
       { h: 'Exercise', md: `1. In the Chart Lab replay mode, run 50 bar-by-bar trades of a simple opening-range breakout on Nifty, using random start dates.
 2. Log every trade with R multiple net of costs (use [[widget:charges-india]]).
 3. Feed your win rate and average R into [[widget:monte-carlo]] and note the 95th-percentile drawdown.
@@ -821,7 +830,7 @@ A loser stopped at 24,170 with 3 points of slippage: (−40 − 3 − 4.6) ÷ 40
     check: [
       { q: "In an automated test, a signal is computed from a bar's close. When should the order be assumed to fill?", o: ["At that same bar's open", "At that bar's close exactly, with no slippage", "At the next bar's open (or later), plus slippage", "At the bar's best price"], a: 2, why: "You cannot act on a close before it happens; next-bar execution with slippage avoids look-ahead and optimistic fills." },
       { q: "A bar hits both your stop and target, and you only have 5-min OHLC data. The conservative assumption is…", o: ["Target first", "Stop first", "Ignore the trade", "Average of both"], a: 1, why: "Without intrabar data you cannot know the order; assuming the stop first avoids flattering results." },
-      { q: "Why reshuffle a backtest trade list in a Monte Carlo simulation?", o: ["To increase the average R", "To see the range of drawdowns and streaks the same set of outcomes can produce in different orders", "To remove losing trades", "To satisfy exchange rules"], a: 1, why: "Order matters for drawdown; reshuffling shows how bad sequences could be even with the same edge." },
+      { q: "Why reshuffle a backtest trade list in a Monte Carlo simulation?", o: ["To increase the average R","To remove losing trades","To see the range of drawdowns and streaks the same set of outcomes can produce in different orders","To satisfy exchange rules"], a: 2, why: "Order matters for drawdown; reshuffling shows how bad sequences could be even with the same edge." },
     ],
     refs: ['Robert Pardo — The Evaluation and Optimization of Trading Strategies (book)', 'Ernest Chan — Algorithmic Trading: Winning Strategies and Their Rationale (book)', 'Marcos López de Prado — Advances in Financial Machine Learning (book)', 'NSE — Historical contract specifications and circulars (nseindia.com)'],
   },
@@ -839,7 +848,7 @@ A loser stopped at 24,170 with 3 points of slippage: (−40 − 3 − 4.6) ÷ 40
 
 > [!evidence] Established: these biases are well-documented in statistics and finance research (e.g. work by Bailey, Borwein, López de Prado and Zhu on backtest overfitting, and by Harvey, Liu and Zhu on multiple testing in factor research).
 
-Analogy: if you flip 100 coins ten times each, one of them will probably land heads eight or more times. It is not a special coin.` },
+Analogy: if you flip 100 fair coins ten times each, you should expect about five of them to land heads eight or more times (the chance for any one coin is about 5.5%). Those coins are not special.` },
       { h: 'Intermediate view', md: `### How each bias sneaks in
 | Bias | Typical cause | Check |
 |---|---|---|
@@ -864,7 +873,12 @@ Each additional variation you test raises the chance that the best one is a fals
 ### Subtle look-ahead
 - Adjusted historical prices for splits/dividends are fine for returns, but price-level rules (e.g. "stock above ₹1,000") on adjusted data use information from the future.
 - Volume profiles or VWAP computed over the full day used for a 10:00 decision.
-- Indicators that "repaint" (pivot points or zig-zag that confirm swings only later).
+- Indicators that "repaint" (swing-pivot detectors, fractals or zig-zag lines that confirm a swing only N bars later). Classic floor pivot points from the prior day's high, low and close do not repaint.
+
+### Measuring overfitting directly
+- **Probability of backtest overfitting (PBO)**: split the data into many blocks, choose the best configuration on each combination of in-sample blocks and record how it ranks out of sample (combinatorially symmetric cross-validation, Bailey, Borwein, López de Prado and Zhu). A high share of below-median out-of-sample ranks means the selection process is fitting noise.
+- **Minimum backtest length**: the more configurations you try, the longer the history needed before the best Sharpe ratio is distinguishable from the best of many random ones. Trying hundreds of variants on two years of data almost guarantees an impressive-looking but meaningless winner.
+- **Keep a trial log**: the number of variants tried is an input to every one of these corrections. If you did not record it, assume it is large.
 
 ### Regime dependence
 A strategy can be valid in a regime that ended. Split results by year, volatility regime and trend regime. A test that is entirely carried by one year is fragile.` },
@@ -892,10 +906,10 @@ P(at least one false positive) = 1 − (1 − α)^k
     ],
     check: [
       { q: "You test 30 strategy variations on the same data at the 5% level. Roughly what is the chance at least one looks significant by luck alone (if all are independent and useless)?", o: ["5%", "30%", "About 79%", "100%"], a: 2, why: "1 − 0.95^30 ≈ 1 − 0.215 = 0.785." },
-      { q: "A test uses today's Nifty 50 constituents back to 2015. Which bias is present?", o: ["Look-ahead only", "Survivorship (and a form of look-ahead in selection)", "None if costs are included", "Overfitting only"], a: 1, why: "Today's list excludes stocks that were dropped, often after poor performance, flattering results." },
+      { q: "A test uses today's Nifty 50 constituents back to 2015. Which bias is present?", o: ["Look-ahead only","None if costs are included","Overfitting only","Survivorship (and a form of look-ahead in selection)"], a: 3, why: "Today's list excludes stocks that were dropped, often after poor performance, flattering results." },
       { q: "EMA length 20 gives +0.20R; 18 gives −0.04R; 22 gives −0.07R. What should you conclude?", o: ["Use 20; it is optimal", "The result is unstable and likely noise", "Use 18 and 22 together", "Increase leverage"], a: 1, why: "A sharp peak surrounded by poor neighbours indicates overfitting rather than a robust effect." },
     ],
-    refs: ['David Bailey, Jonathan Borwein, Marcos López de Prado & Qiji Jim Zhu — Pseudo-Mathematics and Financial Charlatanism (Notices of the AMS, 2014)', 'Campbell Harvey, Yan Liu & Heqing Zhu — …and the Cross-Section of Expected Returns (Review of Financial Studies, 2016)', 'David Bailey & Marcos López de Prado — The Deflated Sharpe Ratio (Journal of Portfolio Management, 2014)', 'NSE Indices — Historical index constituent changes (niftyindices.com)'],
+    refs: ['David Bailey, Jonathan Borwein, Marcos López de Prado & Qiji Jim Zhu — Pseudo-Mathematics and Financial Charlatanism (Notices of the AMS, 2014)', 'Campbell Harvey, Yan Liu & Heqing Zhu — …and the Cross-Section of Expected Returns (Review of Financial Studies, 2016)', 'David Bailey & Marcos López de Prado — The Deflated Sharpe Ratio (Journal of Portfolio Management, 2014)', 'David Bailey, Jonathan Borwein, Marcos López de Prado & Qiji Jim Zhu — The Probability of Backtest Overfitting (Journal of Computational Finance, 2017)', 'NSE Indices — Historical index constituent changes (niftyindices.com)'],
   },
   {
     id: 'l3-significance', module: 'L3-M6', level: 3, track: 'strategy', title: 'Sample size and statistical significance', mins: 22,
@@ -909,7 +923,7 @@ P(at least one false positive) = 1 − (1 − α)^k
 Analogy: a cricketer who scores 80 in one innings is not proven better than one who scores 20. Over 50 innings, the averages start to mean something.` },
       { h: 'Intermediate view', md: `### The three numbers you need
 1. **Mean R per trade** (x̄): average of all R multiples, after costs.
-2. **Standard deviation of R** (s): how spread out the outcomes are. For a system with fixed 1R stops and 2R targets, s is often around 1.2–1.6R.
+2. **Standard deviation of R** (s): how spread out the outcomes are. For a pure +2R / −1R system with win rate p, s = 3 × √(p(1 − p)), which is about 1.4–1.5R for win rates between 30% and 60%; systems with trailing exits and occasional big winners often have higher s.
 3. **Number of trades** (n).
 
 ### Standard error and the t-statistic
@@ -917,7 +931,7 @@ Analogy: a cricketer who scores 80 in one innings is not proven better than one 
 Standard error (SE) = s ÷ √n
 t = x̄ ÷ SE
 :::
-Rule of thumb: |t| > 2 means the result would be unusual (roughly 5% two-sided) if the true mean were zero. After testing many variations, demand more (|t| ≈ 3).
+Rule of thumb: |t| > 2 means the result would be unusual (roughly 5% two-sided) if the true mean were zero. After testing many variations, demand more (|t| ≈ 3). For small samples use the Student-t critical value rather than 2: about 2.09 at n = 20, 2.03 at n = 35, 2.00 at n = 60 (two-sided 5%). If your hypothesis is one-directional (mean R > 0), a one-sided test at 5% needs about 1.65 for large n — but decide one- versus two-sided before testing, not after.
 
 ### Confidence interval
 :::formula
@@ -976,9 +990,9 @@ Compare live mean R with the backtest using the same method: is the difference l
 4. Run [[widget:monte-carlo]] with your parameters for 100 and 500 trades and record the 5th and 95th percentile ending equity.` },
     ],
     check: [
-      { q: "n = 100 trades, mean R = 0.20, SD = 1.5R. What is the t-statistic?", o: ["0.75", "1.33", "2.00", "13.3"], a: 1, why: "SE = 1.5 ÷ 10 = 0.15; t = 0.20 ÷ 0.15 = 1.33." },
+      { q: "n = 100 trades, mean R = 0.20, SD = 1.5R. What is the t-statistic?", o: ["1.33","0.75","2.00","13.3"], a: 0, why: "SE = 1.5 ÷ 10 = 0.15; t = 0.20 ÷ 0.15 = 1.33." },
       { q: "Mean R 0.10, SD 1.0R. Roughly how many trades for t = 2?", o: ["40", "100", "400", "4,000"], a: 2, why: "n ≈ (2 × 1.0 ÷ 0.10)² = 20² = 400." },
-      { q: "You take 6 correlated long trades on Nifty stocks on the same trend day. Why might counting them as 6 independent observations mislead you?", o: ["They have different tickers", "Their outcomes are driven largely by the same market move, so they carry less independent information", "Correlation increases sample size", "Exchange rules prohibit it"], a: 1, why: "Dependence inflates effective sample size and understates the standard error." },
+      { q: "You take 6 correlated long trades on Nifty stocks on the same trend day. Why might counting them as 6 independent observations mislead you?", o: ["They have different tickers","Correlation increases sample size","Their outcomes are driven largely by the same market move, so they carry less independent information","Exchange rules prohibit it"], a: 2, why: "Dependence inflates effective sample size and understates the standard error." },
     ],
     refs: ['David Aronson — Evidence-Based Technical Analysis (book)', 'Bradley Efron & Robert Tibshirani — An Introduction to the Bootstrap (book)', 'Andrew Lo — The Statistics of Sharpe Ratios (Financial Analysts Journal, 2002)', 'Van K. Tharp — Trade Your Way to Financial Freedom (book) — R-multiple framework'],
   },
@@ -1037,10 +1051,21 @@ With unequal payoffs, closed forms get messy; simulation is the practical approa
 [[widget:ror]]
 
 ### Define ruin realistically
-Most traders do not trade to zero; they quit, or blow their confidence, at a 30–50% drawdown. Set ruin at that level. A 1% risk-per-trade system with a modest edge typically has a negligible chance of hitting −50% but a non-trivial chance of hitting −20% at some point in a year.
+Most traders do not trade to zero; they quit, or blow their confidence, at a 30–50% drawdown. Set ruin at that level. Illustration from simulation (not a forecast): with 1% compounded risk, 250 trades a year and an edge of about +0.12R per trade, the chance of a −50% drawdown within the year is effectively zero, while the chance of a −20% drawdown from a peak at some point is roughly 2–9% depending on the win-rate/payoff mix. Run your own numbers in the simulator.
+
+> [!note] The [[widget:ror]] calculator is a Monte Carlo simulation of compounded fixed-fraction risk over a finite number of trades, so it will not reproduce the closed-form fixed-rupee number below exactly. Both are models; neither includes costs, slippage, changing edge or behavioural errors.
 
 ### Edge uncertainty
 Your *estimated* edge has a standard error ([[link:l3-significance]]). If the true edge is lower than you think, ruin probability rises sharply. Professionals size for a conservative edge estimate (for example the lower end of the confidence interval), not the backtest average.
+
+### Maximum drawdown, duration and tail streaks
+:::formula
+Drawdown(t) = 1 − Equity(t) ÷ max(Equity up to t)
+Max drawdown = largest Drawdown(t) over the period
+:::
+Also record **drawdown duration** (time from a peak to a new peak). A strategy with a 12% max drawdown that takes nine months to recover can be harder to live with than one with 18% that recovers in six weeks. Max drawdown from a single backtest is one draw from a distribution; the Monte Carlo widget shows how much deeper it can be with the same trades in a different order.
+
+Losing-streak probabilities quoted in this lesson were computed exactly (a run-length recursion over 200 trades with independent outcomes). Real trades are not fully independent — clusters of losses on choppy days make long streaks somewhat more likely than the model says.
 
 ### Fractional Kelly
 The Kelly criterion gives the growth-maximising bet fraction: f* = p − (1 − p) ÷ b, where b is the payoff ratio. Full Kelly produces very deep drawdowns and is highly sensitive to edge errors. Practitioners who use it at all typically bet a fraction (a quarter or less), and many intraday traders simply cap risk at 0.25–1% per trade.` },
@@ -1056,12 +1081,12 @@ DD = 25% → 0.25 ÷ 0.75 = 33.3%.
 **Simple risk of ruin.** p = 0.55, even payoff. Ruin defined as losing 20 units (e.g. 20 × 1% ≈ a 20% loss with fixed rupee risk): ((0.45) ÷ (0.55))²⁰ = 0.818²⁰ ≈ **1.8%**. If you risk 2% per trade, the same 20% loss is only 10 units: 0.818¹⁰ ≈ **13.4%**. Doubling risk per trade raised ruin probability about sevenfold.
 
 **Kelly.** p = 0.45, b = 2: f* = 0.45 − 0.55 ÷ 2 = 0.45 − 0.275 = 0.175 (17.5%). A quarter-Kelly would be about 4.4% — still far above what most intraday professionals risk, which shows how aggressive Kelly is in practice and how wrong it becomes if p is overestimated.` },
-      { h: 'India', md: `> [!india] Example: ₹10 lakh account trading Nifty futures. At 1% risk (₹10,000) and a 40-point stop, size = 10,000 ÷ 40 = 250 units → 3 lots (195 units, risk ₹7,800). Ten straight losers ≈ −₹78,000 (−7.8%). At 3 lots with a 120-point "mental" stop that gets ignored, a single bad day can exceed that.` },
+      { h: 'India', md: `> [!india] Example: ₹10 lakh account trading Nifty futures. At 1% risk (₹10,000) and a 40-point stop, size = 10,000 ÷ 40 = 250 units → 3 lots (195 units, risk ₹7,800). Ten straight losers ≈ −₹78,000 (−7.8%) — plus charges of roughly ₹2,800 per round trip at 3 lots (about ₹940 per lot as of Nov 2026, see [[widget:charges-india]]), another ₹28,000 over ten trades, taking the streak to about −10.6%. At 3 lots with a 120-point "mental" stop that gets ignored, a single bad day can exceed that.` },
       { h: 'Common misconceptions', md: `- **"A 50% loss needs a 50% gain."** It needs 100%.
-- **"My system wins 60%, so long streaks won't happen."** Over hundreds of trades, streaks of 5–7 losses are routine at 60%.
+- **"My system wins 60%, so long streaks won't happen."** Over 300 trades at a 60% win rate, a run of at least 5 straight losses is very likely (about 85%), 6 is roughly a coin flip, and 7 happens about one time in four.
 - **"Risk of ruin is zero if expectancy is positive."** It is lower, not zero; it depends heavily on size.
 - **"Kelly is the optimal size for me."** Only if you know your edge exactly — you do not.` },
-      { h: 'When it fails', md: `**Example.** A trader with a genuine +0.2R edge risks 4% per trade because "the edge is proven". An ordinary 7-loss streak takes him to −25%; he widens stops to avoid more losses, two trades go to −2R each, and the account is down 38%. He needs +61% to recover. The edge was real; the sizing made it irrelevant.` },
+      { h: 'When it fails', md: `**Example.** A trader with a genuine +0.2R edge risks 4% per trade because "the edge is proven". An ordinary 7-loss streak takes him to about −25% (1 − 0.96⁷); he widens stops to avoid more losses, two trades go to −2R each (−8% of equity each), and the account is down about 36%. He needs about +57% to recover. The edge was real; the sizing made it irrelevant.` },
       { h: 'Exercise', md: `1. Use [[widget:drawdown]] to find the recovery gain for your worst historical drawdown.
 2. In [[widget:ror]], enter your win rate and payoff ratio. Compare ruin probability (ruin = −30%) at 0.5%, 1% and 2% risk.
 3. In [[widget:monte-carlo]], run 500 trades with your parameters and note the 95th-percentile maximum drawdown.
@@ -1069,10 +1094,10 @@ DD = 25% → 0.25 ÷ 0.75 = 33.3%.
     ],
     check: [
       { q: "Your account is in a 40% drawdown. What gain is needed to return to the peak?", o: ["40%", "57%", "66.7%", "100%"], a: 2, why: "0.40 ÷ 0.60 = 66.7%." },
-      { q: "Risk 2% per trade, 10 consecutive losses (compounded). Approximate drawdown?", o: ["−10%", "−18%", "−20%", "−25%"], a: 1, why: "1 − 0.98^10 ≈ 1 − 0.817 = 18.3%." },
+      { q: "Risk 2% per trade, 10 consecutive losses (compounded). Approximate drawdown?", o: ["−10%","−20%","−25%","−18%"], a: 3, why: "1 − 0.98^10 ≈ 1 − 0.817 = 18.3%." },
       { q: "Why do professionals often size using the lower end of their estimated edge?", o: ["It increases returns", "Estimated edges have error; overestimating the edge sharply increases drawdown and ruin risk", "Exchanges require it", "Lower edges have lower costs"], a: 1, why: "Sizing on an overestimated edge, especially with Kelly-style rules, leads to oversized bets and deep drawdowns." },
     ],
-    refs: ['Ralph Vince — The Mathematics of Money Management (book)', 'Edward Thorp — The Kelly Capital Growth Investment Criterion (edited volume)', 'Van K. Tharp — Definitive Guide to Position Sizing (book)', 'William Feller — An Introduction to Probability Theory and Its Applications (book) — gambler\'s ruin'],
+    refs: ['Ralph Vince — The Mathematics of Money Management (book)', 'Leonard MacLean, Edward Thorp & William Ziemba (eds.) — The Kelly Capital Growth Investment Criterion: Theory and Practice (book, 2011)', 'Van K. Tharp — Definitive Guide to Position Sizing (book)', 'William Feller — An Introduction to Probability Theory and Its Applications (book) — gambler\'s ruin'],
   },
   {
     id: 'l3-limits', module: 'L3-M7', level: 3, track: 'risk', title: 'Daily and weekly loss limits, circuit breakers for yourself', mins: 18,
@@ -1083,7 +1108,7 @@ DD = 25% → 0.25 ÷ 0.75 = 33.3%.
 
 Why? Because losses change behaviour. After a few losers, people take revenge trades, increase size and abandon their rules. A pre-set limit makes the decision for you while you are still calm.
 
-> [!evidence] Established practice at professional trading desks (traders typically operate under daily and monthly loss limits set by risk managers). Behavioural research on loss aversion and the "disposition effect" supports the idea that decisions after losses are often worse; the specific limit values are judgement calls.
+> [!evidence] Established practice at professional trading desks (traders typically operate under daily and monthly loss limits set by risk managers). Behavioural research on loss aversion, the "break-even effect" (extra risk-taking after losses, Thaler and Johnson, 1990) and the disposition effect is consistent with the idea that decisions after losses are often worse; the specific limit values are judgement calls.
 
 Analogy: a fuel gauge with an automatic cut-off. You cannot run the engine dry, however much you want to keep driving.` },
       { h: 'Intermediate view', md: `### Linking limits to risk per trade
@@ -1126,9 +1151,9 @@ Weekly limit = 5 × R
 
 R = ₹8,000. Daily limit = ₹20,000. Weekly limit = ₹40,000.
 
-**Worst-case week if limits hold.** Five days hitting the daily limit would be ₹1,00,000, but the weekly limit stops you at ₹40,000 — at most two full daily-limit days, then a partial day.
+**Worst-case week if limits hold.** Five days hitting the daily limit would be ₹1,00,000, but the weekly limit stops you at ₹40,000 — at most two full daily-limit days (or several partial ones), after which you stop for the rest of the week.
 
-**Slippage beyond the limit.** If you are at −₹17,000 and hold 3 Nifty lots (195 units) with a 20-point stop, the planned loss is ₹3,900 → −₹20,900, already slightly over. The rule should be: *no new trade unless the full stop-loss fits inside the remaining daily allowance*. Remaining ₹3,000 at a 20-point stop allows at most 150 units → 2 lots (130 units, ₹2,600).` },
+**Slippage beyond the limit.** If you are at −₹17,000 and hold 3 Nifty lots (195 units) with a 20-point stop, the planned loss is ₹3,900 → −₹20,900, already slightly over. The rule should be: *no new trade unless the full stop-loss fits inside the remaining daily allowance*. Remaining ₹3,000 at a 20-point stop allows at most 150 units → 2 lots (130 units, ₹2,600) on price risk alone. Charges also count against the allowance: about ₹940 per Nifty futures lot round trip (as of Nov 2026, [[widget:charges-india]]), so 2 lots really risk about ₹4,480 and only 1 lot (₹1,300 + ₹940 ≈ ₹2,240) fits.` },
       { h: 'India', md: `> [!india] Several Indian brokers provide a "kill switch" or segment-level disable for the day, and some allow a daily loss cap. Features and names vary by broker — check your broker's help pages (as of Nov 2026). SEBI's rules on algorithmic and API trading for retail clients are evolving; verify on sebi.gov.in if you automate limits through an API.` },
       { h: 'US & global', md: `> [!us] Many US platforms offer configurable daily loss limits and account locks. With FINRA's pattern-day-trader rule being replaced by risk-based intraday margin (SEC approval Apr 2026; broker implementation timing varies), small accounts may soon trade more frequently — which makes self-imposed limits more important, not less.` },
       { h: 'Common misconceptions', md: `- **"I'll stop when I feel I'm off."** The feeling arrives too late; that is why the limit is numeric.
@@ -1137,16 +1162,16 @@ R = ₹8,000. Daily limit = ₹20,000. Weekly limit = ₹40,000.
 - **"I can move the limit if the setup is perfect."** A movable limit is not a limit.` },
       { h: 'When it fails', md: `Limits fail when they are not enforced or when one trade can blow through them.
 
-**Example.** A trader with a ₹15,000 daily limit is at −₹12,000 by 11:30. He sells Bank Nifty options for "quick premium", 10 lots, with no stop. A 400-point move against him costs ₹48,000 in an hour. The limit existed only on paper, and the last trade was sized for hope, not for the remaining allowance.` },
+**Example.** A trader with a ₹15,000 daily limit is at −₹12,000 by 11:30. He sells Bank Nifty options for "quick premium", 10 lots, with no stop. A 400-point move against him lifts the premium by about 160 points; on 10 lots (300 units) that costs ₹48,000 in an hour. The limit existed only on paper, and the last trade was sized for hope, not for the remaining allowance.` },
       { h: 'Exercise', md: `1. Write your per-trade, daily, weekly and monthly limits in the journal, in rupees and in R.
 2. Configure any broker kill switch or loss cap you have access to, or set a phone alarm to check P&L every hour.
 3. Review your last 20 trading days: on how many would the daily limit have triggered? What happened afterwards on those days?
 4. Use [[widget:position-size]] to recompute size when your remaining daily allowance is less than one normal R.` },
     ],
     check: [
-      { q: "Capital ₹6 lakh, per-trade risk 1%, daily limit 2.5R. You are down ₹12,000 today. What is the maximum risk on your next trade?", o: ["₹6,000", "₹3,000", "₹15,000", "No trade allowed"], a: 1, why: "Daily limit = ₹15,000; remaining allowance ₹3,000, so the next trade's full stop must fit within ₹3,000." },
-      { q: "Why might stopping after a daily limit improve results even with a positive-edge system?", o: ["It changes market probabilities", "It removes trades taken in a degraded state, which tend to have worse execution and expectancy", "It lowers STT", "It guarantees a profitable week"], a: 1, why: "The statistical edge assumes rule-following; behaviour after losses often breaks the rules." },
-      { q: "Which circuit breaker best addresses moving a stop-loss mid-trade?", o: ["A profit cap", "An error stop: any rule violation ends the trading day", "A larger daily limit", "A weekly review only"], a: 1, why: "An error stop directly penalises rule breaks and prevents compounding them." },
+      { q: "Capital ₹6 lakh, per-trade risk 1%, daily limit 2.5R. You are down ₹12,000 today. What is the maximum risk on your next trade?", o: ["₹3,000","₹6,000","₹15,000","No trade allowed"], a: 0, why: "Daily limit = ₹15,000; remaining allowance ₹3,000, so the next trade's full stop must fit within ₹3,000." },
+      { q: "Why might stopping after a daily limit improve results even with a positive-edge system?", o: ["It changes market probabilities","It lowers STT","It removes trades taken in a degraded state, which tend to have worse execution and expectancy","It guarantees a profitable week"], a: 2, why: "The statistical edge assumes rule-following; behaviour after losses often breaks the rules." },
+      { q: "Which circuit breaker best addresses moving a stop-loss mid-trade?", o: ["A profit cap","A larger daily limit","A weekly review only","An error stop: any rule violation ends the trading day"], a: 3, why: "An error stop directly penalises rule breaks and prevents compounding them." },
     ],
     refs: ['Brett Steenbarger — The Daily Trading Coach (book)', 'Mark Douglas — Trading in the Zone (book)', 'Daniel Kahneman & Amos Tversky — Prospect Theory: An Analysis of Decision under Risk (Econometrica, 1979)', 'FINRA — Day trading and margin requirements (finra.org)'],
   },
@@ -1171,7 +1196,8 @@ Analogy: a mountaineer moving their safety rope up the cliff as they climb. Move
 | ATR trail | High − k × ATR(14) (e.g. k = 2) | Adapts to volatility |
 | Swing structure | Below the last higher low | Follows market structure |
 | Moving average | Exit on close below EMA 20 | Smooth, laggy |
-| Chandelier / Supertrend | ATR-based from the highest high | Popular, systematic |
+| Chandelier exit | Highest high since entry − k × ATR | Systematic; only ratchets in your favour |
+| Supertrend | (High + Low) ÷ 2 − m × ATR, ratcheted (default 10, 3) | Flips side on a close through the line |
 | Time-based | Exit at a fixed time (e.g. 15:15 IST) | Limits intraday exposure |
 
 [[chart:NIFTY:93:st,ema20,atr]]
@@ -1210,7 +1236,9 @@ Scenario B (half at 1R, rest stopped at breakeven): 65 units +40 = ₹2,600; 65 
 
 Scenario C (half at 1R, rest at 2R): ₹2,600 + 65 × 80 = ₹5,200 → ₹7,800 = **+1.5R**.
 
-**Scaling in without extra risk.** Initial 1 lot (65) at 24,200, stop 24,160 → risk ₹2,600 (half of the full R ₹5,200). Price rises to 24,240 and forms a higher low at 24,222. Add 1 lot at 24,240; move the combined stop to 24,222. If the combined stop is hit: lot 1 exits 22 points *above* its entry (+₹1,430) and lot 2 exits 18 points below its entry (−₹1,170). Net outcome at the stop ≈ +₹260 — the position is now at full size with essentially no open risk, versus ₹5,200 if you had entered both lots at 24,200.
+**Scaling in without extra risk.** Initial 1 lot (65) at 24,200, stop 24,160 → risk ₹2,600 (half of the full R ₹5,200). Price rises to 24,240 and forms a higher low at 24,222. Add 1 lot at 24,240; move the combined stop to 24,222. If the combined stop is hit: lot 1 exits 22 points *above* its entry (+₹1,430) and lot 2 exits 18 points below its entry (−₹1,170). Net outcome at the stop ≈ +₹260 before charges — the position is now at full size with essentially no open *price* risk, versus ₹5,200 if you had entered both lots at 24,200. Charges on two Nifty futures lots are roughly ₹1,900 round trip (as of Nov 2026), so the realistic outcome at the stop is about −₹1,600; budget costs into the "no added risk" calculation.
+
+**General rule for the combined stop.** For a long, total risk = Σ quantity × (entry − stop) must stay ≤ original R. With 65 at 24,200 and 65 at 24,240 (average 24,220), the lowest permissible combined stop is 24,220 − 5,200 ÷ 130 = 24,180.
 
 **ATR trail.** ATR(14) on 5-min = 18 points, k = 2. Highest high since entry 24,310 → trail stop = 24,310 − 36 = 24,274.` },
       { h: 'India', md: `> [!india] With lot-based futures (Nifty 65, Bank Nifty 30 — as of Nov 2026, verify on NSE), partial exits require at least 2 lots. In cash equities any share quantity works. Each partial exit incurs its own costs (brokerage per order, STT on the sell side, exchange charges) — check them with [[widget:charges-india]]; many small partials can eat a small edge.` },
@@ -1226,10 +1254,10 @@ Scenario C (half at 1R, rest at 2R): ₹2,600 + 65 × 80 = ₹5,200 → ₹7,800
     ],
     check: [
       { q: "Long 2 lots, R = 40 points. You exit half at +40 and the rest is stopped at breakeven. Result in R for the whole position?", o: ["+1R", "+0.5R", "0R", "+2R"], a: 1, why: "Half the position earns 1R and half earns 0: total 0.5R." },
-      { q: "Which describes scaling in correctly?", o: ["Adding when price moves against you to lower average cost", "Adding to a working position while keeping total open risk within the original plan", "Doubling size after a loss", "Entering all at once at the open"], a: 1, why: "Scaling in adds to winners with a stop adjustment so total risk does not exceed plan; adding to losers is averaging down." },
-      { q: "ATR(14) = 25, multiplier 2, highest high since entry 1,850. Where is the chandelier-style trailing stop?", o: ["1,825", "1,800", "1,875", "1,775"], a: 1, why: "1,850 − 2 × 25 = 1,800." },
+      { q: "Which describes scaling in correctly?", o: ["Adding to a working position while keeping total open risk within the original plan","Adding when price moves against you to lower average cost","Doubling size after a loss","Entering all at once at the open"], a: 0, why: "Scaling in adds to winners with a stop adjustment so total risk does not exceed plan; adding to losers is averaging down." },
+      { q: "ATR(14) = 25, multiplier 2, highest high since entry 1,850. Where is the chandelier-style trailing stop?", o: ["1,825","1,875","1,800","1,775"], a: 2, why: "1,850 − 2 × 25 = 1,800." },
     ],
-    refs: ['Van K. Tharp — Trade Your Way to Financial Freedom (book)', 'Chuck LeBeau & David Lucas — Technical Traders Guide to Computer Analysis of the Futures Markets (book) — chandelier exit', 'J. Welles Wilder — New Concepts in Technical Trading Systems (book) — ATR', 'Curtis Faith — Way of the Turtle (book)'],
+    refs: ['Van K. Tharp — Trade Your Way to Financial Freedom (book)', 'Chuck LeBeau & David Lucas — Technical Traders Guide to Computer Analysis of the Futures Market (book) — chandelier exit', 'J. Welles Wilder — New Concepts in Technical Trading Systems (book) — ATR', 'Curtis Faith — Way of the Turtle (book)'],
   },
   {
     id: 'l3-correlation', module: 'L3-M7', level: 3, track: 'risk', title: 'Correlated exposure and portfolio heat', mins: 20,
@@ -1300,7 +1328,7 @@ Heat = ₹24,000 (2.4%). Bank group = ₹17,000 — **over the ₹15,000 group c
 
 **Correlation effect.** Two bank positions, each with a 1-standard-deviation daily risk of ₹9,000 and ₹8,000, correlation 0.8:
 σ = √(9,000² + 8,000² + 2 × 0.8 × 9,000 × 8,000) = √(81 + 64 + 115.2) × 1,000 ≈ √260.2 × 1,000 ≈ **₹16,100** — almost the simple sum (₹17,000). At correlation 0 it would be √145 × 1,000 ≈ ₹12,000.` },
-      { h: 'India', md: `> [!india] Nifty and Bank Nifty are heavily weighted towards a handful of stocks; HDFC Bank, ICICI Bank and Reliance together form a large share of Nifty (check current weights on niftyindices.com — as of Nov 2026). Being long two of those and Nifty futures is largely one index bet. Remember lot sizes: 1 Bank Nifty lot (30) at 52,000 is ₹15.6 lakh notional.` },
+      { h: 'India', md: `> [!india] Nifty and Bank Nifty are heavily weighted towards a handful of stocks; HDFC Bank, ICICI Bank and Reliance together form a large share of Nifty (check current weights on niftyindices.com — as of Nov 2026). Being long two of those and Nifty futures is largely one index bet. Remember lot sizes: 1 Bank Nifty lot (30) at an illustrative 52,000 is ₹15.6 lakh notional.` },
       { h: 'US & global', md: `> [!us] In US markets, a handful of mega-cap technology stocks make up a large share of the S&P 500 and Nasdaq-100. Long NVDA, long AMD and long QQQ is mostly one semiconductor/tech bet. Sector ETFs (XLK, XLF, SMH) are useful proxies for grouping.` },
       { h: 'Common misconceptions', md: `- **"More tickers means more diversification."** Only if their drivers differ.
 - **"Correlation is stable."** It changes, and rises in crises.
@@ -1323,60 +1351,60 @@ Heat = ₹24,000 (2.4%). Bank group = ₹17,000 — **over the ₹15,000 group c
 
   IA.content.questions.push(
   /* ---------- L3-M4 ---------- */
-  { id: 'L3-M4-q01', module: 'L3-M4', d: 1, q: 'Which of these is best described as an established market-microstructure idea rather than a subjective framework?', o: ['Order blocks mark bank entries', 'Stop orders cluster near obvious levels and can accelerate moves when triggered', 'Wyckoff Phase B always has falling volume', 'Fair value gaps always fill'], a: 1, why: 'Order clustering and stop-driven price impact are documented microstructure findings; the others are framework claims without robust independent evidence.' },
+  { id: 'L3-M4-q01', module: 'L3-M4', d: 1, q: 'Which of these is best described as an established market-microstructure idea rather than a subjective framework?', o: ["Order blocks mark bank entries","Wyckoff Phase B always has falling volume","Fair value gaps always fill","Stop orders cluster near obvious levels and can accelerate moves when triggered"], a: 3, why: 'Order clustering and stop-driven price impact are documented microstructure findings; the others are framework claims without robust independent evidence.' },
   { id: 'L3-M4-q02', module: 'L3-M4', d: 2, q: 'A trader says: "That wick was a liquidity grab by smart money." What is the most defensible restatement?', o: ['Institutions bought at the low', 'Orders, possibly including triggered stops, were filled below the level and price did not continue lower', 'Retail traders were deliberately targeted', 'The level is now permanent support'], a: 1, why: 'The chart shows fills below a level and a recovery. Participant identity and intent cannot be observed on a retail feed.' },
   { id: 'L3-M4-q03', module: 'L3-M4', d: 2, q: 'Bar 1 low 1,240; bar 2 range 1,205–1,238; bar 3 high 1,219. Is there a bearish FVG, and where?', o: ['Yes, 1,219–1,240', 'Yes, 1,205–1,238', 'No, because bar 3 high is below bar 1 low only by chance', 'No FVG can be bearish'], a: 0, why: 'Bearish FVG: bar 3 high (1,219) is below bar 1 low (1,240), leaving the zone 1,219–1,240.' },
-  { id: 'L3-M4-q04', module: 'L3-M4', d: 2, q: 'In an uptrend, what is a Change of Character (CHoCH) in SMC terms?', o: ['A close above the last swing high', 'The first close below the most recent higher low', 'Any red candle', 'A gap up at the open'], a: 1, why: 'A CHoCH is the first break of the trend-defining swing; a close above the swing high is a BOS (continuation).' },
-  { id: 'L3-M4-q05', module: 'L3-M4', d: 3, q: 'You want to test whether order blocks add value. Which design is most informative?', o: ['Collect chart examples where OBs worked', 'Fix a mechanical OB definition, test entries at OBs, and compare with entries at a control level (e.g. 50% retracement) using the same stops, targets and costs', 'Ask a course provider for their win rate', 'Use higher-timeframe confluence until results improve'], a: 1, why: 'A fixed definition plus a control isolates whether the OB label adds anything beyond ordinary pullback entries.' },
-  { id: 'L3-M4-q06', module: 'L3-M4', d: 2, q: 'In Wyckoff accumulation, what defines a spring?', o: ['A high-volume bar at the range top', 'A break below range support that quickly recovers back inside the range', 'The first bar of markup', 'An upthrust above resistance'], a: 1, why: 'A spring is a failed breakdown; it is confirmed only by the recovery back inside the range.' },
+  { id: 'L3-M4-q04', module: 'L3-M4', d: 2, q: 'In an uptrend, what is a Change of Character (CHoCH) in SMC terms?', o: ["The first close below the most recent higher low","A close above the last swing high","Any red candle","A gap up at the open"], a: 0, why: 'A CHoCH is the first break of the trend-defining swing; a close above the swing high is a BOS (continuation).' },
+  { id: 'L3-M4-q05', module: 'L3-M4', d: 3, q: 'You want to test whether order blocks add value. Which design is most informative?', o: ["Collect chart examples where OBs worked","Ask a course provider for their win rate","Fix a mechanical OB definition, test entries at OBs, and compare with entries at a control level (e.g. 50% retracement) using the same stops, targets and costs","Use higher-timeframe confluence until results improve"], a: 2, why: 'A fixed definition plus a control isolates whether the OB label adds anything beyond ordinary pullback entries.' },
+  { id: 'L3-M4-q06', module: 'L3-M4', d: 2, q: 'In Wyckoff accumulation, what defines a spring?', o: ["A high-volume bar at the range top","The first bar of markup","An upthrust above resistance","A break below range support that quickly recovers back inside the range"], a: 3, why: 'A spring is a failed breakdown; it is confirmed only by the recovery back inside the range.' },
   { id: 'L3-M4-q07', module: 'L3-M4', d: 2, q: 'Why is Wyckoff phase labelling considered subjective?', o: ['Wyckoff never used volume', 'Phases such as selling climax or spring are often identifiable with confidence only after the range resolves, and similar ranges can be relabelled as accumulation or distribution', 'Exchanges prohibit it', 'It only works on crypto'], a: 1, why: 'Real-time ambiguity and flexible relabelling (re-accumulation, re-distribution) make the labels hard to falsify.' },
-  { id: 'L3-M4-q08', module: 'L3-M4', d: 3, q: 'Volume bins: 50:3, 51:8, 52:16(POC), 53:12, 54:9, 55:2. Total 50; 70% target 35. Value area?', o: ['51–53', '52–54', '51–54', '50–53'], a: 1, why: 'Start at the POC 16; neighbours 8 (51) vs 12 (53): add 12 → 28. Next neighbours 8 (51) vs 9 (54): add 9 → 37 ≥ 35. VA = 52–54.' },
-  { id: 'L3-M4-q09', module: 'L3-M4', d: 2, q: 'Nifty futures open inside yesterday\'s value area. Under Auction Market Theory, what is the base case?', o: ['A trend day away from value', 'Balance, with rotation around value and the prior POC', 'A guaranteed gap fill', 'An upthrust'], a: 1, why: 'An open inside prior value suggests the market still accepts those prices; balance and rotation are the default scenario.' },
-  { id: 'L3-M4-q10', module: 'L3-M4', d: 3, q: 'You short Nifty futures 3 lots (195 units) with a stop 42 points away. Your journal shows average stop slippage of 6 points at that time of day. Realistic risk?', o: ['₹8,190', '₹9,360', '₹8,970', '₹7,020'], a: 1, why: '(42 + 6) × 195 = ₹9,360; the planned figure ignores slippage.' },
+  { id: 'L3-M4-q08', module: 'L3-M4', d: 3, q: 'Volume bins: 50:3, 51:8, 52:16(POC), 53:12, 54:9, 55:2. Total 50; 70% target 35. Value area?', o: ["52–54","51–53","51–54","50–53"], a: 0, why: 'Start at the POC 16; neighbours 8 (51) vs 12 (53): add 12 → 28. Next neighbours 8 (51) vs 9 (54): add 9 → 37 ≥ 35. VA = 52–54.' },
+  { id: 'L3-M4-q09', module: 'L3-M4', d: 2, q: 'Nifty futures open inside yesterday\'s value area. Under Auction Market Theory, what is the base case?', o: ["A trend day away from value","A guaranteed gap fill","Balance, with rotation around value and the prior POC","An upthrust"], a: 2, why: 'An open inside prior value suggests the market still accepts those prices; balance and rotation are the default scenario.' },
+  { id: 'L3-M4-q10', module: 'L3-M4', d: 3, q: 'You short Nifty futures 3 lots (195 units) with a stop 42 points away. Your journal shows average stop slippage of 6 points at that time of day. Realistic risk?', o: ["₹8,190","₹8,970","₹7,020","₹9,360"], a: 3, why: '(42 + 6) × 195 = ₹9,360; the planned figure ignores slippage.' },
   { id: 'L3-M4-q11', module: 'L3-M4', d: 1, q: 'Market Profile and Auction Market Theory are most associated with which originator?', o: ['Richard Wyckoff', 'J. Peter Steidlmayer', 'J. Welles Wilder', 'Ralph Elliott'], a: 1, why: 'Steidlmayer developed Market Profile at the CBOT in the 1980s; Dalton and others extended AMT.' },
   { id: 'L3-M4-q12', module: 'L3-M4', d: 2, q: 'What is the best way to place a stop near an obvious equal-low cluster?', o: ['Exactly at the equal lows', 'A few ticks below the lows', 'Where the idea is invalidated, beyond the level plus a volatility buffer, with size reduced to fit risk', 'No stop; use a mental stop'], a: 2, why: 'Obvious levels attract sweeps; a volatility-based buffer and size adjustment keep risk constant while avoiding the crowd.' },
   { id: 'L3-M4-q13', module: 'L3-M4', d: 3, q: 'Bank Nifty sweeps the prior day low and reverses. Which explanation can you rule out from the chart alone?', o: ['Short covering by intraday traders', 'An option dealer hedging', 'Random fluctuation', 'None of these — the chart cannot distinguish among them'], a: 3, why: 'A sweep-and-reverse bar is consistent with many explanations; price data alone cannot identify participants.' },
   /* ---------- L3-M5 ---------- */
-  { id: 'L3-M5-q01', module: 'L3-M5', d: 1, q: 'Which ratio measures return on all capital employed (equity plus debt)?', o: ['ROE', 'ROCE', 'P/E', 'EPS'], a: 1, why: 'ROCE = EBIT ÷ capital employed; ROE uses equity only.' },
+  { id: 'L3-M5-q01', module: 'L3-M5', d: 1, q: 'Which ratio measures return on all capital employed (equity plus debt)?', o: ["ROCE","ROE","P/E","EPS"], a: 0, why: 'ROCE = EBIT ÷ capital employed; ROE uses equity only.' },
   { id: 'L3-M5-q02', module: 'L3-M5', d: 2, q: 'Net profit ₹900 crore, 45 crore shares, price ₹1,100. EPS and P/E?', o: ['EPS ₹20, P/E 55', 'EPS ₹20, P/E 50', 'EPS ₹45, P/E 24', 'EPS ₹24, P/E 45'], a: 0, why: 'EPS = 900 ÷ 45 = ₹20; P/E = 1,100 ÷ 20 = 55.' },
-  { id: 'L3-M5-q03', module: 'L3-M5', d: 2, q: 'Debt ₹2,400 crore, equity ₹800 crore. What is D/E and what does it suggest for intraday risk?', o: ['0.33; very low leverage', '3.0; high leverage, greater event and downgrade risk', '1.0; neutral', '30; impossible'], a: 1, why: '2,400 ÷ 800 = 3.0. High leverage increases sensitivity to adverse news.' },
-  { id: 'L3-M5-q04', module: 'L3-M5', d: 2, q: 'A stock closes at ₹750 before its ex-dividend date; dividend ₹15. It opens at ₹737. On an adjusted basis, the move is…', o: ['−1.7%', 'About +0.3%', '−2.0%', '0%'], a: 1, why: 'Adjusted reference ≈ ₹735; ₹737 is about ₹2 higher, roughly +0.3%.' },
+  { id: 'L3-M5-q03', module: 'L3-M5', d: 2, q: 'Debt ₹2,400 crore, equity ₹800 crore. What is D/E and what does it suggest for intraday risk?', o: ["0.33; very low leverage","1.0; neutral","3.0; high leverage, greater event and downgrade risk","30; impossible"], a: 2, why: '2,400 ÷ 800 = 3.0. High leverage increases sensitivity to adverse news.' },
+  { id: 'L3-M5-q04', module: 'L3-M5', d: 2, q: 'A stock closes at ₹750 before its ex-dividend date; dividend ₹15. It opens at ₹737. On an adjusted basis, the move is…', o: ["−1.7%","−2.0%","0%","About +0.3%"], a: 3, why: 'Adjusted reference ≈ ₹735; ₹737 is about ₹2 higher, roughly +0.3%.' },
   { id: 'L3-M5-q05', module: 'L3-M5', d: 3, q: 'You hold 400 shares long at ₹1,500 with a stop at ₹1,480 into an after-hours results release. The stock opens at ₹1,410. Approximate loss?', o: ['₹8,000', '₹36,000', '₹20,000', '₹4,000'], a: 1, why: 'The stop cannot fill until the open: (1,500 − 1,410) × 400 = ₹36,000, far above the planned ₹8,000.' },
   { id: 'L3-M5-q06', module: 'L3-M5', d: 2, q: 'Rights issue: 1 new for every 5 held at ₹300; stock price ₹420. Theoretical ex-rights price?', o: ['₹400', '₹360', '₹410', '₹420'], a: 0, why: 'TERP = (5 × 420 + 1 × 300) ÷ 6 = 2,400 ÷ 6 = ₹400.' },
-  { id: 'L3-M5-q07', module: 'L3-M5', d: 2, q: 'RBI MPC cuts the repo rate by 25 bp as fully expected but signals concern about liquidity. Bank Nifty spikes then falls. Which lesson applies?', o: ['Decisions are always bullish', 'When a decision is priced, guidance and details drive the sustained reaction', 'MPC decisions do not affect banks', 'Always buy before the decision'], a: 1, why: 'The surprise lies in guidance; the initial spike is often a headline reaction.' },
-  { id: 'L3-M5-q08', module: 'L3-M5', d: 2, q: 'Around what time (ET) are the FOMC statement and press conference released?', o: ['08:30 and 09:30', '14:00 and 14:30', '10:00 and 11:00', '16:00 and 16:30'], a: 1, why: 'The FOMC statement is at 14:00 ET with the press conference at 14:30 ET (verify on federalreserve.gov).' },
-  { id: 'L3-M5-q09', module: 'L3-M5', d: 3, q: 'Risk budget ₹7,000. Your logged reaction to US NFP in GIFT Nifty is about 90 points. Nifty lot 65. How many lots can you hold through?', o: ['0 lots', '1 lot', '2 lots', '3 lots'], a: 1, why: '7,000 ÷ 90 ≈ 77 units, so 1 lot (65). Two lots would risk about ₹11,700.' },
+  { id: 'L3-M5-q07', module: 'L3-M5', d: 2, q: 'RBI MPC cuts the repo rate by 25 bp as fully expected but signals concern about liquidity. Bank Nifty spikes then falls. Which lesson applies?', o: ["When a decision is priced, guidance and details drive the sustained reaction","Decisions are always bullish","MPC decisions do not affect banks","Always buy before the decision"], a: 0, why: 'The surprise lies in guidance; the initial spike is often a headline reaction.' },
+  { id: 'L3-M5-q08', module: 'L3-M5', d: 2, q: 'Around what time (ET) are the FOMC statement and press conference released?', o: ["08:30 and 09:30","10:00 and 11:00","14:00 and 14:30","16:00 and 16:30"], a: 2, why: 'The FOMC statement is at 14:00 ET with the press conference at 14:30 ET (verify on federalreserve.gov).' },
+  { id: 'L3-M5-q09', module: 'L3-M5', d: 3, q: 'Risk budget ₹7,000. Your logged reaction to US NFP in GIFT Nifty is about 90 points. Nifty lot 65. How many lots can you hold through?', o: ["0 lots","2 lots","3 lots","1 lot"], a: 3, why: '7,000 ÷ 90 ≈ 77 units, so 1 lot (65). Two lots would risk about ₹11,700.' },
   { id: 'L3-M5-q10', module: 'L3-M5', d: 2, q: 'US CPI comes in at consensus, but the prior month is revised up sharply. How should you read it?', o: ['A neutral print — nothing changed', 'Potentially hawkish, because revisions alter the inflation picture', 'Bullish because the headline matched', 'Irrelevant to equities'], a: 1, why: 'Revisions are part of the surprise; markets react to the full information set, not just the headline.' },
   { id: 'L3-M5-q11', module: 'L3-M5', d: 1, q: 'India CPI is published by which body?', o: ['RBI', 'SEBI', 'MoSPI (National Statistics Office)', 'NSE'], a: 2, why: 'CPI is released by the Ministry of Statistics and Programme Implementation; RBI uses it for policy.' },
   { id: 'L3-M5-q12', module: 'L3-M5', d: 3, q: 'A stock\'s ATM straddle costs ₹42 on a ₹700 stock the day before results. You want gap risk ≤ ₹6,000. Approximate maximum position?', o: ['About 140 shares', 'About 1,000 shares', 'About 6,000 shares', 'About 60 shares'], a: 0, why: 'Implied move ≈ 42 ÷ 700 = 6% ≈ ₹42 per share; 6,000 ÷ 42 ≈ 143 shares.' },
-  { id: 'L3-M5-q13', module: 'L3-M5', d: 2, q: 'Why do long options bought just before a scheduled release often disappoint?', o: ['STT doubles on event days', 'Implied volatility usually falls after the event, so a smaller-than-priced move can lose money', 'Options cannot be traded on event days', 'Delta becomes zero'], a: 1, why: 'IV rises into events and drops afterwards; vega losses can offset directional gains.' },
+  { id: 'L3-M5-q13', module: 'L3-M5', d: 2, q: 'Why do long options bought just before a scheduled release often disappoint?', o: ["Implied volatility usually falls after the event, so a smaller-than-priced move can lose money","STT doubles on event days","Options cannot be traded on event days","Delta becomes zero"], a: 0, why: 'IV rises into events and drops afterwards; vega losses can offset directional gains.' },
   /* ---------- L3-M6 ---------- */
-  { id: 'L3-M6-q01', module: 'L3-M6', d: 1, q: 'What makes a trading hypothesis testable?', o: ['It is based on a famous indicator', 'It specifies exact conditions, entry, stop, exit, universe and success criteria so it can be proven wrong', 'It has a high win rate', 'It is endorsed by a mentor'], a: 1, why: 'Falsifiability requires precise, pre-defined rules and decision criteria.' },
+  { id: 'L3-M6-q01', module: 'L3-M6', d: 1, q: 'What makes a trading hypothesis testable?', o: ["It is based on a famous indicator","It has a high win rate","It specifies exact conditions, entry, stop, exit, universe and success criteria so it can be proven wrong","It is endorsed by a mentor"], a: 2, why: 'Falsifiability requires precise, pre-defined rules and decision criteria.' },
   { id: 'L3-M6-q02', module: 'L3-M6', d: 2, q: 'n = 64 trades, mean R = +0.25, SD = 1.6R. t-statistic?', o: ['1.25', '2.5', '0.16', '4.0'], a: 0, why: 'SE = 1.6 ÷ 8 = 0.2; t = 0.25 ÷ 0.2 = 1.25.' },
-  { id: 'L3-M6-q03', module: 'L3-M6', d: 3, q: 'Mean R = 0.12, SD = 1.2R. Approximately how many trades are needed for t = 3?', o: ['300', '900', '100', '3,000'], a: 1, why: 'n ≈ (3 × 1.2 ÷ 0.12)² = 30² = 900.' },
+  { id: 'L3-M6-q03', module: 'L3-M6', d: 3, q: 'Mean R = 0.12, SD = 1.2R. Approximately how many trades are needed for t = 3?', o: ["300","100","3,000","900"], a: 3, why: 'n ≈ (3 × 1.2 ÷ 0.12)² = 30² = 900.' },
   { id: 'L3-M6-q04', module: 'L3-M6', d: 2, q: 'A rule uses the day\'s closing VWAP to decide a 10:30 entry. Which bias is this?', o: ['Survivorship', 'Look-ahead', 'Selection', 'Recency'], a: 1, why: 'The full-day VWAP is not known at 10:30; using it leaks future information.' },
   { id: 'L3-M6-q05', module: 'L3-M6', d: 2, q: 'n = 225, mean R = 0.18, SD = 1.5R. What is the approximate 95% confidence interval for mean R?', o: ['−0.02 to 0.38', '0.08 to 0.28', '0.15 to 0.21', '−0.18 to 0.54'], a: 0, why: 'SE = 1.5 ÷ √225 = 1.5 ÷ 15 = 0.10; 0.18 ± 2 × 0.10 = −0.02 to 0.38. The interval includes zero, so the edge is not yet established.' },
-  { id: 'L3-M6-q06', module: 'L3-M6', d: 3, q: 'You tried 50 parameter combinations; the best has t = 2.4. What is the most reasonable view?', o: ['Strong evidence of an edge', 'Weak evidence; after 50 trials a t of 2.4 is quite plausible by chance — test on untouched data', 'Proof the strategy works in all markets', 'The result should be doubled for safety'], a: 1, why: 'Multiple testing inflates false positives; Bonferroni would demand a much higher threshold.' },
-  { id: 'L3-M6-q07', module: 'L3-M6', d: 2, q: 'In a bar-by-bar backtest, when is a limit buy at ₹500 safely counted as filled?', o: ['When the bar low equals ₹500', 'When price trades through ₹500 (e.g. low ₹499.80)', 'Whenever the bar opens above ₹500', 'At the bar close regardless'], a: 1, why: 'A touch does not guarantee a fill due to queue position; trade-through is the conservative rule.' },
-  { id: 'L3-M6-q08', module: 'L3-M6', d: 2, q: 'Which split best protects against overfitting?', o: ['Optimise on all data, then test on all data', 'Develop on earlier data and test once on a held-out later period', 'Test only on the most volatile year', 'Use the period with the best results'], a: 1, why: 'A single, untouched out-of-sample test gives an honest estimate; repeated peeking destroys it.' },
-  { id: 'L3-M6-q09', module: 'L3-M6', d: 2, q: 'Long Nifty future, entry 24,300, stop 24,260, exit 24,360. Costs plus slippage ≈ 5 points. Net R?', o: ['1.5R', '1.375R', '1.25R', '1.625R'], a: 1, why: '(60 − 5) ÷ 40 = 1.375R.' },
-  { id: 'L3-M6-q10', module: 'L3-M6', d: 3, q: 'A backtest of a small-cap momentum strategy uses only companies listed today. Results look strong. What is the main concern?', o: ['Look-ahead in indicators', 'Survivorship bias — failed and delisted companies are missing', 'Too few parameters', 'Costs are too high'], a: 1, why: 'Excluding companies that failed removes many losers, inflating returns.' },
-  { id: 'L3-M6-q11', module: 'L3-M6', d: 2, q: 'What does walk-forward analysis evaluate?', o: ['One optimal parameter for all time', 'The performance of a process of periodic re-optimisation, measured on successive out-of-sample windows', 'Only the latest month', 'The number of indicators used'], a: 1, why: 'It rolls an optimisation window forward and stitches together out-of-sample segments.' },
-  { id: 'L3-M6-q12', module: 'L3-M6', d: 3, q: 'Your strategy shows mean +0.30R over 120 trades, but removing the top 4 trades drops it to +0.02R. What does this tell you?', o: ['The strategy is robust', 'Results depend on a few outliers; the estimate is fragile and needs a larger sample or a skew-aware assessment', 'Outliers should be deleted permanently', 'The SD must be zero'], a: 1, why: 'Heavy dependence on a few trades indicates high uncertainty in the mean.' },
+  { id: 'L3-M6-q06', module: 'L3-M6', d: 3, q: 'You tried 50 parameter combinations; the best has t = 2.4. What is the most reasonable view?', o: ["Weak evidence; after 50 trials a t of 2.4 is quite plausible by chance — test on untouched data","Strong evidence of an edge","Proof the strategy works in all markets","The result should be doubled for safety"], a: 0, why: 'Multiple testing inflates false positives; Bonferroni would demand a much higher threshold.' },
+  { id: 'L3-M6-q07', module: 'L3-M6', d: 2, q: 'In a bar-by-bar backtest, when is a limit buy at ₹500 safely counted as filled?', o: ["When the bar low equals ₹500","Whenever the bar opens above ₹500","When price trades through ₹500 (e.g. low ₹499.80)","At the bar close regardless"], a: 2, why: 'A touch does not guarantee a fill due to queue position; trade-through is the conservative rule.' },
+  { id: 'L3-M6-q08', module: 'L3-M6', d: 2, q: 'Which split best protects against overfitting?', o: ["Optimise on all data, then test on all data","Test only on the most volatile year","Use the period with the best results","Develop on earlier data and test once on a held-out later period"], a: 3, why: 'A single, untouched out-of-sample test gives an honest estimate; repeated peeking destroys it.' },
+  { id: 'L3-M6-q09', module: 'L3-M6', d: 2, q: 'Long 1 lot Nifty futures, entry 24,300, stop 24,260, exit 24,360. Charges (about ₹940 per lot round trip as of Nov 2026) plus slippage come to about 15 points. Net R?', o: ['1.5R', '1.125R', '1.25R', '0.75R'], a: 1, why: '(60 − 15) ÷ 40 = 1.125R. Ignoring charges would report 1.5R; on a 40-point stop, costs are over a third of R.' },
+  { id: 'L3-M6-q10', module: 'L3-M6', d: 3, q: 'A backtest of a small-cap momentum strategy uses only companies listed today. Results look strong. What is the main concern?', o: ["Survivorship bias — failed and delisted companies are missing","Look-ahead in indicators","Too few parameters","Costs are too high"], a: 0, why: 'Excluding companies that failed removes many losers, inflating returns.' },
+  { id: 'L3-M6-q11', module: 'L3-M6', d: 2, q: 'What does walk-forward analysis evaluate?', o: ["One optimal parameter for all time","Only the latest month","The performance of a process of periodic re-optimisation, measured on successive out-of-sample windows","The number of indicators used"], a: 2, why: 'It rolls an optimisation window forward and stitches together out-of-sample segments.' },
+  { id: 'L3-M6-q12', module: 'L3-M6', d: 3, q: 'Your strategy shows mean +0.30R over 120 trades, but removing the top 4 trades drops it to +0.02R. What does this tell you?', o: ["The strategy is robust","Outliers should be deleted permanently","The SD must be zero","Results depend on a few outliers; the estimate is fragile and needs a larger sample or a skew-aware assessment"], a: 3, why: 'Heavy dependence on a few trades indicates high uncertainty in the mean.' },
   { id: 'L3-M6-q13', module: 'L3-M6', d: 1, q: 'A Monte Carlo reshuffle of a trade list mainly helps you understand…', o: ['Which indicator to use', 'The range of drawdowns and streaks possible with the same edge', 'Exchange charges', 'Future news events'], a: 1, why: 'Reordering outcomes shows sequence risk and plausible drawdowns.' },
   /* ---------- L3-M7 ---------- */
-  { id: 'L3-M7-q01', module: 'L3-M7', d: 1, q: 'An account falls from ₹4 lakh to ₹3 lakh. What gain is needed to recover?', o: ['25%', '33.3%', '20%', '50%'], a: 1, why: 'Drawdown 25%; gain needed = 0.25 ÷ 0.75 = 33.3%.' },
-  { id: 'L3-M7-q02', module: 'L3-M7', d: 2, q: 'Risk 1% per trade compounded. Approximately how much drawdown do 12 consecutive losses produce?', o: ['−12%', '−11.4%', '−10%', '−8.9%'], a: 1, why: '1 − 0.99^12 ≈ 1 − 0.886 = 11.4%.' },
+  { id: 'L3-M7-q01', module: 'L3-M7', d: 1, q: 'An account falls from ₹4 lakh to ₹3 lakh. What gain is needed to recover?', o: ["33.3%","25%","20%","50%"], a: 0, why: 'Drawdown 25%; gain needed = 0.25 ÷ 0.75 = 33.3%.' },
+  { id: 'L3-M7-q02', module: 'L3-M7', d: 2, q: 'Risk 1% per trade compounded. Approximately how much drawdown do 12 consecutive losses produce?', o: ["−12%","−10%","−11.4%","−8.9%"], a: 2, why: '1 − 0.99^12 ≈ 1 − 0.886 = 11.4%.' },
   { id: 'L3-M7-q03', module: 'L3-M7', d: 3, q: 'Simple risk-of-ruin model: p = 0.55, even payoff. Ruin is 10 units away versus 20 units away. Approximately how do the probabilities compare?', o: ['They are equal', 'About 13% versus about 2%', 'About 2% versus about 13%', 'Both are zero'], a: 1, why: '(0.45 ÷ 0.55)^10 ≈ 0.134; ^20 ≈ 0.018. Halving risk per trade doubles the units to ruin and sharply cuts the probability.' },
   { id: 'L3-M7-q04', module: 'L3-M7', d: 2, q: 'Kelly fraction for p = 0.5, payoff b = 1.5?', o: ['16.7%', '33%', '50%', '0%'], a: 0, why: 'f* = 0.5 − 0.5 ÷ 1.5 = 0.5 − 0.333 = 0.167.' },
-  { id: 'L3-M7-q05', module: 'L3-M7', d: 2, q: 'Capital ₹12 lakh, per-trade risk 0.75%, daily limit 3R. What is the daily limit in rupees?', o: ['₹9,000', '₹27,000', '₹36,000', '₹18,000'], a: 1, why: 'R = ₹9,000; 3R = ₹27,000.' },
-  { id: 'L3-M7-q06', module: 'L3-M7', d: 3, q: 'You are at −₹16,000 with a daily limit of ₹20,000. Your next Bank Nifty futures setup has a 50-point stop (lot 30). Maximum lots?', o: ['0', '2', '3', '4'], a: 1, why: 'Remaining ₹4,000; one lot risks 50 × 30 = ₹1,500; 2 lots = ₹3,000 fits, 3 lots = ₹4,500 does not.' },
+  { id: 'L3-M7-q05', module: 'L3-M7', d: 2, q: 'Capital ₹12 lakh, per-trade risk 0.75%, daily limit 3R. What is the daily limit in rupees?', o: ["₹9,000","₹36,000","₹18,000","₹27,000"], a: 3, why: 'R = ₹9,000; 3R = ₹27,000.' },
+  { id: 'L3-M7-q06', module: 'L3-M7', d: 3, q: 'You are at −₹16,000 with a daily limit of ₹20,000. Your next Bank Nifty futures setup has a 50-point stop (lot 30). Counting price risk only (ignore charges), maximum lots?', o: ['0', '2', '3', '4'], a: 1, why: 'Remaining ₹4,000; one lot risks 50 × 30 = ₹1,500; 2 lots = ₹3,000 fits, 3 lots = ₹4,500 does not. In practice add charges (roughly ₹930 per Bank Nifty lot round trip as of Nov 2026): 2 lots then risk about ₹4,860, so only 1 lot truly fits.' },
   { id: 'L3-M7-q07', module: 'L3-M7', d: 2, q: 'Long 4 lots, R = 30 points. You sell 2 lots at +30 and the remainder hits +90. Result in R for the whole position?', o: ['+2R', '+1.5R', '+3R', '+1R'], a: 0, why: 'Half earns 1R, half earns 3R: average (1 + 3) ÷ 2 = 2R.' },
-  { id: 'L3-M7-q08', module: 'L3-M7', d: 2, q: 'Which practice increases risk on a trade that is going against you?', o: ['Scaling in after confirmation with a tighter combined stop', 'Averaging down', 'Taking a partial exit', 'Trailing a stop'], a: 1, why: 'Averaging down adds exposure to a losing idea; the others reduce or hold risk.' },
+  { id: 'L3-M7-q08', module: 'L3-M7', d: 2, q: 'Which practice increases risk on a trade that is going against you?', o: ["Averaging down","Scaling in after confirmation with a tighter combined stop","Taking a partial exit","Trailing a stop"], a: 0, why: 'Averaging down adds exposure to a losing idea; the others reduce or hold risk.' },
   { id: 'L3-M7-q09', module: 'L3-M7', d: 2, q: 'ATR(14) = 14, multiplier 2.5, highest high since entry 2,460. Trailing stop?', o: ['2,425', '2,446', '2,432', '2,474'], a: 0, why: '2,460 − 2.5 × 14 = 2,460 − 35 = 2,425.' },
-  { id: 'L3-M7-q10', module: 'L3-M7', d: 3, q: 'Two positions with one-SD risk ₹6,000 and ₹8,000, correlation 0. Combined one-SD risk?', o: ['₹14,000', '₹10,000', '₹2,000', '₹7,000'], a: 1, why: '√(6,000² + 8,000²) = √(36 + 64) × 1,000 = ₹10,000.' },
+  { id: 'L3-M7-q10', module: 'L3-M7', d: 3, q: 'Two positions with one-SD risk ₹6,000 and ₹8,000, correlation 0. Combined one-SD risk?', o: ["₹14,000","₹2,000","₹10,000","₹7,000"], a: 2, why: '√(6,000² + 8,000²) = √(36 + 64) × 1,000 = ₹10,000.' },
   { id: 'L3-M7-q11', module: 'L3-M7', d: 2, q: 'Capital ₹8 lakh, heat cap 2.5%. Open risks ₹7,000, ₹6,000 and ₹4,000. Maximum risk on a new trade?', o: ['₹3,000', '₹20,000', '₹0', '₹8,000'], a: 0, why: 'Cap = ₹20,000; current heat ₹17,000; remaining ₹3,000.' },
-  { id: 'L3-M7-q12', module: 'L3-M7', d: 3, q: 'You hold long HDFC Bank, long ICICI Bank and long Bank Nifty call options. A colleague says you are diversified across three instruments. What is the best response?', o: ['Agreed — three instruments', 'They share the same driver (banking sector), so treat them as one correlated group with a group risk cap', 'Options remove the correlation', 'Diversification only matters overnight'], a: 1, why: 'All three are driven largely by bank-sector moves; correlation, not ticker count, determines diversification.' },
+  { id: 'L3-M7-q12', module: 'L3-M7', d: 3, q: 'You hold long HDFC Bank, long ICICI Bank and long Bank Nifty call options. A colleague says you are diversified across three instruments. What is the best response?', o: ["Agreed — three instruments","Options remove the correlation","Diversification only matters overnight","They share the same driver (banking sector), so treat them as one correlated group with a group risk cap"], a: 3, why: 'All three are driven largely by bank-sector moves; correlation, not ticker count, determines diversification.' },
   { id: 'L3-M7-q13', module: 'L3-M7', d: 1, q: 'Why do correlations matter more in sell-offs?', o: ['They usually fall to zero', 'Correlations between risky assets tend to rise, so diversification weakens when it is most needed', 'Exchanges suspend correlation', 'They only affect bonds'], a: 1, why: 'Stress episodes commonly show rising co-movement among risky assets.' },
   );
 })(typeof window !== 'undefined' ? window : globalThis);

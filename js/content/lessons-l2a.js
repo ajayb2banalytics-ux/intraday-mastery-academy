@@ -113,8 +113,8 @@ For NVDA, which can move 3–5% intraday on news, use N = 3 on the 5-minute char
     ],
     check: [
       { q: 'Nifty 5-min makes HH 24,950, then breaks its last HL at 24,900 and closes at 24,880. What is the most accurate description?', o: ['A confirmed downtrend', 'The uptrend definition has failed; a downtrend is not yet confirmed', 'The uptrend is intact because the daily is up', 'A range, so short the next high'], a: 1, why: 'Breaking the last higher low invalidates the uptrend, but a downtrend also needs a lower high followed by a lower low. Option A jumps ahead; C mixes timeframes; D assumes a range without evidence.' },
-      { q: 'Why does a swing-point trend definition always have lag?', o: ['Because exchanges delay data', 'Because a swing point is only confirmed after N subsequent bars fail to exceed it', 'Because volume must confirm first', 'It has no lag; it is visible instantly'], a: 1, why: 'A fractal swing needs N bars on its right side; you cannot know a low was the low until later bars stay above it.' },
-      { q: 'SPY prints higher highs but QQQ prints lower highs on the same morning. How should a Dow-style trader read this?', o: ['As a sell signal for SPY', 'As non-confirmation: a weaker, narrower context that may justify smaller size', 'As irrelevant', 'As proof institutions are distributing'], a: 1, why: 'Non-confirmation is context, not a timing signal. It does not prove institutional distribution.' },
+      { q: 'Why does a swing-point trend definition always have lag?', o: ['Because exchanges delay data', 'Because volume must confirm first', 'Because a swing point is only confirmed after N subsequent bars fail to exceed it', 'It has no lag; it is visible instantly'], a: 2, why: 'A fractal swing needs N bars on its right side; you cannot know a low was the low until later bars stay above it.' },
+      { q: 'SPY prints higher highs but QQQ prints lower highs on the same morning. How should a Dow-style trader read this?', o: ['As a sell signal for SPY', 'As proof institutions are distributing', 'As irrelevant', 'As non-confirmation: a weaker, narrower context that may justify smaller size'], a: 3, why: 'Non-confirmation is context, not a timing signal. It does not prove institutional distribution.' },
     ],
     refs: ['Robert Rhea — The Dow Theory (book)', 'John J. Murphy — Technical Analysis of the Financial Markets (book)', 'Moskowitz, Ooi, Pedersen — Time Series Momentum, Journal of Financial Economics (2012)'],
   },
@@ -210,8 +210,8 @@ If VWAP were at 24,830 instead, reward = 25 points, R ≈ 0.8 — skip, even tho
     ],
     check: [
       { q: 'A Nifty support zone looks excellent, but the next resistance is 18 points away and your stop must be 30 points away. What should you do?', o: ['Take it; strong support matters most', 'Skip or wait: reward-to-risk is below 1', 'Widen the target beyond resistance', 'Tighten the stop inside the zone'], a: 1, why: 'Room to the next level decides R. Tightening a stop inside the zone puts it where normal noise will hit it; moving the target ignores the obstacle.' },
-      { q: 'Why are obvious lows often briefly breached before price reverses?', o: ['Exchanges manipulate prices', 'Clustered stop orders below the low supply liquidity that larger buyers can absorb', 'Indicators lag', 'It never happens'], a: 1, why: 'Stops beyond obvious levels become market orders when triggered, giving liquidity to opposite-side participants. No manipulation is needed to explain it.' },
-      { q: 'Which statement is honest about supply and demand zones?', o: ['They reveal unfilled institutional orders', 'They are areas of prior fast movement; any institutional story is unverifiable from a chart', 'They are established science', 'They work best on news days'], a: 1, why: 'A chart shows only past prices and volume, not who traded or what is unfilled.' },
+      { q: 'Why are obvious lows often briefly breached before price reverses?', o: ['Clustered stop orders below the low supply liquidity that larger buyers can absorb', 'Exchanges manipulate prices', 'Indicators lag', 'It never happens'], a: 0, why: 'Stops beyond obvious levels become market orders when triggered, giving liquidity to opposite-side participants. No manipulation is needed to explain it.' },
+      { q: 'Which statement is honest about supply and demand zones?', o: ['They reveal unfilled institutional orders', 'They are established science', 'They are areas of prior fast movement; any institutional story is unverifiable from a chart', 'They work best on news days'], a: 2, why: 'A chart shows only past prices and volume, not who traded or what is unfilled.' },
     ],
     refs: ['John J. Murphy — Technical Analysis of the Financial Markets (book)', 'Carol Osler — Support for Resistance: Technical Analysis and Intraday Exchange Rates, FRBNY Economic Policy Review (2000)', 'Larry Harris — Trading and Exchanges (book)'],
   },
@@ -292,9 +292,9 @@ Notice the line rises 10 points per bar: if you wait 6 bars for a better entry, 
 4. Compare the trendline with the 20 EMA: how often did both "hold" together?` },
     ],
     check: [
-      { q: 'Swing lows: 24,800 at bar 5 and 24,860 at bar 17. What is the projected line at bar 29?', o: ['24,880', '24,920', '24,900', '24,860'], a: 1, why: 'Slope = 60 ÷ 12 = 5 points per bar. Bar 29 is 24 bars after bar 5: 24,800 + 5 × 24 = 24,920.' },
+      { q: 'Swing lows: 24,800 at bar 5 and 24,860 at bar 17. What is the projected line at bar 29?', o: ['24,880', '24,860', '24,900', '24,920'], a: 3, why: 'Slope = 60 ÷ 12 = 5 points per bar. Bar 29 is 24 bars after bar 5: 24,800 + 5 × 24 = 24,920.' },
       { q: 'Price closes below your validated uptrend line but the last higher low is still intact. What is the best reading?', o: ['Confirmed downtrend; go short', 'The slope has changed; the structure has not yet broken', 'Redraw the line through the new low', 'Ignore it'], a: 1, why: 'A trendline break ends a slope. The Dow structure is only broken when the last higher low fails. Redrawing after the fact removes discipline.' },
-      { q: 'Why might a linear regression channel be preferred in a backtest?', o: ['It is more profitable', 'It is reproducible: the same data always give the same line', 'It has no lag', 'Institutions use it'], a: 1, why: 'Reproducibility is required for testing. No claim of extra profitability or zero lag is justified.' },
+      { q: 'Why might a linear regression channel be preferred in a backtest?', o: ['It is reproducible: the same data always give the same line', 'It is more profitable', 'It has no lag', 'Institutions use it'], a: 0, why: 'Reproducibility is required for testing. No claim of extra profitability or zero lag is justified.' },
     ],
     refs: ['John J. Murphy — Technical Analysis of the Financial Markets (book)', 'Edwards and Magee — Technical Analysis of Stock Trends (book)', 'Thomas Bulkowski — Encyclopedia of Chart Patterns (book)'],
   },
@@ -389,8 +389,8 @@ If you win 40% of breakout trades at +1.7R and lose 60% at −1R, expectancy = 0
 5. Use [[widget:expectancy]] with your own win rate and average R.` },
     ],
     check: [
-      { q: 'A range is 24,860–24,910. Using the measured-move convention, where is the target for an upside break?', o: ['24,935', '24,960', '24,910', '25,010'], a: 1, why: 'Height 50 points added to the breakout level: 24,910 + 50 = 24,960.' },
-      { q: 'NVDA breaks yesterday\'s high, then closes back inside the range 20 minutes later. Which plan reflects the mechanics?', o: ['Buy more; it will break again', 'Consider a fade below the failure bar with a stop above the failed high', 'Assume manipulation and stop trading', 'Hold the long because volume was high'], a: 1, why: 'Trapped breakout buyers and their stops can fuel a move back through the range. That is the failed-breakout setup, with a defined stop.' },
+      { q: 'A range is 24,860–24,910. Using the measured-move convention, where is the target for an upside break?', o: ['24,935', '24,910', '24,960', '25,010'], a: 2, why: 'Height 50 points added to the breakout level: 24,910 + 50 = 24,960.' },
+      { q: 'NVDA breaks yesterday\'s high, then closes back inside the range 20 minutes later. Which plan reflects the mechanics?', o: ['Buy more; it will break again', 'Hold the long because volume was high', 'Assume manipulation and stop trading', 'Consider a fade below the failure bar with a stop above the failed high'], a: 3, why: 'Trapped breakout buyers and their stops can fuel a move back through the range. That is the failed-breakout setup, with a defined stop.' },
       { q: 'What is the main trade-off of retest entries compared with stop-buy breakout entries?', o: ['Retests have wider stops', 'Retests give better price and tighter stops but miss breakouts that never pull back', 'Retests are always more profitable', 'There is no difference'], a: 1, why: 'Waiting improves location but reduces participation in the strongest moves.' },
     ],
     refs: ['Linda Bradford Raschke and Laurence Connors — Street Smarts (book)', 'Thomas Bulkowski — Encyclopedia of Chart Patterns (book)', 'Larry Harris — Trading and Exchanges (book)', 'Carol Osler — Currency Orders and Exchange Rate Dynamics: An Explanation for the Predictive Success of Technical Analysis, Journal of Finance (2003)'],
@@ -479,9 +479,9 @@ On the daily chart of a mid-cap stock, months of sideways movement after a fall,
 4. Journal which side triggered and whether your "accumulation/distribution" guess was right.` },
     ],
     check: [
-      { q: 'Closes over 5 bars net +20 points with total absolute bar changes of 160 points. What does the efficiency ratio suggest?', o: ['Strong trend', 'Range-like, choppy conditions', 'A breakout has started', 'Accumulation by institutions'], a: 1, why: 'ER = 20 ÷ 160 = 0.125, which is low and choppy. ER cannot tell you who is trading.' },
+      { q: 'Closes over 5 bars net +20 points with total absolute bar changes of 160 points. What does the efficiency ratio suggest?', o: ['Range-like, choppy conditions', 'Strong trend', 'A breakout has started', 'Accumulation by institutions'], a: 0, why: 'ER = 20 ÷ 160 = 0.125, which is low and choppy. ER cannot tell you who is trading.' },
       { q: 'A tight range forms after a strong rally. What can you honestly conclude?', o: ['It is distribution', 'It is re-accumulation', 'An expansion is plausible but direction is unknown; plan both sides', 'Price must fall'], a: 2, why: 'Volatility clustering hints at expansion; the label is only knowable after the break.' },
-      { q: 'Which tool belongs in a confirmed markup phase?', o: ['Fading every new high', 'Buying pullbacks with stops below higher lows', 'Selling options at random', 'Waiting for accumulation'], a: 1, why: 'In a trend, pullback entries in the trend direction align with the structure; fading fights it.' },
+      { q: 'Which tool belongs in a confirmed markup phase?', o: ['Fading every new high', 'Waiting for accumulation', 'Selling options at random', 'Buying pullbacks with stops below higher lows'], a: 3, why: 'In a trend, pullback entries in the trend direction align with the structure; fading fights it.' },
     ],
     refs: ['Richard D. Wyckoff — Studies in Tape Reading (book)', 'Perry Kaufman — Trading Systems and Methods (book)', 'Rama Cont — Empirical properties of asset returns: stylized facts and statistical issues, Quantitative Finance (2001)'],
   },
@@ -543,7 +543,7 @@ Why it matters: these levels are watched by a very large number of participants,
 
 [[chart:NIFTY:64:vwap,vol]]` },
       { h: 'Advanced view', md: `### Relative OR width
-A narrow OR (say less than 40% of the 14-day average daily range) suggests the open was balanced and leaves room for expansion. A wide OR suggests a lot of the day's range may already be used. Professionals size and select ORB trades using this ratio, not the raw OR.
+A narrow OR (say less than 40% of the 14-day average daily range — a practitioner threshold, not a tested constant) suggests the open was balanced and leaves room for expansion. A wide OR suggests a lot of the day's range may already be used. Many ORB traders filter and size trades with a relative measure like this rather than the raw OR; calibrate the threshold on your own data.
 
 ### Pre-open auction in India
 NSE's pre-open call auction (09:00–09:08 IST order entry, then order matching before the 09:15 open) sets the equilibrium opening price for stocks in the cash segment; the index's opening value is computed from those constituent prices. Check nseindia.com for which F&O contracts currently have a pre-open session (as of Nov 2026 — verify). A large gap discovered in pre-open often comes with a burst of volatility at 09:15. Many traders wait until at least 09:20 or 09:30 to let the first auction settle.
@@ -587,7 +587,7 @@ The numbers show why levels must be checked against R before entering — a narr
 - **"The first candle tells you the day."** It is one piece of information, often noisy.
 - **"PDH/PDL are exact."** Treat them as zones with a small buffer.` },
       { h: 'When it fails', md: `- Wide OR days: stops too wide, targets too close.
-- Days with news scheduled mid-morning (RBI policy at 10:00 IST).
+- Days with news scheduled mid-morning (RBI policy announcements are usually at 10:00 IST — check the RBI calendar).
 - Range days where the OR is broken both ways.
 - **Losing example.** Nifty OR 24,880–24,920. Long on a close above 24,920 at 24,923, stop 24,900. Price pokes to 24,935, then reverses through OR low by 10:20. Stopped for −23 × 65 = −₹1,495 per lot, plus roughly ₹950–1,000 in charges (mostly STT on the futures sell leg at Nov 2026 rates — check with [[widget:charges-india]]). Later the short side of the OR works; you were not wrong to take the first trade, but if you skipped the opposite trigger out of frustration, you missed the plan's other half.` },
       { h: 'Exercise', md: `1. Before the open in the simulator, write PDH, PDL, PDC and the expected gap for NIFTY.
@@ -598,8 +598,8 @@ The numbers show why levels must be checked against R before entering — a narr
     ],
     check: [
       { q: 'PDC 24,850, open 24,935, PDH 24,910. Which gap type is this?', o: ['Gap inside yesterday\'s range', 'Gap outside the range (above PDH)', 'No gap', 'Gap down'], a: 1, why: '24,935 is above PDH 24,910, so the open is outside yesterday\'s range.' },
-      { q: 'The OR width is 120 points and ADR(14) is 150 points. What does this imply for an ORB trade?', o: ['Ideal setup', 'Most of the typical range is used; stops are wide and targets limited', 'Guaranteed trend day', 'Nothing'], a: 1, why: 'Relative OR of 0.8 leaves little typical range for follow-through and makes stops costly.' },
-      { q: 'An ORB long breaks out, then price returns inside the OR. What does experience suggest about a later break of OR low?', o: ['It cannot happen', 'It may be stronger because breakout buyers are trapped', 'It is always weaker', 'It must be ignored'], a: 1, why: 'Trapped traders and their stops can add fuel to the opposite break — a tendency, not a rule.' },
+      { q: 'The OR width is 120 points and ADR(14) is 150 points. What does this imply for an ORB trade?', o: ['Most of the typical range is used; stops are wide and targets limited', 'Ideal setup', 'Guaranteed trend day', 'Nothing'], a: 0, why: 'Relative OR of 0.8 leaves little typical range for follow-through and makes stops costly.' },
+      { q: 'An ORB long breaks out, then price returns inside the OR. What does experience suggest about a later break of OR low?', o: ['It cannot happen', 'It is always weaker', 'It may be stronger because breakout buyers are trapped', 'It must be ignored'], a: 2, why: 'Trapped traders and their stops can add fuel to the opposite break — a tendency, not a rule.' },
     ],
     refs: ['Toby Crabel — Day Trading with Short Term Price Patterns and Opening Range Breakout (book)', 'NSE — Pre-open call auction (nseindia.com)', 'Linda Bradford Raschke and Laurence Connors — Street Smarts (book)'],
   },
@@ -674,14 +674,16 @@ Band k               = VWAP ± k × SD
 - Variance = 7,20,000 ÷ 40,000 = 18; SD ≈ ₹4.24.
 - +1 SD = ₹1,408.24; +2 SD = ₹1,412.49; −1 SD = ₹1,399.76.
 
-Bar 1's heavy volume pulled VWAP toward ₹1,400, even though the simple average of TP is ₹1,405.33.` },
+Bar 1's heavy volume pulled VWAP toward ₹1,400, even though the simple average of TP is ₹1,405.33.
+
+> [!note] Platforms differ in detail. The app's engine (and this lesson) uses typical price (H + L + C) ÷ 3 and resets VWAP at each session start; anchored VWAP uses the same sum, started at the anchor bar. Some platforms use the close, OHLC ÷ 4, or tick-by-tick trade prices, and some compute the bands with a different variance formula, so expect small differences between platforms.` },
       { h: 'India', md: `Nifty futures, trend day up (illustrative): VWAP 24,880 at 11:00 IST, +1 SD 24,915, +2 SD 24,950. Price has ridden between +1 and +2 SD all morning. A pullback reaches 24,912 and a 5-minute bar closes at 24,925.
 
 - Long at 24,927, stop 24,895 (below +1 SD with buffer and above VWAP) = 32 points × 65 = ₹2,080.
 - Target: +2 SD at 24,950 plus drift (bands rise through the day) → 24,960: 33 points (≈1R). Weak alone; trail instead of using a fixed target.
 
 Anchored example: HDFCBANK results day low ₹1,905 (illustrative). An AVWAP from that day's open sits at ₹1,932 three sessions later. Each test of ₹1,932 from below meets selling as buyers from results day try to exit at cost. A daily close above it shifts the picture.` },
-      { h: 'US & global', md: `SPY VWAP and bands are widely displayed by US platforms. On rotational days SPY often oscillates within ±1 SD. NVDA after a large gap: anchor VWAP at the 09:30 ET open and at the premarket high; if price holds above the open-anchored VWAP through the first hour, gap-and-go is intact. In DAX futures, many traders anchor VWAP at 09:00 CET (Xetra open) and again at 15:30 CET (US open).` },
+      { h: 'US & global', md: `SPY VWAP and bands are widely displayed by US platforms. On rotational days SPY often oscillates within ±1 SD. NVDA after a large gap: anchor VWAP at the 09:30 ET open and at the premarket high; if price holds above the open-anchored VWAP through the first hour, gap-and-go is intact. In DAX futures, many traders anchor VWAP at 09:00 CET (Xetra open) and again at the US open (15:30 CET for most of the year; 14:30 CET for a few weeks when US and European daylight-saving changes are out of step).` },
       { h: 'Common misconceptions', md: `- **"VWAP is where institutions buy."** It is an execution benchmark; institutions buy and sell all day.
 - **"Above VWAP = bullish, always."** It means the average buyer today is in profit; trend context still matters.
 - **"±2 SD is overbought."** On trend days price can ride +2 SD for hours.
@@ -696,9 +698,9 @@ Anchored example: HDFCBANK results day low ₹1,905 (illustrative). An AVWAP fro
 4. Journal five VWAP pullback trades and five band fades; record the day type each time.` },
     ],
     check: [
-      { q: 'Bars: TP 100 (vol 30), TP 110 (vol 10). What is VWAP?', o: ['105.0', '102.5', '107.5', '110.0'], a: 1, why: '(100 × 30 + 110 × 10) ÷ 40 = 4,100 ÷ 40 = 102.5.' },
+      { q: 'Bars: TP 100 (vol 30), TP 110 (vol 10). What is VWAP?', o: ['105.0', '110.0', '107.5', '102.5'], a: 3, why: '(100 × 30 + 110 × 10) ÷ 40 = 4,100 ÷ 40 = 102.5.' },
       { q: 'A fund executes a large buy "at VWAP". What does this tell you?', o: ['They will defend VWAP as support', 'Their execution quality is measured against VWAP; it says nothing about net market direction', 'VWAP will rise all day', 'Retail should buy at VWAP'], a: 1, why: 'VWAP benchmarking is about execution evaluation; buy and sell programmes run simultaneously.' },
-      { q: 'On which day type is fading a +2 SD tag most dangerous?', o: ['Rotational day', 'Trend day', 'Holiday', 'Pre-open'], a: 1, why: 'On trend days price can ride the upper bands for hours.' },
+      { q: 'On which day type is fading a +2 SD tag most dangerous?', o: ['Trend day', 'Rotational day', 'Holiday', 'Pre-open'], a: 0, why: 'On trend days price can ride the upper bands for hours.' },
     ],
     refs: ['Berkowitz, Logue and Noser — The Total Cost of Transactions on the NYSE, Journal of Finance (1988)', 'Brian Shannon — Maximum Trading Gains with Anchored VWAP (book)', 'Robert Kissell — The Science of Algorithmic Trading and Portfolio Management (book)'],
   },
@@ -803,8 +805,8 @@ Contrast: if it had opened 56,180 and moved up quickly through the 56,200–56,2
 4. For five sessions, record where tomorrow opened (inside or outside value) and whether the day was rotational or trending.` },
     ],
     check: [
-      { q: 'Total profile volume is 200k with POC 50k. When does the value area algorithm stop?', o: ['At 100k', 'At 140k or more', 'At 50k', 'At 200k'], a: 1, why: 'Value area targets 70% of total volume: 0.7 × 200k = 140k.' },
-      { q: 'Between your long entry and target lies an LVN, followed by an HVN at the target. What does profile logic suggest?', o: ['Price will stop at the LVN', 'Price may move quickly through the LVN and meet friction at the HVN', 'Volume profile is irrelevant', 'The HVN guarantees a reversal'], a: 1, why: 'Little prior trade at LVNs offers little friction; HVNs are where two-sided trade slowed price before.' },
+      { q: 'Total profile volume is 200k with POC 50k. When does the value area algorithm stop?', o: ['At 100k', 'At 50k', 'At 140k or more', 'At 200k'], a: 2, why: 'Value area targets 70% of total volume: 0.7 × 200k = 140k.' },
+      { q: 'Between your long entry and target lies an LVN, followed by an HVN at the target. What does profile logic suggest?', o: ['Price will stop at the LVN', 'The HVN guarantees a reversal', 'Volume profile is irrelevant', 'Price may move quickly through the LVN and meet friction at the HVN'], a: 3, why: 'Little prior trade at LVNs offers little friction; HVNs are where two-sided trade slowed price before.' },
       { q: 'Why might two platforms show a different POC for the same day?', o: ['One is wrong', 'Different data granularity (tick vs bar) and bin sizes', 'Exchanges publish two POCs', 'POC is random'], a: 1, why: 'Profiles built from bars approximate tick data, and bin width changes the mode.' },
     ],
     refs: ['J. Peter Steidlmayer and Steven Hawkins — Steidlmayer on Markets (book)', 'James Dalton, Eric Jones and Robert Dalton — Mind Over Markets (book)', 'CME Group — Market Profile education material (cmegroup.com)'],
@@ -887,15 +889,29 @@ Trading implication: from 11:30, the plan was "buy pullbacks above IB high". Lon
       { h: 'When it fails', md: `- News days that ignore the IB entirely.
 - Low-liquidity stocks where TPOs are sparse.
 - **Losing example.** Nifty IB is wide and the morning is rotational, so you fade the IB high at 24,960 with a stop at 24,985. At 13:30 IST a large index-weight results surprise drives a late extension to 25,040. Loss 25 × 65 = −₹1,625 per lot. Your rule ("abandon fades after acceptance above for a full period") was correct; the stop protected you, and the day type changed.` },
+      { h: 'Professional notes', md: `### Open types (Dalton)
+Practitioners classify the first minutes of the auction, because the open often sets the tone for the day type:
+| Open type | What happens | Working read |
+|---|---|---|
+| Open-Drive | Price moves away from the open aggressively and never trades back to it | Strong conviction; avoid fading |
+| Open-Test-Drive | Price first tests a known level in one direction, rejects, then drives the other way | Conviction after a test |
+| Open-Rejection-Reverse | Price moves one way, meets opposite activity, and reverses through the open | Less conviction; rotation more likely |
+| Open-Auction | Price rotates on both sides of the open | Balanced; expect a rotational start |
+
+### Balance, imbalance and value migration
+Compare today's developing value area with yesterday's: **higher** value (today's VA mostly above yesterday's), **overlapping** value (balance) or **lower** value. Higher or lower value is read as directional acceptance; overlapping value as balance. This uses the same 70% value-area convention as [[link:l2-volume-profile]] applied to TPO counts.
+
+### Honest limits
+The open types, day types and value-migration readings come from practitioner books (Steidlmayer, Dalton), not from published out-of-sample tests. They are a vocabulary for describing the auction — label them **subjective** in your journal and record which readings actually changed your decisions.` },
       { h: 'Exercise', md: `1. In the Chart Lab load SPY with vp. Split the session into 30-minute blocks and sketch a TPO chart with letters on paper.
 2. Mark IB, range extension and any single prints or tails.
 3. Assign a working day type at 10:30, 12:00 and the close; note when and why it changed.
 4. Journal five sessions: day type versus which of your trades (fades or pullbacks) worked.` },
     ],
     check: [
-      { q: 'IB width 40, session range 120, close near the high, extension one-sided. Most consistent day type?', o: ['Neutral day', 'Trend day', 'Non-trend day', 'Normal day'], a: 1, why: 'Extension ratio 3×, one-sided, close near the extreme fit the trend-day description.' },
-      { q: 'What is the key difference between a TPO chart and a volume profile?', o: ['TPO counts time spent at price; volume profile counts volume traded at price', 'They are the same', 'TPO only works in India', 'Volume profile counts time'], a: 0, why: 'TPOs are letters per time period at each price; volume profile sums volume.' },
-      { q: 'At 10:15 IST you classify the day as normal. Price then accepts above the IB high for a full 30-minute period. What should a disciplined profile trader do?', o: ['Keep fading', 'Update the hypothesis and stop fading the high', 'Add to the short', 'Ignore it'], a: 1, why: 'Day type is a moving target; acceptance beyond IB contradicts the rotational hypothesis.' },
+      { q: 'IB width 40, session range 120, close near the high, extension one-sided. Most consistent day type?', o: ['Trend day', 'Neutral day', 'Non-trend day', 'Normal day'], a: 0, why: 'Extension ratio 3×, one-sided, close near the extreme fit the trend-day description.' },
+      { q: 'What is the key difference between a TPO chart and a volume profile?', o: ['TPO only works in India', 'They are the same', 'TPO counts time spent at price; volume profile counts volume traded at price', 'Volume profile counts time'], a: 2, why: 'TPOs are letters per time period at each price; volume profile sums volume.' },
+      { q: 'At 10:15 IST you classify the day as normal. Price then accepts above the IB high for a full 30-minute period. What should a disciplined profile trader do?', o: ['Keep fading', 'Ignore it', 'Add to the short', 'Update the hypothesis and stop fading the high'], a: 3, why: 'Day type is a moving target; acceptance beyond IB contradicts the rotational hypothesis.' },
     ],
     refs: ['J. Peter Steidlmayer and Kevin Koy — Markets and Market Logic (book)', 'James Dalton, Eric Jones and Robert Dalton — Mind Over Markets (book)', 'NSE — Closing price computation in the capital market segment (nseindia.com)'],
   },
@@ -910,7 +926,7 @@ Trading implication: from 11:30, the plan was "buy pullbacks above IB high". Lon
   { id: 'L2-M2-q07', module: 'L2-M2', d: 1, q: 'What is the point of control (POC)?', o: ['The day\'s high', 'VWAP', 'The opening price', 'The price with the most traded volume in the profile'], a: 3, why: 'POC is the volume mode of the profile.' },
   { id: 'L2-M2-q08', module: 'L2-M2', d: 3, q: 'Profile total 100k, POC bin 22k. Pairs above: 26k, 12k; pairs below: 20k, 15k. Using the standard algorithm, which pairs are added?', o: ['Above 26k then below 20k (total 68k), then the next larger pair (below 15k) to reach 83k', 'Only above pairs', 'Only below pairs', 'All pairs'], a: 0, why: 'Start at 22k; add larger pair 26k → 48k; compare 12k vs 20k, add 20k → 68k; compare 12k vs 15k, add 15k → 83k ≥ 70k.' },
   { id: 'L2-M2-q09', module: 'L2-M2', d: 2, q: 'Which statement about volume profile is honest?', o: ['POC is guaranteed support', 'The computation is established; predictive value of nodes is mixed', 'It reveals institutional positions', 'It is identical on every platform'], a: 1, why: 'Mechanics are arithmetic; whether nodes predict reactions is not settled.' },
-  { id: 'L2-M2-q10', module: 'L2-M2', d: 2, q: 'In Market Profile, what is the initial balance on NSE?', o: ['09:00–09:08 IST', '09:15–09:30 IST', '09:15–10:15 IST', '15:00–15:30 IST'], a: 2, why: 'IB is the first hour of the regular session: 09:15–10:15 IST.' },
+  { id: 'L2-M2-q10', module: 'L2-M2', d: 2, q: 'In Market Profile, what is the initial balance on NSE?', o: ['09:00–09:10 IST', '09:15–09:30 IST', '09:15–10:15 IST', '15:00–15:30 IST'], a: 2, why: 'IB is the first hour of the regular session: 09:15–10:15 IST.' },
   { id: 'L2-M2-q11', module: 'L2-M2', d: 3, q: 'Nifty IB is very wide versus recent days and both extremes are probed and rejected by 13:00. What tactic fits the working day type?', o: ['Buy every breakout above IB', 'Fade extremes back toward the middle, abandoning fades on acceptance beyond IB', 'Short all day', 'Hold overnight'], a: 1, why: 'Wide IB and two-sided rejection describe a neutral/normal rotational day.' },
   { id: 'L2-M2-q12', module: 'L2-M2', d: 2, q: 'Why should you not use the Nifty 50 cash index for VWAP?', o: ['An index has no traded volume; use futures or a liquid ETF', 'It is too volatile', 'SEBI forbids it', 'VWAP only works in the US'], a: 0, why: 'VWAP needs volume; the cash index is a computed number with no trades of its own.' },
   { id: 'L2-M2-q13', module: 'L2-M2', d: 3, q: 'NVDA opens 6% higher after earnings; the 15-minute OR is $9 wide. With a $500 risk budget and the stop at the OR low, entry at the OR high, how many shares?', o: ['About 55', 'About 500', 'About 9', 'About 5,000'], a: 0, why: '500 ÷ 9 ≈ 55 shares. Wide ORs force much smaller size.' },
@@ -1021,8 +1037,8 @@ On an NSE stock like INFY, RSI-based "oversold" buys near the previous day low c
     ],
     check: [
       { q: '14-bar high 600, low 580, close 585. What are Stochastic %K and Williams %R?', o: ['%K 75, %R −25', '%K 25, %R −75', '%K 50, %R −50', '%K 25, %R 75'], a: 1, why: '%K = (585 − 580) ÷ 20 × 100 = 25; %R = 25 − 100 = −75. They carry the same information.' },
-      { q: 'You add RSI, Stochastic and Williams %R to your chart and all three are overbought. How many independent confirmations do you have?', o: ['Three', 'Essentially one — they measure the same thing', 'Zero, they cancel', 'Two'], a: 1, why: 'All three are functions of the recent close relative to recent price action; Williams %R is a rescaled Stochastic.' },
-      { q: 'During a strong 60-minute uptrend, the 5-minute RSI shows bearish divergence. What is the best use?', o: ['Short immediately', 'Treat it as a pullback warning: tighten stops or reduce size; look for structure change before reversing', 'Ignore all timeframes', 'Buy more'], a: 1, why: 'Divergence flags fading momentum; without structure change it often resolves as continuation.' },
+      { q: 'You add RSI, Stochastic and Williams %R to your chart and all three are overbought. How many independent confirmations do you have?', o: ['Essentially one — they measure the same thing', 'Three', 'Zero, they cancel', 'Two'], a: 0, why: 'All three are functions of the recent close relative to recent price action; Williams %R is a rescaled Stochastic.' },
+      { q: 'During a strong 60-minute uptrend, the 5-minute RSI shows bearish divergence. What is the best use?', o: ['Short immediately', 'Ignore all timeframes', 'Treat it as a pullback warning: tighten stops or reduce size; look for structure change before reversing', 'Buy more'], a: 2, why: 'Divergence flags fading momentum; without structure change it often resolves as continuation.' },
     ],
     refs: ['J. Welles Wilder — New Concepts in Technical Trading Systems (book)', 'George Lane — Lane\'s Stochastics, Technical Analysis of Stocks and Commodities (1984)', 'Constance Brown — Technical Analysis for the Trading Professional (book)'],
   },
@@ -1122,9 +1138,9 @@ For India VIX-driven days (high implied volatility), expect wider ATR at the ope
 4. Journal ten trades with fixed stops and ten with ATR stops (paper only); compare how often noise stopped you out.` },
     ],
     check: [
-      { q: 'Prev close 500; bar H 508, L 503. What is the true range?', o: ['5', '8', '3', '13'], a: 1, why: 'H − L = 5; |H − PC| = 8; |L − PC| = 3. TR = max = 8.' },
+      { q: 'Prev close 500; bar H 508, L 503. What is the true range?', o: ['5', '13', '3', '8'], a: 3, why: 'H − L = 5; |H − PC| = 8; |L − PC| = 3. TR = max = 8.' },
       { q: 'Bollinger Bands contract inside Keltner Channels. What can you honestly conclude?', o: ['An upside breakout is coming', 'Volatility is compressed and may expand; direction is unknown', 'The trend is down', 'Nothing at all'], a: 1, why: 'Volatility clustering supports expansion as plausible; no directional information exists in the squeeze itself.' },
-      { q: 'Risk budget ₹5,000, Nifty stop 1.5 × ATR with ATR 30, lot 65. How many lots?', o: ['2', '1', '3', '0'], a: 1, why: 'Stop 45 points × 65 = ₹2,925 per lot; 5,000 ÷ 2,925 = 1.7 → round down to 1 lot.' },
+      { q: 'Risk budget ₹5,000, Nifty stop 1.5 × ATR with ATR 30, lot 65. How many lots?', o: ['1', '2', '3', '0'], a: 0, why: 'Stop 45 points × 65 = ₹2,925 per lot; 5,000 ÷ 2,925 = 1.7 → round down to 1 lot.' },
     ],
     refs: ['J. Welles Wilder — New Concepts in Technical Trading Systems (book)', 'John Bollinger — Bollinger on Bollinger Bands (book)', 'Curtis Faith — Way of the Turtle (book)', 'John Carter — Mastering the Trade (book)'],
   },
@@ -1241,8 +1257,8 @@ The same rules on a choppy afternoon (ADX 14) produce four flips in 90 minutes, 
 4. Write a one-line rule in your journal that uses at most one directional tool and one regime filter.` },
     ],
     check: [
-      { q: 'EMA12 is 100.0, the new close is 113. What is the new EMA12 (k = 2/13)?', o: ['102.0', '113.0', '101.0', '106.5'], a: 0, why: '100 + 0.1538 × 13 = 100 + 2.0 = 102.0.' },
-      { q: 'ADX is 38 and rising while +DI is well below −DI. What does that describe?', o: ['A strong uptrend', 'A strong downtrend', 'No trend', 'A squeeze'], a: 1, why: 'ADX measures strength; the DI lines give direction. −DI dominant with high ADX = strong downtrend.' },
+      { q: 'EMA12 is 100.0, the new close is 113. What is the new EMA12 (k = 2/13)?', o: ['101.0', '113.0', '102.0', '106.5'], a: 2, why: '100 + 0.1538 × 13 = 100 + 2.0 = 102.0.' },
+      { q: 'ADX is 38 and rising while +DI is well below −DI. What does that describe?', o: ['A strong uptrend', 'A squeeze', 'No trend', 'A strong downtrend'], a: 3, why: 'ADX measures strength; the DI lines give direction. −DI dominant with high ADX = strong downtrend.' },
       { q: 'Which pair is most redundant?', o: ['ADX and MACD', 'MACD zero-cross and EMA12/26 crossover', 'ATR and Supertrend direction', 'Volume and Ichimoku'], a: 1, why: 'MACD = EMA12 − EMA26, so its zero cross is the EMA crossover by definition.' },
     ],
     refs: ['Gerald Appel — Technical Analysis: Power Tools for Active Investors (book)', 'J. Welles Wilder — New Concepts in Technical Trading Systems (book)', 'Nicole Elliott — Ichimoku Charts (book)', 'Hurst, Ooi, Pedersen — A Century of Evidence on Trend-Following Investing, AQR (2017)'],
@@ -1332,7 +1348,7 @@ Score 6/6. Now add RSI, Stochastic and MACD all bullish: still 6/6 — they all 
       { h: 'India', md: `A common Indian retail setup combines Supertrend, MACD, RSI above 50 and price above EMA20 on Nifty 5-minute. All four are trend/momentum family members. Illustrative morning: by the time all four align, Nifty has rallied from 24,820 to 24,905; the structural stop (below the last higher low) is at 24,858 — 47 points away (₹3,055 per lot) — and the previous day high at 24,935 is only 30 points away (0.64R). Four confirmations, poor trade.
 
 A leaner version: price at the opening-range high retest (location), Nifty 60-minute uptrend (context), relative volume (participation), one trigger candle. Entry earlier, tighter stop, more room.` },
-      { h: 'US & global', md: `On NVDA, traders often stack MACD, RSI and Stochastic on a 1-minute chart. Those three agree almost tick for tick. Replacing two of them with SPY/QQQ direction (market context) and the premarket high (location) adds genuinely different information. In DAX, adding the US open time (15:30 CET) as a context filter is more independent than any second oscillator.` },
+      { h: 'US & global', md: `On NVDA, traders often stack MACD, RSI and Stochastic on a 1-minute chart. Those three agree almost tick for tick. Replacing two of them with SPY/QQQ direction (market context) and the premarket high (location) adds genuinely different information. In DAX, adding the US open time (usually 15:30 CET) as a context filter is more independent than any second oscillator.` },
       { h: 'Common misconceptions', md: `- **"Five indicators agreeing is five confirmations."** Only if they come from different families.
 - **"Oscillators are leading."** They are computed from past prices.
 - **"Removing indicators means less information."** Removing redundant ones removes noise and lag.
@@ -1347,9 +1363,9 @@ A leaner version: price at the opening-range high retest (location), Nifty 60-mi
 4. Journal ten setups with their category score; review after 30 to see whether higher scores did better for **you**.` },
     ],
     check: [
-      { q: 'What is the average lag of a 20-period SMA on a 5-minute chart?', o: ['20 minutes', '47.5 minutes', '100 minutes', '9.5 minutes'], a: 1, why: '(20 − 1) ÷ 2 = 9.5 bars × 5 minutes = 47.5 minutes.' },
+      { q: 'What is the average lag of a 20-period SMA on a 5-minute chart?', o: ['47.5 minutes', '20 minutes', '100 minutes', '9.5 minutes'], a: 0, why: '(20 − 1) ÷ 2 = 9.5 bars × 5 minutes = 47.5 minutes.' },
       { q: 'Which combination gives the most independent evidence?', o: ['RSI, Stochastic and CCI', 'EMA cross, MACD cross and Supertrend', 'A value-area-edge level, 60-minute trend and relative volume', 'Bollinger, Keltner and Donchian'], a: 2, why: 'Location, higher-timeframe context and participation come from different inputs; the others are within-family stacks.' },
-      { q: 'A trader requires EMA cross + MACD cross + RSI > 50 before entering. What is the most likely side effect?', o: ['Earlier entries', 'Late entries with distant structural stops and poor R', 'Fewer losses guaranteed', 'No effect'], a: 1, why: 'Stacking lagging confirmations pushes entries later in the move.' },
+      { q: 'A trader requires EMA cross + MACD cross + RSI > 50 before entering. What is the most likely side effect?', o: ['Earlier entries', 'No effect', 'Fewer losses guaranteed', 'Late entries with distant structural stops and poor R'], a: 3, why: 'Stacking lagging confirmations pushes entries later in the move.' },
     ],
     refs: ['John Bollinger — Bollinger on Bollinger Bands (book; discusses multicollinearity of indicators)', 'Perry Kaufman — Trading Systems and Methods (book)', 'David Aronson — Evidence-Based Technical Analysis (book)'],
   },
@@ -1446,9 +1462,9 @@ Notice that every decision anchor here could be justified without CPR (VWAP, PDH
 4. Journal ten sessions: did reactions occur more at Fibonacci/pivots that overlapped VWAP or prior swings than at isolated ones?` },
     ],
     check: [
-      { q: 'Yesterday H 600, L 580, C 590. What is the classic pivot P and R1?', o: ['P 590, R1 600', 'P 590, R1 610', 'P 585, R1 595', 'P 595, R1 610'], a: 0, why: 'P = 1,770 ÷ 3 = 590; R1 = 2 × 590 − 580 = 600.' },
-      { q: 'Swing 24,600 → 25,000. Where is the 50% retracement?', o: ['24,850', '24,700', '24,800', '24,900'], a: 2, why: '25,000 − 0.5 × 400 = 24,800.' },
-      { q: 'Why is "price bounced at a Fibonacci level" weak evidence?', o: ['Fibonacci is illegal', 'With many closely spaced levels, a touch of some level is likely by chance, and the swing was chosen in hindsight', 'Price never reacts at Fibonacci levels', 'Fibonacci only works in crypto'], a: 1, why: 'Level density and swing selection create coincidences; that is why the tool is labelled subjective.' },
+      { q: 'Yesterday H 600, L 580, C 590. What is the classic pivot P and R1?', o: ['P 590, R1 610', 'P 590, R1 600', 'P 585, R1 595', 'P 595, R1 610'], a: 1, why: 'P = 1,770 ÷ 3 = 590; R1 = 2 × 590 − 580 = 600.' },
+      { q: 'Swing 24,600 → 25,000. Where is the 50% retracement?', o: ['24,800', '24,700', '24,850', '24,900'], a: 0, why: '25,000 − 0.5 × 400 = 24,800.' },
+      { q: 'Why is "price bounced at a Fibonacci level" weak evidence?', o: ['Fibonacci is illegal', 'Price never reacts at Fibonacci levels', 'With many closely spaced levels, a touch of some level is likely by chance, and the swing was chosen in hindsight', 'Fibonacci only works in crypto'], a: 2, why: 'Level density and swing selection create coincidences; that is why the tool is labelled subjective.' },
     ],
     refs: ['Robert Fischer — Fibonacci Applications and Strategies for Traders (book)', 'Frank Ochoa — Secrets of a Pivot Boss (book)', 'David Aronson — Evidence-Based Technical Analysis (book)'],
   },
@@ -1559,7 +1575,7 @@ Top-down check:
 Decision: either skip, or take a small scalp to ₹1,434 with a tight stop. A short at ₹1,435 rejection is the trade aligned with the daily, if the rejection appears.
 
 > [!india] Indices and heavyweight stocks move together: HDFCBANK, ICICIBANK, RELIANCE and INFY have large Nifty weights. A Nifty 60-minute trend often tells you more about a heavyweight's afternoon than its own 1-minute chart.` },
-      { h: 'US & global', md: `SPY daily in an uptrend, 60-minute pulling back, 5-minute showing a VWAP reclaim at 10:40 ET: partially aligned → normal-to-reduced size, target the morning high. NVDA after a big earnings gap: the daily chart shows a gap above a multi-week range; the 60-minute has only one bar, so the premarket and the first 15 minutes act as the "higher timeframe" until more bars exist. DAX traders often treat the US open (15:30 CET) as a regime change and re-run the top-down then.` },
+      { h: 'US & global', md: `SPY daily in an uptrend, 60-minute pulling back, 5-minute showing a VWAP reclaim at 10:40 ET: partially aligned → normal-to-reduced size, target the morning high. NVDA after a big earnings gap: the daily chart shows a gap above a multi-week range; the 60-minute has only one bar, so the premarket and the first 15 minutes act as the "higher timeframe" until more bars exist. DAX traders often treat the US open (usually 15:30 CET) as a regime change and re-run the top-down then.` },
       { h: 'Common misconceptions', md: `- **"More timeframes = better analysis."** Three or four with defined jobs is enough.
 - **"Never trade against the daily trend."** Counter-trend trades at major levels can be valid with smaller size and nearer targets.
 - **"The 1-minute chart gives better entries."** It gives tighter stops, which noise hits more often.
@@ -1574,9 +1590,9 @@ Decision: either skip, or take a small scalp to ₹1,434 with a tight stop. A sh
 4. Classify 20 paper trades as aligned, partial or opposed. After 20, compare average R by group.` },
     ],
     check: [
-      { q: 'A 5-minute long trigger appears 30 points below a daily resistance; your stop must be 40 points. What does top-down analysis suggest?', o: ['Take it; the trigger is clean', 'Skip or scalp: the higher-timeframe level leaves R below 1', 'Move the stop to 10 points', 'Switch to the 1-minute chart'], a: 1, why: 'The higher timeframe defines the room. 30 ÷ 40 = 0.75R. Shrinking the stop to fit is self-deception.' },
+      { q: 'A 5-minute long trigger appears 30 points below a daily resistance; your stop must be 40 points. What does top-down analysis suggest?', o: ['Take it; the trigger is clean', 'Switch to the 1-minute chart', 'Move the stop to 10 points', 'Skip or scalp: the higher-timeframe level leaves R below 1'], a: 3, why: 'The higher timeframe defines the room. 30 ÷ 40 = 0.75R. Shrinking the stop to fit is self-deception.' },
       { q: 'What is the average lag of an EMA20 on a 60-minute chart, in NSE sessions (375 minutes)?', o: ['About 0.25 sessions', 'About 1.5 sessions', 'About 4 sessions', 'No lag'], a: 1, why: '9.5 bars × 60 = 570 minutes ÷ 375 ≈ 1.5 sessions.' },
-      { q: 'Daily up, 60-minute down, 15-minute down. You see a 5-minute short trigger. How should you classify and manage it?', o: ['Fully aligned; full size', 'Partially aligned against the daily: reduced size and nearer targets', 'Opposed; never trade', 'Irrelevant'], a: 1, why: 'The intraday frames agree but the daily disagrees — partial alignment.' },
+      { q: 'Daily up, 60-minute down, 15-minute down. You see a 5-minute short trigger. How should you classify and manage it?', o: ['Partially aligned against the daily: reduced size and nearer targets', 'Fully aligned; full size', 'Opposed; never trade', 'Irrelevant'], a: 0, why: 'The intraday frames agree but the daily disagrees — partial alignment.' },
     ],
     refs: ['Alexander Elder — Trading for a Living / The New Trading for a Living (book; triple screen)', 'John J. Murphy — Technical Analysis of the Financial Markets (book)', 'Brian Shannon — Technical Analysis Using Multiple Timeframes (book)'],
   },
@@ -1671,8 +1687,8 @@ The card fits on a phone screen and takes about five minutes to fill.` },
 4. After 20 trades, compute expectancy with [[widget:expectancy]] and tag results by each step's output.` },
     ],
     check: [
-      { q: 'Your routine shows a perfect 5-minute trigger, but the context step reveals US CPI in 10 minutes. What is the disciplined action?', o: ['Take full size; the trigger is perfect', 'Skip or wait until after the release, per your context rule', 'Remove the stop', 'Take double size'], a: 1, why: 'Context precedes trigger. Scheduled events can gap through stops.' },
-      { q: 'Risk budget ₹5,000, Nifty stop 30 points, lot 65. How many lots?', o: ['1', '2', '3', '5'], a: 1, why: 'Per lot risk = 30 × 65 = ₹1,950; 5,000 ÷ 1,950 = 2.56 → 2 lots.' },
+      { q: 'Your routine shows a perfect 5-minute trigger, but the context step reveals US CPI in 10 minutes. What is the disciplined action?', o: ['Take full size; the trigger is perfect', 'Remove the stop', 'Skip or wait until after the release, per your context rule', 'Take double size'], a: 2, why: 'Context precedes trigger. Scheduled events can gap through stops.' },
+      { q: 'Risk budget ₹5,000, Nifty stop 30 points, lot 65. How many lots?', o: ['1', '5', '3', '2'], a: 3, why: 'Per lot risk = 30 × 65 = ₹1,950; 5,000 ÷ 1,950 = 2.56 → 2 lots.' },
       { q: 'Why does the routine allow only one trigger indicator?', o: ['Indicators are banned', 'Multiple momentum triggers are redundant and add lag without independent information', 'One is more profitable', 'SEBI requires it'], a: 1, why: 'Redundant triggers delay entries and give false confidence.' },
     ],
     refs: ['Atul Gawande — The Checklist Manifesto (book)', 'Brett Steenbarger — The Daily Trading Coach (book)', 'Peter Gollwitzer — Implementation intentions: strong effects of simple plans, American Psychologist (1999)'],

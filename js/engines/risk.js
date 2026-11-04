@@ -140,14 +140,15 @@
     return { segment: g.label, turnover, brokerage, stt, txn, sebi, stamp, gst, total, gross: sellValue - buyValue, net: sellValue - buyValue - total, asOf: S.asOf,
       steps: [`Turnover = ${r2(turnover)}`, `Brokerage = ${r2(brokerage)}`, `STT = buy×${g.sttBuy * 100}% + sell×${g.sttSell * 100}% = ${r2(stt)}`, `Exchange txn = turnover × ${r2(g.txn * 100, 5)}% = ${r2(txn)}`, `SEBI fee = turnover × ₹10/crore = ${r2(sebi)}`, `Stamp duty = buy × ${g.stampBuy * 100}% = ${r2(stamp)}`, `GST = 18% × (brokerage + txn + SEBI) = ${r2(gst)}`, `Total charges = ${r2(total)}`] };
   }
-  function usCharges({ shares, buyPrice, sellPrice, contracts = 0, specs }) {
-    const S = specs || IA.specsDefault.us;
-    const sellValue = shares * sellPrice;
+  function usCharges({ shares, buyPrice, sellPrice, contracts = 0, specs, date }) {
+    const S = specs || (IA.specs || IA.specsDefault).us;
+    const sellValue = shares * sellPrice; const day = (date || new Date().toISOString()).slice(0, 10); const tafRule = (S.tafSchedule || []).find((r) => day >= r.from && day <= r.to); const tafPS = tafRule ? tafRule.perShare : S.finraTafPerShare, tafMax = tafRule ? tafRule.max : S.finraTafMax;
     const commission = Math.max(S.commissionMin, shares * S.commissionPerShare * 2) + contracts * S.optionPerContract * 2;
-    const sec = sellValue * S.secFeeRate, taf = Math.min(S.finraTafMax, shares * S.finraTafPerShare);
+    const sec = sellValue * S.secFeeRate, taf = Math.min(tafMax, shares * tafPS);
     const total = commission + sec + taf, gross = shares * (sellPrice - buyPrice);
     return { commission, sec, taf, total, gross, net: gross - total, asOf: S.asOf };
   }
+  function indexFutTick(level, specs) { const t = (specs || (IA.specs || IA.specsDefault).india).indexFutTick || [[Infinity, 0.05]]; return t.find(([lim]) => level <= lim)[1]; }
   function breakevenMove(chargesTotal, qty) { return qty > 0 ? chargesTotal / qty : null; }
 
   // Exact probability of at least one run of >= k consecutive losses in n independent trades (loss prob q). DP on current run length.
@@ -166,5 +167,5 @@
     let worst = Infinity, best = -Infinity; grid.forEach((g) => g.row.forEach((c) => { worst = Math.min(worst, c.pnl); best = Math.max(best, c.pnl); }));
     return { grid, worst, best };
   }
-  IA.risk = { streakProb, expectedMaxStreak, optionsScenario, positionSize, rrTargets, riskReward, atrStop, expectancy, tradeStats, cumulative, maxDrawdown, lossesToRecover, riskOfRuinFormula, compounding, leverageMargin, futuresExposure, portfolioRisk, kelly, convert, indiaCharges, usCharges, breakevenMove, r2 };
+  IA.risk = { indexFutTick, streakProb, expectedMaxStreak, optionsScenario, positionSize, rrTargets, riskReward, atrStop, expectancy, tradeStats, cumulative, maxDrawdown, lossesToRecover, riskOfRuinFormula, compounding, leverageMargin, futuresExposure, portfolioRisk, kelly, convert, indiaCharges, usCharges, breakevenMove, r2 };
 })(typeof window !== 'undefined' ? window : globalThis);

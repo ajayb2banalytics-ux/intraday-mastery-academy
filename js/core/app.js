@@ -21,7 +21,7 @@
     const search = h('input', { type: 'search', placeholder: 'Search lessons, indicators, strategies…', 'aria-label': 'Search', id: 'gsearch' });
     search.addEventListener('keydown', (e) => { if (e.key === 'Enter' && search.value.trim()) { location.hash = '#/search/' + encodeURIComponent(search.value.trim()); search.blur(); } });
     const top = h('header', { class: 'topbar' }, h('h1', { id: 'title' }, ''), h('div', { class: 'search' }, icon('search'), search), h('span', { class: 'offline-pill', id: 'netpill' }, 'offline-ready'));
-    const bottom = h('nav', { class: 'bottomnav' }, BOTTOM.map((k) => { const n = NAV.find((x) => x[0] === k); return h('a', { href: '#/' + k, 'data-nav': k }, icon(n[2]), n[1].split(' ')[0]); }), h('button', { type: 'button', onclick: drawer, 'aria-label': 'All sections' }, icon('more'), 'More'));
+    const bottom = h('nav', { class: 'bottomnav' }, BOTTOM.map((k) => { const n = NAV.find((x) => x[0] === k); return h('a', { href: '#/' + k, 'data-nav': k }, icon(n[2]), n[1].split(' ')[0]); }), h('button', { type: 'button', onclick: drawer, 'aria-label': 'More sections' }, icon('more'), 'More'));
     const main = h('div', { class: 'main' }, top, h('main', { class: 'view', id: 'view' }), h('footer', { class: 'disclaimer' }, 'Educational tool, not financial advice. Charts and simulations use synthetic data unless you import your own. Trading can lose all of your capital. Market specifications are dated — verify with your exchange and broker.'));
     document.body.innerHTML = ''; document.body.append(h('div', { class: 'app' }, side, main), bottom);
   }
@@ -48,10 +48,25 @@
     $$('[data-nav]').forEach((a) => a.classList.toggle('active', a.dataset.nav === navKey));
     const v = IA.views[name] || IA.views.notfound;
     const nav = NAV.find((x) => x[0] === navKey); setTitle(nav ? nav[1] : 'Intraday Mastery');
-    try { current = (await v(el, arg)) || null; } catch (e) { console.error(e); el.append(h('div', { class: 'card' }, h('h3', null, 'Something went wrong'), h('p', { class: 'err' }, e.message), h('p', { class: 'muted small' }, 'Your data is safe. Try another section, then report this in the Known issues list.'))); }
+    try { current = (await v(el, arg)) || null; IA.a11y(el); } catch (e) { console.error(e); el.append(h('div', { class: 'card' }, h('h3', null, 'Something went wrong'), h('p', { class: 'err' }, e.message), h('p', { class: 'muted small' }, 'Your data is safe. Try another section, then report this in the Known issues list.'))); }
   }
   function setTitle(t) { const e = $('#title'); if (e) e.textContent = t; document.title = t + ' · Intraday Mastery'; }
   IA.setTitle = setTitle;
+  // Give every form control an accessible name (label text, table column header, placeholder) and make
+  // scrollable tables keyboard-focusable. Runs after each route render and on DOM additions.
+  IA.a11y = (rootEl) => {
+    const fix = () => {
+      rootEl.querySelectorAll('input, select, textarea').forEach((e) => {
+        if (e.getAttribute('aria-label') || e.closest('label') || (e.id && rootEl.querySelector(`label[for="${e.id}"]`))) return;
+        let name = e.placeholder || e.title || '';
+        const td = e.closest('td'); if (!name && td) { const tbl = td.closest('table'); const th = tbl && tbl.querySelectorAll('thead th')[td.cellIndex]; const rowHead = td.parentNode.cells[0]; name = [(th && th.textContent) || '', rowHead && rowHead !== td ? rowHead.textContent : ''].filter(Boolean).join(' — '); }
+        if (!name) { const prev = e.previousElementSibling || (e.parentNode && e.parentNode.previousElementSibling); name = prev ? prev.textContent.trim().slice(0, 60) : ''; }
+        e.setAttribute('aria-label', name || (e.tagName === 'SELECT' ? 'Choose an option' : 'Input'));
+      });
+      rootEl.querySelectorAll('.tbl-wrap').forEach((w) => { if (!w.hasAttribute('tabindex')) { w.setAttribute('tabindex', '0'); w.setAttribute('role', 'region'); w.setAttribute('aria-label', 'Scrollable table'); } });
+    };
+    fix(); if (!rootEl._a11yObs) { rootEl._a11yObs = new MutationObserver(() => { clearTimeout(rootEl._a11yT); rootEl._a11yT = setTimeout(fix, 50); }); rootEl._a11yObs.observe(rootEl, { childList: true, subtree: true }); }
+  };
 
   IA.views.notfound = (el) => el.append(h('div', { class: 'card' }, h('h3', null, 'Page not found'), h('a', { href: '#/' }, 'Back to dashboard')));
   IA.views.search = (el, q) => {
@@ -78,7 +93,8 @@
     addEventListener('hashchange', route); await route();
     if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(() => {});
   }
-  function deepMerge(a, b) { for (const k in b) { if (b[k] && typeof b[k] === 'object' && !Array.isArray(b[k]) && a[k]) deepMerge(a[k], b[k]); else a[k] = b[k]; } return a; }
+  const BAD = new Set(['__proto__', 'constructor', 'prototype']);
+  function deepMerge(a, b) { for (const k of Object.keys(b)) { if (BAD.has(k)) continue; if (b[k] && typeof b[k] === 'object' && !Array.isArray(b[k]) && a[k]) deepMerge(a[k], b[k]); else a[k] = b[k]; } return a; }
   IA.deepMerge = deepMerge;
   IA.start = start;
 })(typeof window !== 'undefined' ? window : globalThis);

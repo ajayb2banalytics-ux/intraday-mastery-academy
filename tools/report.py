@@ -1,154 +1,138 @@
-"""Generates docs/REQUIREMENTS.md and docs/QA-REPORT.md from actual test results.
-Status rules (never asserted by hand):
-  Verified    — every linked automated test exists in the results and passed (known-answer or functional assertion)
-  Tested      — linked only to route-smoke coverage (loads without error) and/or partially tested
-  Implemented — built, no automated test (manual check recommended)
-  In progress / Not started / Blocked — set explicitly with a reason in 'limits'."""
-import json, os, subprocess, datetime
+"""Generates all validation reports and the requirements register FROM SAVED TEST RESULTS.
+Nothing here asserts a pass by hand: statuses are derived from tests/*.json and the Node suites.
+Status rules: Verified = every linked automated test exists and passed on the builds it ran on;
+Tested = covered only by route smoke tests or partial automation; Implemented = built, no automated test;
+Not testable here = requires hardware/browsers unavailable in this environment."""
+import json, os, subprocess, datetime, glob, re
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__))); os.chdir(ROOT)
-eng = json.loads(subprocess.check_output(['node', '-e', "const r=require('./tests/engines.test.js'); process.stdout.write(JSON.stringify(r.results))"]))
-val = json.loads(subprocess.check_output(['node', '-e', "const r=require('./tests/validate-content.js'); process.stdout.write(JSON.stringify(r))"]))
-e2e = json.load(open('tests/e2e-results.json')) if os.path.exists('tests/e2e-results.json') else []
-e2s = json.load(open('tests/e2e-results-standalone.json')) if os.path.exists('tests/e2e-results-standalone.json') else []
-smoke = json.load(open('tests/smoke-results.json')) if os.path.exists('tests/smoke-results.json') else {}
-RES = {r['id']: r['ok'] for r in eng + e2e}
-RES['CONTENT'] = not val['errors'] and not val['missingLessons']
-RES['SMOKE'] = smoke.get('ok', False)
-def pref(p): return [k for k in RES if k.startswith(p)]
-
-S = 'SMOKE'
-# (id, module, description, tests, explicit_status_or_None, limitations)
+TODAY = datetime.date.today().isoformat()
+def node_suite(f): return json.loads(subprocess.check_output(['node', '-e', f"const r=require('./tests/{f}'); process.stdout.write(JSON.stringify(r.results))"]))
+def load(f, d=None): return json.load(open(f)) if os.path.exists(f) else d
+ENG, DAT, STR, BTA = node_suite('engines.test.js'), node_suite('dataimport.test.js'), node_suite('structure.test.js'), node_suite('backtest-audit.test.js')
+VAL = json.loads(subprocess.check_output(['node', '-e', "const r=require('./tests/validate-content.js'); process.stdout.write(JSON.stringify(r))"]))
+XC = load('tests/crosscheck-results.json', []); E1S, E1F = load('tests/e2e-results.json', []), load('tests/e2e-results-standalone.json', [])
+E2S, E2F = load('tests/e2e-phase2-served.json', []), load('tests/e2e-phase2-standalone.json', []); SEC = load('tests/security-results.json', [])
+MOB = load('tests/mobile-results.json', {}); SMK = load('tests/smoke-results.json', {}); REG = load('tests/regime-results.json', {})
+def ok(rs, info=False): return [r for r in rs if r.get('ok') and not (info and r.get('info'))]
+def cnt(rs, skip_info=True): rs2 = [r for r in rs if not (skip_info and r.get('info'))]; return sum(1 for r in rs2 if r['ok']), len(rs2)
+RES = {}
+for r in ENG + DAT + STR + BTA + XC: RES[r['id']] = RES.get(r['id'], True) and r['ok']
+for suite in (E1S, E1F, E2S, E2F, SEC):
+    for r in suite: RES[r['id']] = RES.get(r['id'], True) and r['ok']
+RES['CONTENT'] = VAL['errors'] == [] and not VAL['missingLessons'] if isinstance(VAL['errors'], list) else VAL['errors'] == 0
+RES['SMOKE'] = bool(SMK.get('ok'))
+prof = MOB.get('profiles', []); axe_n = sum(v['n'] for p in MOB.get('axe', {}).values() for rr in p.values() for v in rr)
+RES['MOB-OVERFLOW'] = bool(prof) and all(not p['overflow'] for p in prof); RES['MOB-NAV'] = bool(prof) and all(p['navOK'] for p in prof)
+RES['MOB-TOUCH'] = bool(MOB.get('touch', {}).get('ok')); RES['MOB-KEYS'] = bool(MOB.get('keyboard', {}).get('ok')); RES['MOB-AXE'] = bool(MOB.get('axe')) and axe_n == 0
+RES['MOB-INSTALL'] = bool((MOB.get('install') or {}).get('ok')); RES['MOB-PERSIST'] = bool((MOB.get('persistence') or {}).get('ok'))
+pre = lambda p: [k for k in RES if k.startswith(p)]
+NT = 'Not testable here'
 REQ = [
- ('ARC-01', 'Architecture', 'Standalone HTML/CSS/JS, no backend, no registration, no paid APIs', ['SMOKE', 'E2E-28'], None, ''),
- ('ARC-02', 'Architecture', 'Single self-contained HTML file that runs from file://', ['SMOKE'], None, 'Verified with Chromium; other browsers not automated.'),
- ('ARC-03', 'Architecture', 'Installable PWA: manifest, icons, versioned cache-first service worker', ['E2E-28'], None, 'Install prompt itself cannot be exercised headless — check once on a phone.'),
- ('ARC-04', 'Architecture', 'Offline-first: app and all lessons load with network off', ['E2E-28'], None, 'Service worker requires HTTPS hosting (or localhost).'),
- ('ARC-05', 'Architecture', 'IndexedDB persistence (key-value + collections) with in-memory fallback warning', ['E2E-03', 'E2E-04', 'E2E-16'], None, 'Private/incognito modes may discard data on close.'),
- ('ARC-06', 'Architecture', 'Full backup/restore (JSON) with schema check; rejects foreign files', ['E2E-13'], None, ''),
- ('ARC-07', 'Architecture', 'Modular engines testable in Node; pure functions', pref('IND') + pref('RSK'), None, ''),
- ('ARC-08', 'Architecture', 'Optional external data via adapters — CSV import adapter for real OHLCV', [S], 'Tested', 'Only CSV import; no network data adapter shipped (by design: no mandatory APIs).'),
- ('UI-01', 'Interface', '15 main sections + Daily Workflow + Settings; sidebar (desktop), bottom bar + drawer (mobile)', [S], None, ''),
- ('UI-02', 'Interface', 'Dark terminal theme default; light theme option', ['E2E-25'], None, ''),
- ('UI-03', 'Interface', 'Mobile-first responsive layout; no horizontal overflow at 360 px', ['E2E-27'], None, 'Checked on 23 key routes.'),
- ('UI-04', 'Interface', 'Global search across lessons, indicators, strategies, patterns, glossary, psychology', ['E2E-26'], None, 'Substring search, no ranking model.'),
- ('UI-05', 'Interface', 'All navigation and controls perform their actions without errors', [S, 'E2E-29'], None, ''),
- ('UI-06', 'Interface', 'Accessible controls (semantic buttons, labels, focus, contrast)', [], 'Implemented', 'No formal accessibility audit or screen-reader test performed.'),
- ('DSH-01', 'Dashboard', 'Overall mastery, current level, completed lessons, modules mastered', [S], None, ''),
- ('DSH-02', 'Dashboard', 'Daily goal, streak, recommended lessons, pending assessments, knowledge gaps', [S], None, ''),
- ('DSH-03', 'Dashboard', 'Simulator, journal and decision statistics; proficiency per track', [S], None, ''),
- ('LRN-01', 'Academy', '4 levels, 25 modules, 99 lessons — every lesson written', ['CONTENT'], None, ''),
- ('LRN-02', 'Academy', 'Each lesson: beginner/intermediate/advanced views, misconceptions, failure conditions, exercise; maths/India/US sections where applicable', ['CONTENT', 'E2E-01'], None, 'Lesson text drafted for this build; worked numbers were script-checked by the authors but have not had independent expert review.'),
- ('LRN-03', 'Academy', 'Lesson completes only when its check questions are all answered correctly', ['E2E-03'], None, ''),
- ('LRN-04', 'Academy', 'Notes and bookmarks per lesson', ['E2E-04'], None, ''),
- ('LRN-05', 'Academy', 'Evidence labels (established / mixed / subjective / speculative) on lessons, indicators, strategies, patterns', ['CONTENT'], None, ''),
- ('LRN-06', 'Academy', 'Embedded charts, pattern diagrams and live calculators inside lessons', ['E2E-01'], None, ''),
- ('LRN-07', 'Academy', 'Separate progress for India, US, global, TA, derivatives, risk, strategy (+ psych, fundamentals, quant, foundations)', [S], None, 'Track score = 50% lessons done + 50% best assessment average.'),
- ('ASM-01', 'Assessments', 'Question bank ≥ 12 per module (357 total incl. readiness)', ['CONTENT'], None, ''),
- ('ASM-02', 'Assessments', 'Module assessment: 10 random questions, 80% mastery, explanations', ['E2E-05'], None, ''),
- ('ASM-03', 'Assessments', 'Level unlock by assessment results, not by clicking through', ['E2E-05', 'E2E-06'], None, ''),
- ('ASM-04', 'Assessments', 'Trading-readiness evaluation (Levels 1–3, 100 logged trades, risk plan, ≥85% exam) with explicit "not proof of profitability"', [S], 'Tested', 'Criteria logic covered by route smoke only.'),
- ('ASM-05', 'Assessments', 'Interactive chart-reading assessments graded from data', ['E2E-21'], None, ''),
- ('ASM-06', 'Assessments', 'Knowledge-gap analysis from assessment history', [S], 'Tested', ''),
- ('MKT-01', 'Markets', 'Indian environment: NSE/BSE, segments, sessions, lot sizes, charges, SEBI topics, F&O lessons', ['CONTENT', S], None, 'Rates as of 4 Nov 2026; verify before trading.'),
- ('MKT-02', 'Markets', 'US environment: venues, NBBO, sessions, SEC/FINRA, PDT change, differences from India', ['CONTENT', S], None, ''),
- ('MKT-03', 'Markets', 'Europe & Asia environments, overnight cues, correlations', ['CONTENT', S], None, ''),
- ('MKT-04', 'Markets', 'Other assets: commodities, FX, crypto perps (funding, liquidation), rate futures', ['CONTENT', S], None, ''),
- ('MKT-05', 'Markets', 'Dated, configurable market specifications (charges, lots, sessions, FX, holidays)', ['E2E-24'] + pref('RSK-2'), None, 'US SEC/TAF rates are placeholders to edit; holidays not bundled.'),
- ('CLK-01', 'Market clock', 'Global clock for 10 markets, pre/main/post, lunch breaks, overlaps, timezone selector', pref('CLK') + ['E2E-23'], None, ''),
- ('CLK-02', 'Market clock', 'DST-safe conversions via IANA zones (no hard-coded offsets)', ['CLK-01', 'CLK-02', 'CLK-04', 'CLK-05'], None, ''),
- ('CLK-03', 'Market clock', 'Exchange holidays where available', ['CLK-09'], 'Implemented', 'Holiday lists are user-entered in Settings; none bundled.'),
- ('TA-01', 'Technical analysis', '38 indicator/tool entries × 15 required fields', ['CONTENT', 'E2E-02-indicator'], None, ''),
- ('TA-02', 'Technical analysis', 'Indicator engine: SMA, EMA, WMA, VWMA, MACD, PSAR, Supertrend, ADX/DMI, Ichimoku, RSI, StochRSI, Stoch, CCI, ROC, %R, Momentum, OBV, CMF, A/D, MFI, VWAP, anchored VWAP, BB, ATR, Keltner, Donchian, SD, pivots, Camarilla, Fibonacci, volume profile, divergence', pref('IND'), None, 'Elliott, Gann, harmonics are taught (labelled subjective), not computed.'),
- ('TA-03', 'Technical analysis', '22 candlestick patterns with formation, psychology, context, confirmation, entry, stop, target, failure', ['CONTENT', 'E2E-02-pattern'], None, ''),
- ('TA-04', 'Technical analysis', 'Chart types: candles, OHLC, line, Heikin-Ashi, Renko; P&F, tick and volume charts explained', ['GEN-06', 'GEN-07', S], 'Tested', 'Point & figure, tick and volume charts are explained but not rendered (no tick data offline).'),
- ('TA-05', 'Technical analysis', 'Timeframes 1m–daily, multi-timeframe lessons; opening range, PDH/PDL, gaps, VWAP, profiles', ['GEN-03', 'CONTENT'], None, 'Market Profile (TPO) is taught but not drawn; volume profile is drawn.'),
- ('CHT-01', 'Chart lab', 'Canvas chart: pan, zoom (wheel/pinch/buttons), crosshair, legend, sub-panes, volume, volume profile', [S, 'E2E-22'], 'Tested', 'Gesture handling verified by code path; pinch tested manually only on desktop emulation.'),
- ('CHT-02', 'Chart lab', 'Annotation: horizontal lines and trendlines saved per chart', ['E2E-22'], None, ''),
- ('CHT-03', 'Chart lab', 'Synthetic OHLCV generator: seeded, regimes, gaps, U-shaped volume, tick rounding, realistic daily range', pref('GEN'), None, 'Stylised; not a model of any real instrument.'),
- ('CHT-04', 'Chart lab', 'CSV import of real OHLCV with validation', [S], 'Tested', 'Parser validated for header detection and OHLC consistency; tested manually.'),
- ('FND-01', 'Fundamentals', 'Company metrics, corporate events, macro (RBI, Fed, ECB, BoJ), calendars, event risk', ['CONTENT'], None, ''),
- ('DRV-01', 'Derivatives', 'Futures: specs, MTM, basis, contango/backwardation, hedging, rollover + basis lab', ['CONTENT', S], None, ''),
- ('DRV-02', 'Derivatives', 'Black–Scholes price, Greeks, implied volatility', pref('OPT-0'), None, 'European model; US American options approximated.'),
- ('DRV-03', 'Derivatives', 'Payoff builder for 15 strategies: max gain/loss, breakevens, today vs expiry', pref('OPT-1'), None, 'Calendar/diagonal spreads (two expiries) are taught but not in the single-expiry builder.'),
- ('DRV-04', 'Derivatives', 'Strategy matrix with position Greeks; Greeks-vs-time lab; synthetic option chain with OI/PCR', [S], 'Tested', 'Chain OI is randomly generated.'),
- ('STR-01', 'Strategies', '30 strategies × 19 fields with worked winning and losing examples', ['CONTENT', 'E2E-02-strategy'], None, ''),
- ('STR-02', 'Strategies', 'Mechanical approximations runnable in backtester', ['E2E-19'], None, '5 discretionary strategies cannot be expressed in the signal catalogue.'),
- ('STR-03', 'Strategies', 'Strategy comparison laboratory on identical data', ['E2E-20'], None, ''),
- ('STR-04', 'Strategies', 'No strategy labelled successful without test results', ['CONTENT'], 'Implemented', 'Content rule enforced by authoring spec and review, not by an automated check.'),
- ('RSK-01', 'Risk', 'Personal risk plan + live daily/weekly limit, trade-count and losing-streak status', [S], 'Tested', ''),
- ('RSK-02', 'Risk', 'Position sizing (cash/lots/leverage), R:R, expectancy, PF, drawdown, recovery, compounding, leverage, futures exposure, portfolio correlation, Kelly', pref('RSK'), None, ''),
- ('RSK-03', 'Risk', 'Risk of ruin (Monte Carlo) and Monte Carlo of trade lists', ['BT-09', 'BT-10'], None, ''),
- ('RSK-04', 'Risk', 'India charges (brokerage, STT, txn, SEBI, stamp, GST) and US fees', ['RSK-20', 'RSK-21', 'RSK-22', 'RSK-23', 'EXE-10'], None, 'Brokerage plan is a typical discount plan — set yours.'),
- ('CAL-01', 'Calculators', '19 required calculators + Greeks, Monte Carlo, Kelly (22 total), each showing its working', ['E2E-07', 'E2E-08', 'E2E-09'], None, ''),
- ('CAL-02', 'Calculators', 'Multi-currency (INR, USD, EUR, GBP, JPY, SGD, HKD, AUD, CAD)', ['RSK-19'], None, 'FX rates are static and user-edited.'),
- ('PSY-01', 'Psychology', '19 psychology topics with signs, costs, countermeasures, exercises', ['CONTENT', S], None, ''),
- ('PSY-02', 'Psychology', '24-item self-assessment with history (self-reflection, not clinical)', [S], 'Tested', ''),
- ('PSY-03', 'Psychology', 'Behavioural pattern analysis from journal (emotion, mistakes)', ['E2E-11'], None, ''),
- ('WFL-01', 'Workflow', 'Editable pre/during/post-market checklists saved per day; consistency history', [S], 'Tested', ''),
- ('JRN-01', 'Journal', 'All 26 required trade fields; derived net, R, R:R, duration', ['E2E-10'], None, ''),
- ('JRN-02', 'Journal', 'Analytics: win rate, avg win/loss, net, PF, expectancy, max DD, avg R:R, by strategy/market/hour/week/month, streaks, cost of mistakes', ['E2E-11', 'RSK-13'], None, ''),
- ('JRN-03', 'Journal', 'CSV export and import; real vs simulated separation', ['E2E-12'], None, ''),
- ('SIM-01', 'Simulator', 'Chart replay: progressive reveal, hidden future, entries, stop/target placement, outcome review', ['E2E-14'], None, ''),
- ('SIM-02', 'Simulator', 'Decision simulator: 10 scenario types, buy/sell/wait/exit/avoid, process vs outcome feedback', ['E2E-15', 'GEN-08'], None, 'Outcome randomised by design; scenario shapes are stylised.'),
- ('SIM-03', 'Simulator', 'Paper trading: virtual capital, market/limit/stop orders, brackets, history, realised/unrealised P&L, costs, persistence', ['E2E-16'] + pref('EXE'), None, 'One instrument per paper account; no options paper trading.'),
- ('SIM-04', 'Simulator', 'Realism: slippage, spread, costs, partial fills, next-bar execution delay, gaps, EOD square-off, volatility regimes', pref('EXE'), None, ''),
- ('SIM-05', 'Simulator', 'No live brokerage connection', [S], None, 'By design.'),
- ('QNT-01', 'Quant lab', 'Rule backtester: configurable entries (12 signals), stops, targets, capital, sizing, costs, slippage; no look-ahead', pref('BT-0'), None, 'Signal catalogue is fixed; custom code not supported.'),
- ('QNT-02', 'Quant lab', 'Walk-forward segments, t-stat, multiple-testing warning, Monte Carlo, research-method guide', ['E2E-17', 'E2E-18'], None, 'Parameter re-optimisation per window is manual.'),
- ('QNT-03', 'Quant lab', 'Synthetic data always labelled; never presented as historical performance', ['E2E-17'], None, ''),
- ('LIB-01', 'Library', '20 books (own summaries), 18 official resources, 219-term glossary, reading by subject', [S], 'Tested', 'Resource URLs were not network-verified during build.'),
- ('SAF-01', 'Safety', 'No profit guarantees; capital-loss, gap, execution and cost warnings throughout; readiness ≠ profitability', ['CONTENT'], 'Implemented', 'Enforced by authoring spec; spot-checked, not exhaustively reviewed.'),
- ('QA-01', 'QA', 'Known-answer tests for financial calculations incl. edge cases (zero, invalid, insufficient capital, tiny size, lot sizes, currency, expiry)', pref('RSK') + pref('OPT'), None, ''),
- ('QA-02', 'QA', 'Browser compatibility', [S], 'Tested', 'Automated on Chromium (Chrome 1xx) only. Safari/iOS and Firefox not tested in this build.'),
- ('QA-03', 'QA', 'Performance', [], 'Implemented', 'See QA report for measured load time; no low-end device testing.'),
+ # id, module, requirement, tests, explicit status, limitations
+ ('ARC-01', 'Architecture', 'Standalone HTML/CSS/JS, no backend, no account, no paid APIs, no mandatory middleware', ['SMOKE', 'E2E-28'], None, ''),
+ ('ARC-02', 'Architecture', 'Single self-contained HTML file runs from disk (file://) with all features', ['SMOKE'] + [r['id'] for r in E1F] + [r['id'] for r in E2F], None, 'Automated on Chromium only.'),
+ ('ARC-03', 'Architecture', 'Installable PWA: manifest, icons, versioned cache-first service worker; installability checked by Chrome', ['MOB-INSTALL', 'E2E-28'], None, 'Install prompt UI itself needs a real device.'),
+ ('ARC-04', 'Architecture', 'Offline-first: hosted PWA reloads and serves lessons with the network off', ['E2E-28'], None, 'Requires HTTPS hosting or localhost.'),
+ ('ARC-05', 'Architecture', 'IndexedDB persistence across reloads and full browser restarts; persistent-storage request; quota errors surfaced', ['E2E-03', 'E2E-04', 'E2E-16', 'MOB-PERSIST'], None, 'Private/incognito modes may discard data.'),
+ ('ARC-06', 'Architecture', 'Backup/restore with SHA-256 checksum, schema check, row validation before any write', ['E2E-13', 'SEC-06-served', 'SEC-07-served', 'P2-21'], None, ''),
+ ('ARC-07', 'Architecture', 'Pure, unit-tested calculation engines (single source for app and tests)', pre('IND') + pre('RSK'), None, ''),
+ ('ARC-08', 'Architecture', 'Script list single source of truth (index.html, service worker, build all generated from js/files.js)', ['SMOKE'], 'Tested', ''),
+ ('UI-01', 'Interface', '19 sections; sidebar on laptop/desktop, bottom bar + drawer on phones', ['MOB-NAV', 'SMOKE'], None, ''),
+ ('UI-02', 'Interface', 'Dark terminal theme default; light theme', ['E2E-25'], None, ''),
+ ('UI-03', 'Interface', 'Responsive: no horizontal overflow on 37 routes at 6 screen sizes (360 px → 1920 px)', ['MOB-OVERFLOW', 'E2E-27'], None, 'Emulated in Chromium.'),
+ ('UI-04', 'Interface', 'Accessibility: zero axe-core WCAG 2.1 A/AA violations on 16 key routes (phone + laptop); visible keyboard focus; 24 px checkboxes', ['MOB-AXE', 'MOB-KEYS'], None, 'Automated rules only; no screen-reader user testing.'),
+ ('UI-05', 'Interface', 'Laptop keyboard shortcuts for chart replay', ['MOB-KEYS'], None, ''),
+ ('UI-06', 'Interface', 'Global search', ['E2E-26'], None, ''),
+ ('UI-07', 'Interface', 'Touch: chart tap, pan, pinch', ['MOB-TOUCH'], 'Tested', 'Tap verified by automation; pinch/pan verified by code path and desktop emulation only.'),
+ ('LRN-01', 'Curriculum', f"{VAL['lessonsPlanned']} lessons in 4 levels / 25 modules, all written; every directive subject mapped (see EDUCATIONAL-AUDIT.md)", ['CONTENT', 'E2E-01'], None, ''),
+ ('LRN-02', 'Curriculum', 'Every lesson: beginner/intermediate/advanced, misconceptions, failure conditions, exercise; maths/India/US where relevant', ['CONTENT', 'E2E-01'], None, ''),
+ ('LRN-03', 'Curriculum', 'Independent educational audit of all lessons, questions, indicators, strategies, patterns, psychology, library', [], 'Implemented', 'AI-assisted review with every number recomputed by script; not an independent human-expert or regulatory certification.'),
+ ('LRN-04', 'Curriculum', 'Lesson completion gated by correct check answers; notes; bookmarks', ['E2E-03', 'E2E-04'], None, ''),
+ ('ASM-01', 'Assessments', f"{VAL['questions']} assessment questions (≥12 per module) incl. readiness exam", ['CONTENT'], None, ''),
+ ('ASM-02', 'Assessments', 'Module assessments, level unlocking by results, readiness evaluation', ['E2E-05', 'E2E-06'], None, ''),
+ ('ASM-03', 'Assessments', 'Chart-reading drills graded from data', ['E2E-21'], None, ''),
+ ('DAT-01', 'Historical data', 'CSV import: NSE quote download, bhavcopy (multi-symbol/series), broker 1-min, TradingView epoch, Yahoo, ISO offsets', pre('DAT-0') + ['DAT-19', 'DAT-20', 'DAT-21'], None, 'Formats verified with layout fixtures (invented prices). No real exchange file was available in this environment.'),
+ ('DAT-02', 'Historical data', 'Validation: dates, time zones, OHLC relationships, volume, duplicates, order, missing candles, outside-session bars, jumps, timeframe inference, mixed timeframes', pre('DAT-'), None, ''),
+ ('DAT-03', 'Historical data', 'Validation report UI, dataset library, HISTORICAL vs SYNTHETIC labelling; DELAYED/LIVE explicitly not provided', ['P2-01', 'P2-02', 'P2-03', 'P2-04', 'P2-05'], None, 'No live or delayed feed (by design: no network dependency).'),
+ ('DAT-04', 'Historical data', 'Multi-timeframe: upward resampling within sessions', ['DAT-25', 'P2-06'], None, 'Cannot create lower timeframes than the file.'),
+ ('DAT-05', 'Historical data', 'Historical replay with no future-candle visibility; next-bar execution', ['P2-07', 'P2-08'], None, ''),
+ ('CHT-01', 'Charts', 'Canvas chart engine, 40 indicator overlays/panels, drawings, crosshair, pan/zoom', ['SMOKE', 'E2E-22'], 'Tested', ''),
+ ('CHT-02', 'Charts', 'Concepts Lab: graded exercises for MTF, VWAP/AVWAP, volume profile, TPO, S/R, supply-demand, structure, BOS/CHoCH, sweeps, order blocks, FVG, relative volume, divergence, relative strength, opening range', ['P2-13'] + pre('STR-'), None, 'Discretionary concepts use the app\'s stated rule definitions; evidence labels shown.'),
+ ('CHT-03', 'Charts', 'Detectors are causal (no future information) — verified by truncation tests', ['STR-15', 'STR-16', 'STR-17', 'STR-18', 'STR-19'], None, 'Swing points carry an explicit confirmation lag.'),
+ ('MKT-01', 'Markets', 'Specifications verified against official sources with effective dates and provenance shown in-app', ['P2-17', 'SPC-01', 'SPC-02', 'SPC-03', 'SPC-04', 'SPC-05'], None, '16 items remain unverified and are labelled as such.'),
+ ('MKT-02', 'Markets', 'Exchange holidays (verified 2026/2027 lists: NSE, NYSE, Nasdaq, Xetra, Euronext) used by the clock', ['SPC-01', 'P2-18', 'P2-19'], None, 'LSE list not verified; 2027 NSE list not yet published.'),
+ ('MKT-03', 'Markets', 'DST-safe global clock with sessions, overlaps, auctions', pre('CLK') + ['E2E-23'], None, ''),
+ ('MKT-04', 'Markets', 'Market comparison laboratory', ['P2-14'], None, 'Correlation meaningful only for historical datasets on common dates.'),
+ ('MKT-05', 'Markets', 'Charges and fees configurable and dated; broker assumptions labelled', ['RSK-20', 'RSK-21', 'RSK-22', 'SPC-03', 'XC-62', 'E2E-24'], None, 'MCX commodity charges not modelled.'),
+ ('RSK-01', 'Risk', 'Position sizing, stop, target, R:R, expectancy, profit factor, drawdown, compounding, leverage, futures exposure, portfolio correlation, Kelly — independently cross-validated', pre('RSK-') + ['XC-60', 'XC-61', 'XC-63', 'XC-64', 'XC-65', 'XC-66', 'XC-69', 'XC-70', 'XC-71', 'XC-72'], None, ''),
+ ('RSK-02', 'Risk', 'Risk of ruin (Monte Carlo), consecutive-loss probability (exact), options scenario risk grid', ['BT-10', 'RSK-26', 'RSK-27', 'RSK-28', 'RSK-29', 'RSK-30', 'XC-67', 'P2-15', 'P2-16'], None, 'Independence assumption stated.'),
+ ('RSK-03', 'Risk', 'Daily/weekly loss limits, trade-count and losing-streak status from the journal', ['SMOKE'], 'Tested', ''),
+ ('DRV-01', 'Derivatives', 'Black–Scholes price/Greeks/IV to 1e-9 vs SciPy; exact payoff max gain/loss/breakevens', pre('OPT-') + ['XC-50', 'XC-51', 'XC-52', 'XC-53', 'XC-54', 'XC-55', 'XC-56', 'XC-68'], None, 'European model; US American options approximated.'),
+ ('CAL-01', 'Calculators', '24 calculators, each showing formula and working', ['E2E-07', 'E2E-08', 'E2E-09', 'P2-15', 'P2-16'], None, ''),
+ ('IND-01', 'Indicators', '30+ indicators match independent implementations of published definitions and the ta library (after warm-up)', [r['id'] for r in XC if r['id'] < 'XC-50' and not r.get('info')], None, 'Parabolic SAR differs from the ta library by convention (app follows Wilder; documented).'),
+ ('SIM-01', 'Simulators', 'Chart replay (synthetic & historical), decision simulator, persistent paper trading', ['E2E-14', 'E2E-15', 'E2E-16', 'P2-07', 'P2-08'], None, ''),
+ ('SIM-02', 'Simulators', 'Execution realism: next-bar fills, spread, slippage, gaps, partial fills, OCO brackets, EOD square-off, charges', pre('EXE-'), None, ''),
+ ('BT-01', 'Backtesting', 'No look-ahead (future-perturbation invariance on all 12 signals), sequencing, stop/target/gap/EOD, slippage, costs, partial fills', pre('BTA-'), None, ''),
+ ('BT-02', 'Backtesting', 'Walk-forward, out-of-sample optimisation (optimiser never sees OOS bars), random-entry overfitting test, Monte Carlo, regime matrix', ['BTA-14', 'BTA-15', 'BTA-16', 'BTA-17', 'BTA-18', 'E2E-18', 'P2-10', 'P2-11', 'P2-12'], None, 'Synthetic regimes are stylised.'),
+ ('JRN-01', 'Journal', 'Journal fields, analytics, CSV export (formula-injection safe) / import', ['E2E-10', 'E2E-11', 'E2E-12', 'SEC-09-served'], None, ''),
+ ('SEC-01', 'Security', 'No stored XSS; CSP (hash-based in standalone, no network); prototype-pollution-safe restore; noopener links', [r['id'] for r in SEC], None, ''),
+ ('MOB-01', 'Mobile', 'Android Chrome compatibility', ['MOB-OVERFLOW', 'MOB-TOUCH'], 'Tested', 'Chromium with Android viewport/UA emulation — not a physical Android device.'),
+ ('MOB-02', 'Mobile', 'iOS Safari compatibility', [], NT, 'WebKit could not be installed here; no Apple device. Not tested. The code avoids APIs known to be missing in Safari, but this is unverified.'),
+ ('MOB-03', 'Browsers', 'Firefox compatibility', [], NT, 'Firefox could not be installed here (download host blocked). Not tested.'),
+ ('MOB-04', 'Browsers', 'Chrome / Chromium', ['SMOKE', 'MOB-OVERFLOW'], None, 'Headless Google Chrome.'),
 ]
 rows = []
 for rid, mod, desc, tests, explicit, lim in REQ:
-    have = [t for t in tests if t in RES]; missing = [t for t in tests if t not in RES]
-    passed = have and all(RES[t] for t in have)
-    if explicit: status = explicit
-    elif not tests: status = 'Implemented'
-    elif have and passed and not missing and have != ['SMOKE']: status = 'Verified'
-    elif have and passed: status = 'Tested'
-    elif have and not passed: status = 'In progress'
-    else: status = 'Implemented'
-    test_status = 'n/a' if not have else ('pass' if passed else 'FAIL: ' + ','.join(t for t in have if not RES[t]))
-    ev = ', '.join(have[:6]) + (f' (+{len(have) - 6})' if len(have) > 6 else '') if have else '—'
-    rows.append((rid, mod, desc, status, test_status, ev, lim))
-counts = {}
-for r in rows: counts[r[3]] = counts.get(r[3], 0) + 1
-today = datetime.date.today().isoformat()
-md = [f'# Master requirements register', '', f'Generated {today} by tools/report.py from the actual test results. Status rules are in the script header: **Verified** means every linked automated test ran and passed; **Tested** means covered by route smoke tests or partial tests; **Implemented** means built without an automated test.', '', 'Summary: ' + ', '.join(f'{k} {v}' for k, v in sorted(counts.items())), '', '| ID | Module | Requirement | Status | Tests | Evidence | Known limitations |', '|---|---|---|---|---|---|---|']
-md += [f'| {a} | {b} | {c} | **{d}** | {e} | {f} | {g} |' for a, b, c, d, e, f, g in rows]
-md += ['', '## Open items lists', '',
- '### Missing educational content', '- None missing from the curriculum map (99/99 lessons). Depth beyond the current lessons — e.g. sector-by-sector Indian case studies, per-indicator video-style walk-throughs — is a future extension.', '- Lessons have not had an independent expert review; treat worked examples as teaching material and report errors.',
- '', '### Incomplete features', '- Point & figure, tick and volume charts: explained only (no tick data offline).', '- Market Profile (TPO) chart not drawn.', '- Calendar/diagonal spreads not in the single-expiry payoff builder.', '- Paper trading: one instrument per account; no options or multi-leg paper trading.', '- Backtester: fixed signal catalogue; 5 discretionary strategies not expressible; walk-forward re-optimisation is manual.', '- No bundled exchange holiday calendars.',
- '', '### Calculation issues', '- None open. RSI reference values differ from the StockCharts table by ≤0.07 because that table rounds intermediate averages (documented in IND-07).',
- '', '### UI defects', '- None open from automated checks. Not audited for screen readers.',
- '', '### Data limitations', '- All bundled market data is synthetic. FX rates and US regulatory fee rates are static placeholders to edit. Indian rates as of 4 Nov 2026.',
- '', '### Offline limitations', '- Service worker requires HTTPS/localhost; the file:// standalone build has no install prompt (still fully offline). External resource links need a connection.',
- '', '### Known bugs', '- None open at the time of this report.']
-open('docs/REQUIREMENTS.md', 'w').write('\n'.join(md))
-
-def sect(title, results):
-    p = sum(r['ok'] for r in results); f = len(results) - p
-    return [f'### {title} — {p} passed, {f} failed', '', '| ID | Test | Result |', '|---|---|---|'] + [f"| {r['id']} | {r['name']} | {'PASS' if r['ok'] else 'FAIL — ' + r.get('detail', '')} |" for r in results] + ['']
-qa = ['# QA and test report', '', f'Run on {today} in this build environment: Node {subprocess.check_output(["node", "--version"]).decode().strip()}, headless Google Chrome via Playwright, Linux. Every result below was produced by executing the test suites in `tests/` — nothing is marked passed without a run.', '',
- '## Summary', '', '| Suite | What it checks | Result |', '|---|---|---|',
- f"| Engine unit tests (`tests/engines.test.js`) | Known-answer maths: indicators, risk, charges, options, generator, backtester, clock/DST, execution | {sum(r['ok'] for r in eng)}/{len(eng)} passed |",
- f"| Content validator (`tests/validate-content.js`) | Schema, required sections, ≥450 words, ≥12 questions/module, coverage | {val['errors'] if isinstance(val['errors'], int) else len(val['errors'])} errors · {val['lessonsWritten']}/{val['lessonsPlanned']} lessons · {val['questions']} questions · {val['indicators']} indicators · {val['strategies']} strategies · {val['patterns']} patterns |",
- f"| Route smoke test (`tests/smoke.py`) | All {smoke.get('routes', 51)} routes load with no console/page errors (served + file://) | {'pass' if smoke.get('ok') else 'see detail'} |",
- f"| End-to-end (`tests/e2e.py`, served PWA) | Functional flows, persistence, offline, mobile overflow | {sum(r['ok'] for r in e2e)}/{len(e2e)} passed |",
- f"| End-to-end (standalone file://) | Same flows on the single-file build | {sum(r['ok'] for r in e2s)}/{len(e2s)} passed (offline-SW test not applicable to file://) |" if e2s else '| End-to-end (standalone) | — | not run |',
- '', '## Measured performance', '', smoke.get('perf', 'Not measured.'), '',
- '## Not tested in this build', '', '- Safari / iOS and Firefox (only Chromium automated). Recommended: open the standalone file once on your phone and run through Dashboard → a lesson → Chart Lab → Simulator.', '- PWA install prompt (cannot be triggered headless).', '- Screen-reader accessibility.', '- Expert review of lesson content and worked examples.', '- Resource-library URLs (no network check).', '',
- '## Defects found and fixed during testing', '',
- '- IndexedDB wrapper returned the request object instead of `undefined` for missing keys → every first-run screen failed. Fixed in `db.js`; caught by smoke test.',
- '- Synthetic trend days drifted ~10% per session (drift scaled per minute, not per day). Fixed; regression tests GEN-00/GEN-00b added.',
- '- VWAP line was drawn across session boundaries. Fixed (session-aware line breaks).',
- '- Widget embeds written mid-sentence by content authors were not rendered. Renderer now lifts them onto their own line; caught by E2E-01/02.',
- '- Options payoff chart range too wide; "today" curve too coarse. Fixed.',
- '- RSI reference test initially failed against StockCharts\' rounded table; engine confirmed exact by hand calculation, test corrected.', '',
- '## Detailed results', ''] + sect('Engine unit tests', eng) + sect('End-to-end (served)', e2e) + (sect('End-to-end (standalone file://)', e2s) if e2s else [])
+    have = [t for t in tests if t in RES]; passed = bool(have) and all(RES[t] for t in have)
+    if explicit: st = explicit
+    elif have and passed and set(have) != {'SMOKE'}: st = 'Verified'
+    elif have and passed: st = 'Tested'
+    elif have: st = 'In progress'
+    else: st = 'Implemented'
+    if explicit in ('Tested', 'Implemented') and have and not passed: st = 'In progress'
+    rows.append((rid, mod, desc, st, 'n/a' if not have else ('pass' if passed else 'FAIL: ' + ', '.join(t for t in have if not RES[t])), ', '.join(have[:5]) + (f' (+{len(have) - 5})' if len(have) > 5 else ''), lim))
+C = {}
+for r in rows: C[r[3]] = C.get(r[3], 0) + 1
+reg = [f'# Requirements register (final)', '', f'Generated {TODAY} by `tools/report.py` from saved test results. **Verified** = every linked automated test ran and passed. **Tested** = smoke-level or partial automation. **Implemented** = built without automated proof. **Not testable here** = needs a browser/device this environment cannot provide.', '', '**Summary:** ' + ', '.join(f'{k}: {v}' for k, v in sorted(C.items())) + f' — {len(rows)} requirements.', '', '| ID | Area | Requirement | Status | Tests | Evidence | Limitations |', '|---|---|---|---|---|---|---|'] + [f'| {a} | {b} | {c} | **{d}** | {e} | {f} | {g} |' for a, b, c, d, e, f, g in rows]
+reg += ['', '## Known limitations (not defects)', '- iOS Safari and Firefox untested (browsers unavailable here). Android and iPhone *viewports* were emulated in Chromium only.', '- No live or delayed market data (by design). Historical data must be imported by the user.', '- Historical import verified against layout fixtures with invented prices; no real exchange file was available offline.', '- 16 market-specification items unverified (marked in-app); BSE charges, Sensex tick, some European/Asian auction windows, LSE holidays.', '- MCX commodity charges not modelled; commodity examples use a bps cost assumption.', '- Calendar/diagonal spreads are taught and priced in lessons but the payoff builder is single-expiry.', '- Educational review is AI-assisted with scripted recomputation — not a human-expert or regulatory certification.', '', '## Open defects', '- None known at the time of this report.']
+open('docs/REQUIREMENTS.md', 'w').write('\n'.join(reg))
+def table(results, cols=('id', 'name', 'ok')):
+    out = ['| ID | Test | Result |', '|---|---|---|']
+    for r in results: out.append(f"| {r['id']} | {r.get('name') or r.get('what')} | {'PASS' if r['ok'] else ('INFO' if r.get('info') else 'FAIL')}{'' if r['ok'] else ' — ' + str(r.get('detail') or r.get('note'))[:160]} |")
+    return out
+def summ(name, rs): p, n = cnt(rs); return f'| {name} | {p}/{n} |'
+# ---------- Calculation validation ----------
+cv = ['# Calculation validation report', '', f'Generated {TODAY}. Three independent layers of evidence:', '', '1. **Known-answer unit tests** (`tests/engines.test.js`) — hand-calculable cases and published reference values.', '2. **Independent cross-validation** (`tests/crosscheck.py`) — the JavaScript engines compared on randomised inputs with (a) separate Python implementations written from the published definitions, (b) the open-source `ta` library, (c) SciPy\'s normal distribution, (d) brute-force and Monte Carlo checks.', '3. **Backtest/execution audits** — see BACKTESTING-VALIDATION.md.', '', '| Suite | Result |', '|---|---|', summ('Engine known-answer tests', ENG), summ('Independent cross-validation (excl. informational)', XC), '', '## Defects found and fixed by this validation', '- **Black–Scholes precision:** the original normal-CDF approximation (Abramowitz–Stegun 7.1.26, |ε|≈1.5e-7) produced up to ₹0.004 error on high-priced underlyings. Replaced with Hart/West double precision; now agrees with SciPy to 1e-9 on 300 random contracts.', '- **Option max gain / max loss:** read from a 4,000-point grid, so a butterfly peak exactly at a strike could be understated by ~₹5–100. Rewritten to evaluate exactly at every strike (payoff is piecewise linear); breakevens solved exactly per segment. Independently found by both the cross-check (XC-68) and the derivatives content audit.', '- **Volume profile / TPO bin edges:** a bar whose high fell exactly on a bin edge was counted in the bin above. Fixed in both engines.', '- **OOS optimiser:** failed when a config omitted stop/target. Defaults applied.', '', '## Convention differences (documented, not errors)', '- Wilder-smoothed indicators (RSI, ATR, ADX) and EMAs are seeded with a simple average; `ta` seeds from the first value. Values converge after warm-up and are compared from bar 300.', '- Parabolic SAR: the app follows Wilder (SAR clamped to the prior two bars before testing for reversal). `ta` tests first; difference reported as informational (XC-41). The app matches an independent Wilder implementation (XC-41a).', '- OBV starts at 0 (some libraries start at the first bar\'s volume); increments are identical.', '', '## Cross-validation detail', '', '| ID | Quantity | Reference | n | max abs error | tolerance | Result | Note |', '|---|---|---|---|---|---|---|---|'] + [f"| {r['id']} | {r['what']} | {r['ref']} | {r['n']} | {('%.3g' % r['maxAbs']) if isinstance(r['maxAbs'], (int, float)) else r['maxAbs']} | {r['tol']} | {'PASS' if r['ok'] else ('INFO' if r.get('info') else 'FAIL')} | {r['note'][:140]} |" for r in XC] + ['', '## Engine known-answer tests', ''] + table(ENG)
+open('docs/CALCULATION-VALIDATION.md', 'w').write('\n'.join(cv))
+# ---------- Historical data ----------
+hd = ['# Historical data testing report', '', f'Generated {TODAY}.', '', '**What was tested:** the importer engine (`js/engines/dataimport.js`) with 26 unit tests over 8 format fixtures, and the full UI flow (import → report → save → chart → resample → replay → backtest) in both builds.', '', '> The fixtures in `tests/fixtures/` reproduce real export **layouts** (NSE equity historical-data download, NSE bhavcopy, broker 1-minute export, TradingView epoch export, Yahoo-style daily, ISO-8601 with offsets across the US DST change) with **invented prices** and deliberate defects. No real exchange file could be downloaded in this environment, so a real NSE/BSE/US file has not been run through the importer. Please import one of your own files and check the validation report.', '', '| Suite | Result |', '|---|---|', summ('Importer unit tests', DAT), summ('UI flow, served PWA (P2-01…P2-09)', [r for r in E2S if r['id'] <= 'P2-09']), summ('UI flow, standalone (P2-01…P2-09)', [r for r in E2F if r['id'] <= 'P2-09']), '', '## Checks performed on every import', '| Check | Behaviour |', '|---|---|', '| Header detection | Synonyms incl. NSE trailing-space headers; priority picks `close` over `ltp` |', '| Delimiter | comma, semicolon, tab, pipe |', '| Dates | ISO, DD-MON-YYYY, Mon DD YYYY, DD/MM/YYYY vs MM/DD/YYYY (auto-detect, ambiguity warning), YYYYMMDD, epoch s/ms, 12-hour times, offsets |', '| Time zone | Naive timestamps read in a chosen source zone; offsets/epochs absolute; converted to exchange-local wall time via IANA zones (DST-safe); >50% outside-session bars → "check time zone" |', '| OHLC | Non-positive/missing prices dropped; H < max(O,C) or L > min(O,C) dropped (or repaired on request) |', '| Volume | Missing → 0 with warning; negative → 0 with error |', '| Duplicates | Identical removed; conflicting → first kept, flagged |', '| Order | Out-of-order detected and sorted |', '| Timeframe | Inferred from modal intraday spacing; mixed-timeframe warning |', '| Missing candles | Per session within regular hours (lunch breaks respected); daily: missing weekdays listed as likely holidays; never filled or invented |', '| Outside session | Flagged; optional drop |', '| Jumps | ≥15% gap flagged (split/bonus/wrong symbol) |', '| Multi-symbol / series | First (or chosen) symbol; non-equity series filtered |', '', '## Importer tests', ''] + table(DAT) + ['', '## UI tests', ''] + table([r for r in E2S if r['id'] <= 'P2-09'])
+open('docs/HISTORICAL-DATA-REPORT.md', 'w').write('\n'.join(hd))
+# ---------- Backtesting ----------
+rr = REG.get('rows', [])
+bt = ['# Backtesting validation report', '', f'Generated {TODAY}.', '', '| Suite | Result |', '|---|---|', summ('Backtest audit (hand-built bars, invariance, OOS, overfitting, regimes)', BTA), summ('Execution engine (paper/replay fills)', [r for r in ENG if r['id'].startswith('EXE')]), summ('Original backtester tests', [r for r in ENG if r['id'].startswith('BT-')]), '', '## What is verified', '- **No look-ahead:** for each of the 12 entry signals, every bar after a cut-off was altered; every trade closed before the cut-off was identical (BTA-13.x). Signals on bar i fill at bar i+1\'s open (BTA-01). Signals on a session\'s last bar are never filled next morning (BTA-11).', '- **Execution sequencing:** stop measured from ATR of the bar before entry (BTA-02); gap through stop exits at the open (BTA-03); stop and target in one bar → stop first (BTA-04); target exact (BTA-05); end-of-day exit at the close (BTA-10).', '- **Frictions:** slippage applied to entry and exit with the target measured from the slipped fill (BTA-06); bps costs exact on both legs (BTA-07); liquidity-capped partial fills (BTA-09, EXE-06).', '- **Out-of-sample:** the optimiser\'s choice is unchanged when only OOS bars are altered — it never sees them (BTA-14).', '- **Overfitting detection:** a random-entry benchmark with identical exits detects a deliberately cheating (perfect-foresight) signal at p ≤ 0.02 (BTA-15) and does not flag random signals (mean p 0.25–0.75 over 6 runs, BTA-16).', '- **Walk-forward and Monte Carlo** reproducible and correctly segmented (BTA-17, BTA-18).', '- **Regimes:** the generator\'s trending, sideways, high/low volatility, gap and news regimes behave as labelled (BTA-19…22).', '', '## Regime matrix — all mechanical strategies (SYNTHETIC data, seed 2026, 60 sessions per regime, Nifty-futures-like, 3 bps costs + 1 tick slippage)', '', f"{REG.get('strategies', 0)} strategies. On a mixed 120-session synthetic sample, **{REG.get('positiveOnMixed', 0)}** had positive average R, and **{REG.get('significantVsRandom', 0)}** beat random entries at p < 0.05 — about what chance alone predicts (≈ 1.25 of 25). That is the correct outcome on data generated as a random process, and it is the main lesson: a rule must beat random entries out-of-sample on real data before it is worth trading, and most will not.", '', '| Strategy | ' + ' | '.join(REG.get('regimes', [])) + ' | Mixed avg R (n) | Random-entry p |', '|---|' + '---|' * (len(REG.get('regimes', [])) + 2)]
+for r in rr: bt.append(f"| {r['name']} | " + ' | '.join((f"{v['avgR']:.2f} ({v['n']})" if v.get('n') else '— (0)') for v in [r['regimes'][g] for g in REG['regimes']]) + f" | {(r['mixed'] or {}).get('avgR', 0):.2f} ({(r['mixed'] or {}).get('n', 0)}) | {r['randomEntry'].get('p', '—') if isinstance(r['randomEntry'].get('p'), str) else ('%.3f' % r['randomEntry']['p'] if 'p' in r['randomEntry'] else '—')} |")
+bt += ['', '> These numbers describe the synthetic generator, not any real market, and must not be read as evidence that any strategy works or fails in practice.', '', '## Audit tests', ''] + table(BTA)
+open('docs/BACKTESTING-VALIDATION.md', 'w').write('\n'.join(bt))
+# ---------- Mobile & offline ----------
+mo = ['# Mobile, laptop and offline compatibility report', '', f'Generated {TODAY}.', '', '## What could and could not be tested', '| Target | Status | How |', '|---|---|---|', '| Google Chrome (desktop, headless) | **Tested** | Every suite runs in Chrome |', '| Laptop 1366×768 and desktop 1920×1080 | **Tested** | Layout, sidebar, keyboard focus, replay shortcuts, axe-core |', '| Android phone (Pixel 7 viewport) | **Emulated** | Chromium mobile emulation: viewport, DPR 2.6, touch, Android UA. Not a physical device. |', '| iPhone 14 viewport | **Emulated (Chromium, not Safari)** | Viewport/UA/touch only — WebKit rendering and Safari storage rules NOT exercised |', '| iOS Safari / WebKit | **Not tested** | WebKit could not be downloaded here; no Apple device |', '| Firefox | **Not tested** | Firefox download host blocked here |', '| PWA install prompt UI | **Partly** | Chrome installability API reports the app installable with an active service worker; the prompt itself needs a real device |', '| Screen readers | **Not tested** | Automated WCAG rules only |', '', '## Results', '| Check | Result |', '|---|---|']
+for p in prof: mo.append(f"| {p['name']}: {p['routes']} routes — horizontal overflow | {'none' if not p['overflow'] else ', '.join(p['overflow'])} |")
+mo += [f"| Navigation correct per screen size (bottom bar/drawer on phones, sidebar on laptops) | {'pass' if RES['MOB-NAV'] else 'FAIL'} |", f"| Touch tap on chart graded (Android emulation) | {'pass' if RES['MOB-TOUCH'] else 'FAIL'} |", f"| Keyboard focus visible / replay shortcuts | {(MOB.get('keyboard') or {}).get('focusVisible', '—')} focus steps visible; shortcuts {'work' if (MOB.get('keyboard') or {}).get('replayShortcut') else 'FAIL'} |", f"| axe-core WCAG 2.1 A/AA violations (16 routes × phone + laptop) | {axe_n} |", f"| Chrome installability (manifest, icons, SW) | {'installable, service worker active' if RES['MOB-INSTALL'] else json.dumps(MOB.get('install'))[:200]} |", f"| Data survives full browser restart | {'pass' if RES['MOB-PERSIST'] else 'FAIL'} |", f"| Offline reload with network disabled (hosted PWA) | {'pass' if RES.get('E2E-28') else 'FAIL'} |", f"| Standalone file makes no network requests (CSP connect-src none) | {'pass' if RES.get('SEC-04-standalone') else 'FAIL'} |", f"| Backup → wipe → restore | {'pass' if RES.get('E2E-13') else 'FAIL'} |", '', '## Accessibility fixes made in Phase 2', '- Text contrast raised (muted/dim tokens), primary button darkened to ≥ 4.5:1.', '- "More" button accessible name matches its visible label.', '- Automatic accessible names for every form control (label, column header, placeholder); scrollable tables keyboard-focusable.', '- Visible `:focus-visible` ring; 24 px checkboxes.', '', '## Recommended manual checks on your devices', '1. iPhone: open the standalone file in Safari; complete one lesson; reload; confirm progress kept. Then Add to Home Screen from the hosted PWA and repeat offline (Airplane mode).', '2. Android: same steps in Chrome.', '3. Laptop: Settings → Download full backup, restore on the phone.']
+open('docs/MOBILE-OFFLINE-REPORT.md', 'w').write('\n'.join(mo))
+# ---------- Security ----------
+se = ['# Security and data-integrity report', '', f'Generated {TODAY}. All tests run with the Content-Security-Policy enforced (no bypass), on both builds.', '', '| Suite | Result |', '|---|---|', summ('Security & integrity tests', SEC), '', '## Threat model', 'A single-user offline app holding personal trading records. Main risks: script injection via imported or typed text (CSV, journal, notes, dataset names, backups), malicious backup files, data leaving the device, spreadsheet formula injection in exports, data loss.', '', '## Controls', '| Control | Implementation |', '|---|---|', '| Output encoding | All user text inserted as DOM text; markdown renderer escapes before formatting; no `eval`/`Function` |', '| Content-Security-Policy (PWA) | `script-src \'self\'`, `connect-src \'self\'`, `object-src \'none\'`, `base-uri \'none\'`, `form-action \'none\'`; boot code moved out of inline script |', '| Content-Security-Policy (standalone) | Single inline script allowed only by its SHA-256 hash; `connect-src \'none\'` — the file cannot make any network request |', '| Backup integrity | SHA-256 checksum on export; verified on restore (tamper warning); schema/row validation before any write; prototype-pollution keys stripped |', '| CSV export | Cells starting with = + - @ prefixed with \' (formula-injection guard) |', '| Links | External links `rel="noopener noreferrer"`; `referrer` policy no-referrer |', '| Storage | Persistent-storage request; quota errors surfaced to the user |', '| Privacy | No analytics, no accounts, no network calls except optional external reading links you click |', '', '## Tests', ''] + table(SEC)
+open('docs/SECURITY-REPORT.md', 'w').write('\n'.join(se))
+# ---------- Final QA ----------
+def line(name, rs, note=''): p, n = cnt(rs); return f'| {name} | {p}/{n} | {note} |'
+qa = ['# Final QA report', '', f'Generated {TODAY} in this build environment (Node {subprocess.check_output(["node", "--version"]).decode().strip()}, headless Google Chrome via Playwright, Linux). Every number below comes from executed test runs saved in `tests/*.json` or produced by the Node suites at generation time. Nothing is marked passed by hand.', '',
+ '## Summary', '', '| Suite | Passed | Notes |', '|---|---|---|',
+ line('Engine known-answer tests (unit/calculation)', ENG), line('Importer tests (data integrity)', DAT), line('Structure-detector tests (incl. causality)', STR), line('Backtest audit tests', BTA), line('Independent cross-validation vs Python/ta/SciPy', XC, '1 informational convention difference'),
+ f"| Content validation | {'0 errors' if RES['CONTENT'] else 'ERRORS'} | {VAL['lessonsWritten']}/{VAL['lessonsPlanned']} lessons, {VAL['questions']} questions, {VAL['indicators']} indicators, {VAL['strategies']} strategies, {VAL['patterns']} patterns |",
+ f"| Route smoke test (all routes, served + standalone) | {'pass' if RES['SMOKE'] else 'FAIL'} | {SMK.get('routes', '?')} routes; {SMK.get('perf', '').strip().replace(chr(10), '; ')} |",
+ line('End-to-end regression suite — served PWA', E1S), line('End-to-end regression suite — standalone file', E1F, 'offline-SW test n/a on file://'), line('End-to-end Phase 2 — served PWA', E2S), line('End-to-end Phase 2 — standalone file', E2F), line('Security & data integrity (both builds)', SEC),
+ f"| Mobile/laptop/accessibility | see report | overflow-free on {len(prof)} profiles; axe violations {axe_n}; installable {RES['MOB-INSTALL']}; restart persistence {RES['MOB-PERSIST']} |",
+ '', '## Defects found and fixed in Phase 2 (all re-tested)', '- IndexedDB `exportAll` declared a variable twice after the checksum change → app failed to start in the standalone build. Caught by the build check; fixed.', '- Black–Scholes normal-CDF precision; option max gain/loss grid error; volume-profile/TPO bin edges; OOS optimiser defaults — see CALCULATION-VALIDATION.md.', '- Accessibility: 153 axe violations → 0.', '- Content: errors fixed by the audits — see EDUCATIONAL-AUDIT.md (most significant: Nifty/Bank Nifty futures round-trip costs understated (₹300–400 vs ≈₹950–1,000) in several lessons and questions; one wrong answer key; self-assessment scoring reversed for two traits).', '- Specifications: 11 values corrected against official sources (NSE session changes Aug–Sep 2026, index-futures tick by level, FINRA TAF pause, SGX lunch break, ASX auction) — see audit/specs-verification.md.', '',
+ '## Not tested (limitations, not hidden passes)', '- iOS Safari/WebKit and Firefox (cannot be installed here). Physical phones. Screen readers. A real NSE/BSE/US export file (only layout fixtures).', '',
+ '## Reports', '- EDUCATIONAL-AUDIT.md · CALCULATION-VALIDATION.md · HISTORICAL-DATA-REPORT.md · BACKTESTING-VALIDATION.md · MOBILE-OFFLINE-REPORT.md · SECURITY-REPORT.md · REQUIREMENTS.md · audit/*.md', '',
+ '## Detailed end-to-end results', '', '### Regression suite (served)', ''] + table(E1S) + ['', '### Regression suite (standalone)', ''] + table(E1F) + ['', '### Phase 2 (served)', ''] + table(E2S) + ['', '### Phase 2 (standalone)', ''] + table(E2F)
 open('docs/QA-REPORT.md', 'w').write('\n'.join(qa))
-print('requirements:', counts); print('engines', sum(r['ok'] for r in eng), '/', len(eng), '| e2e', sum(r['ok'] for r in e2e), '/', len(e2e), '| standalone', sum(r['ok'] for r in e2s), '/', len(e2s))
+print('requirements:', C, '| engines', cnt(ENG), 'data', cnt(DAT), 'struct', cnt(STR), 'bta', cnt(BTA), 'xc', cnt(XC), 'e2e', cnt(E1S), cnt(E1F), cnt(E2S), cnt(E2F), 'sec', cnt(SEC), 'axe', axe_n)

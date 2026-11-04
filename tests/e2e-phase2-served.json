@@ -1,0 +1,134 @@
+[
+ {
+  "id": "P2-01",
+  "name": "Data page explains SYNTHETIC / HISTORICAL / DELAYED / LIVE and states delayed & live are not available",
+  "ok": true,
+  "detail": "Import real historical OHLCV data you have downloaded yourself (NSE/BSE historical data, bhavcopy, broker exports, TradingView, Yahoo-style US files). Every file is validated; the report shows exactly"
+ },
+ {
+  "id": "P2-02",
+  "name": "Import of a defective NSE 5-min file shows a validation report: dropped rows, duplicates, missing candles, outside-hours, jump, quality not good",
+  "ok": true,
+  "detail": "Validation report\nQuality: usable with issues\nROWS READ\n76\nBARS KEPT\n71\nTIMEFRAME\n5 min\nSESSIONS\n2\nRANGE\n2026-10-14 \u2192 2026-10-15\nTIMESTAMPS\nnaive local, interpreted as Asia/Kolkata\nEXCHANGE ZONE\nAsia/Kolkata\nDATE ORDER\nDMY\nMISSING CANDLES\n6\nDROPPED (DATE/PRICE/OHLC)\n3\nDUPLICATES REMOVED\n2\nOUTSIDE HO"
+ },
+ {
+  "id": "P2-03",
+  "name": "Naive-UTC file read as IST is flagged (\"check time zone\") and saving is discouraged",
+  "ok": true,
+  "detail": "Quality: check time zone\nROWS READ\n75\nBARS KEPT\n75\nTIMEFRAME\n5 min\nSESSIONS\n1\nRANGE\n2026-10-14 \u2192 2026-10-14\nTIMESTAMPS\nn"
+ },
+ {
+  "id": "P2-04",
+  "name": "Switching \"Timestamps are in\" to UTC fixes it (quality good)",
+  "ok": true,
+  "detail": "Quality: good\nROWS READ\n75\nBARS KEPT\n75\nTIMEFRAME\n5 min\nSESS"
+ },
+ {
+  "id": "P2-05",
+  "name": "Dataset saved to the library with timeframe, range and bar count",
+  "ok": true,
+  "detail": "[{'name': 'TEST NIFTY 5m', 'file': 'tradingview-nse-5m.csv', 'exchange': 'NSE', 'tfMin': 5, 'tfLabel': '5 min', 'from': '2026-09-01', 'to': '2026-09-03', 'quality': 'good', 'instrType': 'nse-cash', 'lot': None, 'tick': None, 'report': {'exchange': 'NSE', 'exchangeTz': 'Asia/Kolkata', 'sourceTz': 'Asia/Kolkata', 'issues': [], 'counts': {'rows': 225, 'kept': 225, 'badDate': 0, 'badPrice': 0, 'badOHL"
+ },
+ {
+  "id": "P2-06",
+  "name": "Chart Lab shows the dataset labelled HISTORICAL; 15-min resampling gives one third of the 5-min bars per session",
+  "ok": true,
+  "detail": "['HISTORICAL \u00b7 TEST NIFTY 5m\\n2026-09-03 15:25\\nO 25687.5\\nH 2569', 225, 75]"
+ },
+ {
+  "id": "P2-07",
+  "name": "Historical replay: chart exposes only revealed bars (drawn range \u2264 revealed), future hidden, one step reveals exactly one bar, labelled HISTORICAL",
+  "ok": true,
+  "detail": "[{'len': 78, 'total': 150, 'label': 'HISTORICAL \u00b7 TEST NIFTY 5m\\n2026-09-03 09', 'last': 1788427500000}, {'len': 79, 'maxDrawn': 79}]"
+ },
+ {
+  "id": "P2-08",
+  "name": "Historical replay order fills at the NEXT bar's open \u00b1 spread/slippage",
+  "ok": true,
+  "detail": "['Event log\\nFilled #1: 65 @ 25736.8\\nOrder: BUY 65 market SL 25608 \u2014 waiting for next bar\\nHistorical replay of TEST NIFTY 5m from 2026-09-03 (previous session show', 25736.67]"
+ },
+ {
+  "id": "P2-09",
+  "name": "Backtest on a HISTORICAL dataset is labelled as such (not synthetic)",
+  "ok": true,
+  "detail": "Using HISTORICAL dataset TEST NIFTY 5m (5 min, 225 bars, 2026-09-01 \u2192 2026-09-03). Synthetic settings are ignored.\n2. Ru"
+ },
+ {
+  "id": "P2-10",
+  "name": "Quant Lab \"oos\" runs and reports",
+  "ok": true,
+  "detail": "1, target.rr=2, orb.bars=5\nIS AVG R\n0.036\nOOS AVG R\n-0.439\nIS TRADES\n62\nOOS TRADES\n41\nOOS / IS\n-12.11\n\nOut-of-sample performance did not hold up \u2014 the classic signature of fitting parameters to noise."
+ },
+ {
+  "id": "P2-11",
+  "name": "Quant Lab \"overfit\" runs and reports",
+  "ok": true,
+  "detail": ",810.77\nTRADES\n107\nRANDOM MEDIAN\n\u2212\u20b993,984.03\nRANDOM 5TH\u201395TH PCT\n\u2212\u20b94,85,005.28 \u2026 \u20b93,38,089.26\nP-VALUE\n0.924\n\nThe entry rule is not distinguishable from random entries with the same exits on this data."
+ },
+ {
+  "id": "P2-12",
+  "name": "Quant Lab \"regimes\" runs and reports",
+  "ok": true,
+  "detail": "s\t-0.60 (7)\t-0.06 (7)\t-0.99 (4)\t-0.87 (5)\t-0.62 (7)\t-0.74 (3)\t0.15 (9)\t-1.07 (6)\nSector-relative strength strategies\t0.23 (36)\t-0.28 (25)\t-1.01 (35)\t0.02 (29)\t-0.23 (31)\t0.13 (31)\t-0.18 (29)\t0.20 (34)"
+ },
+ {
+  "id": "P2-13",
+  "name": "All 15 Concepts-Lab exercises generate a chart, accept an answer, grade it and record the result",
+  "ok": true,
+  "detail": "{'mtf': {'n': 1, 'ok': 0}, 'vwap': {'n': 1, 'ok': 0}, 'vp': {'n': 1, 'ok': 1}, 'tpo': {'n': 1, 'ok': 0}, 'sr': {'n': 1, 'ok': 0}, 'sd': {'n': 1, 'ok': 0}, 'structure': {'n': 1, 'ok': 1}, 'bos': {'n': 1, 'ok': 0}, 'sweep': {'n': 1, 'ok': 0}, 'ob': {'n': 1, 'ok': 0}, 'fvg': {'n': 1, 'ok': 0}, 'volume': {'n': 1, 'ok': 0}, 'divergence': {'n': 1, 'ok': 0}, 'rs': {'n': 1, 'ok': 0}, 'orb': {'n': 1, 'ok':"
+ },
+ {
+  "id": "P2-14",
+  "name": "Market comparison lab reports volatility, ranges, gaps, round-trip charges and sessions for two markets",
+  "ok": true,
+  "detail": "Global clock\nMarket comparison\nIndia\nUnited States\nEurope & Asia\nOther assets\nSpecs & dates\n\nCompare two markets on the numbers an intraday trader cares about: how far they move, how often they gap, w"
+ },
+ {
+  "id": "P2-15",
+  "name": "Calculator losing-streak computes and shows its working",
+  "ok": true,
+  "detail": "des are not independent (losing streaks cluster in hostile regimes), so treat these as optimistic lower bounds. Plan your daily/weekly limits around the expected longest streak, not the average trade."
+ },
+ {
+  "id": "P2-16",
+  "name": "Calculator options-risk computes and shows its working",
+  "ok": true,
+  "detail": "ndex moves of that size in one session are rare but have happened, and single stocks gap far more. Short-option positions can lose many times the premium collected; exchange margins can rise intraday."
+ },
+ {
+  "id": "P2-17",
+  "name": "Specs page shows provenance (verified / corrected / unverified counts, sources) and verified holiday lists",
+  "ok": true,
+  "detail": "Provenance \u2014 checked 2026-11-04\n\n102 specification items: 75 verified against official or clearly identified sources, 11 corrected, 16 unverified (shown in amber \u2014 do not rely on them without checking"
+ },
+ {
+  "id": "P2-18",
+  "name": "Global clock marks NSE closed for the verified 24 Nov 2026 holiday (clock set to 10:00 IST)",
+  "ok": true,
+  "detail": "NSE / BSE\nIndia \u00b7 10:00 local\nHoliday"
+ },
+ {
+  "id": "P2-19",
+  "name": "Next trading day (25 Nov 2026, 10:00 IST) NSE shows Open",
+  "ok": true,
+  "detail": "NSE / BSE\nIndia \u00b7 10:00 local\nOpen"
+ },
+ {
+  "id": "P2-20",
+  "name": "Settings shows storage status and the phone \u2194 laptop transfer guide",
+  "ok": true,
+  "detail": "Preferences\nTheme\nDark (default)\nLight\nCalculator currency\nUSD\nINR\nEUR\nGBP\nJPY\nSGD\nHKD\nAUD\nCAD\nDaily"
+ },
+ {
+  "id": "P2-21",
+  "name": "Downloaded backup contains a SHA-256 checksum and the saved dataset",
+  "ok": true,
+  "detail": "['app', 'schema', 'exported', 'kv', 'rows', 'sha256']"
+ },
+ {
+  "id": "P2-22",
+  "name": "No uncaught page errors during the Phase 2 run",
+  "ok": true,
+  "detail": "[]"
+ }
+]

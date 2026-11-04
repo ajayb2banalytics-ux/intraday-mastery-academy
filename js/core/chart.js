@@ -11,7 +11,8 @@
     const I = IA.ind, cl = c.map((b) => b.c), ov = [], panes = []; let vol = false, vp = false;
     (list || []).forEach((t, k) => {
       const col = PAL[k % PAL.length];
-      const m = t.match(/^(ema|sma|wma)(\d+)$/);
+      const m = t.match(/^(ema|sma|wma)(\d+)$/); const mv = t.match(/^vwma(\d+)$/);
+      if (mv) { ov.push({ name: t.toUpperCase(), data: I.vwma(c, +mv[1]), color: col }); return; }
       if (m) ov.push({ name: t.toUpperCase(), data: I[m[1]](cl, +m[2]), color: col });
       else if (t === 'vwap') ov.push({ name: 'VWAP', data: I.vwap(c), color: '#f2b84b', width: 1.6, session: true });
       else if (t === 'bb') { const b = I.bollinger(cl); ov.push({ name: 'BB', band: [b.upper, b.lower], data: b.mid, color: '#a78bfa', dash: [4, 3] }); }
@@ -33,6 +34,11 @@
       else if (t === 'willr') panes.push({ name: 'Williams %R', lines: [{ data: I.williamsR(c), color: '#ff6fb5' }], levels: [-80, -20], min: -100, max: 0 });
       else if (t === 'roc') panes.push({ name: 'ROC 10', lines: [{ data: I.roc(cl), color: '#4fb3ff' }], levels: [0] });
       else if (t === 'cmf') panes.push({ name: 'CMF 20', lines: [{ data: I.cmf(c), color: '#26c281' }], levels: [0] });
+      else if (t === 'stochf') { const s = I.stochastic(c, 14, 3, 1); panes.push({ name: 'Fast Stoch 14,3', lines: [{ data: s.k, color: '#4fb3ff' }, { data: s.d, color: '#f2b84b' }], levels: [20, 80], min: 0, max: 100 }); }
+      else if (t === 'stochrsi') { const s = I.stochRsi(cl); panes.push({ name: 'StochRSI 14,14,3,3', lines: [{ data: s.k, color: '#a78bfa' }, { data: s.d, color: '#f2b84b' }], levels: [20, 80], min: 0, max: 100 }); }
+      else if (t === 'adl') panes.push({ name: 'Accum./Distribution', lines: [{ data: I.adl(c), color: '#3fd0d4' }] });
+      else if (t === 'sd') panes.push({ name: 'Std dev 20', lines: [{ data: I.stdev(cl, 20), color: '#ff8c69' }] });
+      else if (t === 'mom') panes.push({ name: 'Momentum 10', lines: [{ data: I.momentum(cl), color: '#9be15d' }], levels: [0] });
     });
     return { overlays: ov, panes, volume: vol, profile: vp };
   }
@@ -42,7 +48,7 @@
       this.host = host; this.o = Object.assign({ height: 340, paneH: 90, volume: true, type: 'candle', synthetic: true, profile: false, interactive: true, draw: null }, opt);
       this.c = []; this.ov = []; this.panes = []; this.markers = []; this.levels = []; this.drawings = []; this.end = null; this.zones = [];
       this.box = IA.ui.h('div', { class: 'chart-box' }); this.cv = IA.ui.h('canvas'); this.legend = IA.ui.h('div', { class: 'chart-legend' });
-      this.box.append(this.cv, this.legend); host.append(this.box);
+      this.box.append(this.cv, this.legend); host.append(this.box); this.box.setAttribute('role', 'img'); this.box.setAttribute('aria-label', 'Price chart'); (IA._charts = IA._charts || []).push(this); if (IA._charts.length > 12) IA._charts.shift();
       this.view = { n: 80, off: 0 }; // n bars visible, off = bars hidden from right
       this.mouse = null; this.pending = null;
       this._bind(); this._ro = new ResizeObserver(() => this.render()); this._ro.observe(this.box);

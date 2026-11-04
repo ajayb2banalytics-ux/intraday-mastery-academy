@@ -18,7 +18,7 @@
     });
     return dbp;
   }
-  const tx = (d, store, mode, fn) => new Promise((res, rej) => { const t = d.transaction(store, mode); const s = t.objectStore(store); const out = fn(s); t.oncomplete = () => res(out instanceof IDBRequest ? out.result : out); t.onerror = () => rej(t.error); });
+  const tx = (d, store, mode, fn) => new Promise((res, rej) => { const t = d.transaction(store, mode); const s = t.objectStore(store); const out = fn(s); t.oncomplete = () => res(out instanceof IDBRequest ? out.result : out); const fail = () => { const e = t.error || new Error('Storage transaction failed'); if (e && e.name === 'QuotaExceededError') e.message = 'Device storage is full — delete old datasets or download a backup and erase data.'; if (root.IA && IA.ui) IA.ui.toast(e.message, 6000); rej(e); }; t.onerror = fail; t.onabort = fail; });
   const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 
   async function get(key, def) {
@@ -44,12 +44,18 @@
       const keys = await tx(d, 'kv', 'readonly', (s) => s.getAllKeys()), vals = await tx(d, 'kv', 'readonly', (s) => s.getAll());
       keys.forEach((k, i) => (kv[k] = vals[i])); rs = await tx(d, 'rows', 'readonly', (s) => s.getAll());
     }
-    return { app: 'intraday-mastery-academy', schema: SCHEMA, exported: new Date().toISOString(), kv, rows: rs };
+    const out = { app: 'intraday-mastery-academy', schema: SCHEMA, exported: new Date().toISOString(), kv, rows: rs }; const sum = await digest({ kv, rows: rs }); if (sum) out.sha256 = sum; return out;
   }
+  // Remove keys that could alter object prototypes when the data is later merged/assigned.
+  function sanitize(x, depth = 0) { if (depth > 40) throw new Error('Backup nesting too deep.'); if (Array.isArray(x)) return x.map((v) => sanitize(v, depth + 1)); if (x && typeof x === 'object') { const o = {}; for (const k of Object.keys(x)) { if (k === '__proto__' || k === 'constructor' || k === 'prototype') continue; o[k] = sanitize(x[k], depth + 1); } return o; } return x; }
+  async function digest(payload) { if (!(root.crypto && crypto.subtle)) return null; const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(JSON.stringify(payload))); return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join(''); }
+  async function verify(obj) { if (!obj.sha256) return { status: 'none' }; const d = await digest({ kv: obj.kv, rows: obj.rows }); if (d === null) return { status: 'unavailable' }; return { status: d === obj.sha256 ? 'ok' : 'mismatch' }; }
   async function importAll(obj, { replace = true } = {}) {
     if (!obj || obj.app !== 'intraday-mastery-academy') throw new Error('This file is not an Intraday Mastery backup.');
+    obj = sanitize(obj);
     if (obj.schema > SCHEMA) throw new Error(`Backup schema ${obj.schema} is newer than this app (${SCHEMA}).`);
-    if (!Array.isArray(obj.rows) || typeof obj.kv !== 'object') throw new Error('Backup is malformed.');
+    if (!Array.isArray(obj.rows) || !obj.kv || typeof obj.kv !== 'object' || Array.isArray(obj.kv)) throw new Error('Backup is malformed.');
+    obj.rows.forEach((r, i) => { if (!r || typeof r !== 'object' || typeof r.id !== 'string' || typeof r.coll !== 'string') throw new Error(`Backup row ${i + 1} is malformed (missing id/coll).`); });
     const d = await open();
     if (!d) { if (replace) mem = { kv: {}, rows: {} }; Object.assign(mem.kv, obj.kv); obj.rows.forEach((r) => (mem.rows[r.id] = r)); return; }
     if (replace) { await tx(d, 'kv', 'readwrite', (s) => s.clear()); await tx(d, 'rows', 'readwrite', (s) => s.clear()); }
@@ -58,5 +64,7 @@
   }
   async function wipe() { const d = await open(); if (!d) { mem = { kv: {}, rows: {} }; return; } await tx(d, 'kv', 'readwrite', (s) => s.clear()); await tx(d, 'rows', 'readwrite', (s) => s.clear()); }
   async function persistent() { await open(); return !mem; }
-  IA.db = { get, set, del, rows, put, remove, exportAll, importAll, wipe, persistent, uid };
+  async function storageInfo() { const n = root.navigator && navigator.storage; let persisted = null, usage = null, quota = null; try { if (n && n.persisted) persisted = await n.persisted(); if (n && n.estimate) { const e = await n.estimate(); usage = e.usage; quota = e.quota; } } catch (e) {} return { persisted, usage, quota }; }
+  async function requestPersist() { try { return root.navigator && navigator.storage && navigator.storage.persist ? await navigator.storage.persist() : null; } catch (e) { return null; } }
+  IA.db = { get, set, del, rows, put, remove, exportAll, importAll, wipe, persistent, uid, verify, sanitize, storageInfo, requestPersist };
 })(typeof window !== 'undefined' ? window : globalThis);

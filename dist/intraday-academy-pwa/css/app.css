@@ -1,8 +1,8 @@
 /* Intraday Mastery — dark trading-terminal design system */
 :root{
   --bg:#0b0f14; --bg2:#10161d; --panel:#141b23; --panel2:#19222c; --line:#24303c; --line2:#2f3d4b;
-  --text:#d8e1ea; --muted:#8696a7; --dim:#5d6c7b;
-  --accent:#4fb3ff; --accent2:#2b7fc0; --up:#26c281; --down:#ef5361; --warn:#f2b84b; --violet:#a78bfa; --cyan:#3fd0d4;
+  --text:#d8e1ea; --muted:#9aa8b8; --dim:#8494a5;
+  --accent:#4fb3ff; --accent2:#1d65a3; --up:#26c281; --down:#ef5361; --warn:#f2b84b; --violet:#a78bfa; --cyan:#3fd0d4;
   --upbg:rgba(38,194,129,.12); --downbg:rgba(239,83,97,.12); --warnbg:rgba(242,184,75,.12); --accbg:rgba(79,179,255,.10);
   --r:10px; --r2:6px; --gap:14px;
   --mono:"JetBrains Mono","SFMono-Regular",Menlo,Consolas,monospace;
@@ -12,7 +12,7 @@
 }
 :root[data-theme="light"]{
   --bg:#f4f6f9; --bg2:#eef1f5; --panel:#ffffff; --panel2:#f7f9fb; --line:#dde3ea; --line2:#cfd7e0;
-  --text:#14202b; --muted:#566575; --dim:#8a97a4; --accent:#1677c9; --accent2:#0f5a99;
+  --text:#14202b; --muted:#4a5866; --dim:#5f6b78; --accent:#1677c9; --accent2:#0f5a99;
   --up:#0f9960; --down:#d23a48; --warn:#b7791f; --accbg:rgba(22,119,201,.08); color-scheme: light;
 }
 *{box-sizing:border-box}
@@ -27,6 +27,9 @@ p{margin:.55em 0} code{font-family:var(--mono);font-size:.88em;background:var(--
 .muted{color:var(--muted)} .dim{color:var(--dim)} .up{color:var(--up)} .down{color:var(--down)} .warn{color:var(--warn)} .acc{color:var(--accent)}
 .small{font-size:.84rem} .tiny{font-size:.74rem} .right{text-align:right} .center{text-align:center} .nowrap{white-space:nowrap}
 .hidden{display:none!important}
+input[type=checkbox],input[type=radio]{width:24px;height:24px;accent-color:var(--accent);vertical-align:middle}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 /* Shell */
 .app{display:flex;min-height:100vh}
@@ -77,13 +80,14 @@ p{margin:.55em 0} code{font-family:var(--mono);font-size:.88em;background:var(--
 .bar{height:6px;background:var(--panel2);border-radius:99px;overflow:hidden;border:1px solid var(--line)}
 .bar>i{display:block;height:100%;background:var(--accent);border-radius:99px}
 .bar.up>i{background:var(--up)}
+.synthetic-badge.hist{color:var(--cyan);border-color:color-mix(in srgb,var(--cyan) 50%,transparent)}
 .synthetic-badge{font:600 .66rem var(--mono);letter-spacing:.08em;color:var(--warn);border:1px solid color-mix(in srgb,var(--warn) 50%,transparent);padding:1px 6px;border-radius:4px}
 
 /* Buttons & forms */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:var(--panel2);border:1px solid var(--line2);color:var(--text);padding:8px 14px;border-radius:8px;cursor:pointer;font-weight:550;font-size:.9rem;min-height:38px;text-decoration:none}
 .btn:hover{border-color:var(--accent);text-decoration:none}
 .btn.primary{background:var(--accent2);border-color:var(--accent2);color:#fff}
-.btn.primary:hover{background:var(--accent)}
+.btn.primary:hover{background:#2472b5;border-color:#2472b5}
 .btn.buy{background:var(--up);border-color:var(--up);color:#06281a}.btn.sell{background:var(--down);border-color:var(--down);color:#2a0609}
 .btn.ghost{background:transparent}
 .btn.sm{padding:4px 10px;min-height:30px;font-size:.82rem}
@@ -98,7 +102,7 @@ input.i:focus,select.i:focus,textarea.i:focus{border-color:var(--accent)}
 input.i.num{font-family:var(--mono)}
 .form{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
 .chk{display:flex;align-items:flex-start;gap:9px;padding:7px 0;border-bottom:1px dashed var(--line);cursor:pointer}
-.chk input{margin-top:3px;width:17px;height:17px;accent-color:var(--accent)}
+.chk input{margin-top:0;width:24px;height:24px;accent-color:var(--accent);flex:0 0 24px}
 
 /* Tables */
 .tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px}

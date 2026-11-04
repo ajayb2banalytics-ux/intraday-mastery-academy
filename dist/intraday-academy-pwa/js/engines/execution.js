@@ -5,8 +5,8 @@
 (function (root) {
   const IA = (root.IA = root.IA || {});
   const INSTR = {
-    NIFTY: { sym: 'NIFTY FUT', lot: 65, tick: 0.05, cur: 'INR', seg: 'futures', spreadTicks: 2 },
-    BANKNIFTY: { sym: 'BANKNIFTY FUT', lot: 30, tick: 0.05, cur: 'INR', seg: 'futures', spreadTicks: 4 },
+    NIFTY: { sym: 'NIFTY FUT', lot: 65, tick: 0.1, cur: 'INR', seg: 'futures', spreadTicks: 2 },
+    BANKNIFTY: { sym: 'BANKNIFTY FUT', lot: 30, tick: 0.2, cur: 'INR', seg: 'futures', spreadTicks: 4 },
     RELIANCE: { sym: 'LARGECAP (cash)', lot: 1, tick: 0.1, cur: 'INR', seg: 'eqIntraday', spreadTicks: 1 },
     MIDCAP: { sym: 'MIDCAP (cash)', lot: 1, tick: 0.05, cur: 'INR', seg: 'eqIntraday', spreadTicks: 3 },
     SPY: { sym: 'SPY-like ETF', lot: 1, tick: 0.01, cur: 'USD', seg: 'us', spreadTicks: 1 },
@@ -16,7 +16,7 @@
     BTC: { sym: 'BTC PERP', lot: 1, tick: 0.5, cur: 'USD', seg: 'bps', bps: 5, spreadTicks: 4 },
   };
   function costs(ins, buyValue, sellValue, qty = 0) {
-    if (ins.seg === 'us') { const U = (IA.specs || IA.specsDefault).us; return Math.max(U.commissionMin, qty * U.commissionPerShare * 2) + sellValue * U.secFeeRate + Math.min(U.finraTafMax, qty * U.finraTafPerShare); }
+    if (ins.seg === 'us') return IA.risk.usCharges({ shares: qty, buyPrice: qty ? buyValue / qty : 0, sellPrice: qty ? sellValue / qty : 0 }).total;
     if (ins.seg === 'bps') return ((buyValue + sellValue) * ins.bps) / 1e4;
     return IA.risk.indiaCharges({ segment: ins.seg, buyValue, sellValue, specs: (IA.specs || IA.specsDefault).india }).total;
   }

@@ -26,7 +26,7 @@ Why should an intraday trader care? Because every rupee of cost, every margin ca
 2. The broker's risk system checks you have enough margin or cash. If not, the order is rejected before it ever reaches the exchange.
 3. The order goes to NSE (or BSE). It enters the **order book** and waits until a seller at ₹1,400 or lower appears. Matching is by price, then time.
 4. On a match, the exchange creates a **trade**. Both sides receive a trade confirmation within milliseconds.
-5. **NSE Clearing Ltd** (for NSE trades) or **Indian Clearing Corporation** (for BSE) becomes the buyer to every seller and the seller to every buyer. This is called **novation**.
+5. A clearing corporation, typically **NSE Clearing Ltd** for NSE trades or **Indian Clearing Corporation** for BSE trades, becomes the buyer to every seller and the seller to every buyer. This is called **novation**. (Under the interoperability framework, in place since 2019, a clearing member can choose which clearing corporation it clears through.)
 6. If you square off the same day (intraday), your buy and sell net to zero shares; only the rupee profit or loss and charges settle.
 7. If you hold, settlement happens on **T+1**: shares are credited to your demat account at **CDSL** or **NSDL** the next working day.
 
@@ -59,6 +59,10 @@ You buy 100 Reliance at ₹1,400 and sell 100 at ₹1,410 the same day.
 No shares move into your demat account, because your net share obligation is zero.` },
       { h: 'India', md: `> [!india] If you buy intraday (MIS/intraday product) and forget to sell, most brokers auto square-off around 15:15–15:25 IST at market price and may charge a fee. If you sell intraday shares you do not own and cannot buy back (for example the stock hits upper circuit), you face **short delivery**: the exchange runs an **auction** and you can pay a penalty well above the price you sold at. This is a real, avoidable intraday risk.
 
+### Professional notes: MIS square-off and short delivery
+- **Auto square-off is a broker process, not an exchange guarantee.** The broker's system sends market orders near its cut-off time. If the stock is locked at a circuit, those orders cannot fill. An unfilled intraday *buy* becomes a delivery position that needs full payment (the broker may sell it the next day at your risk); an unfilled intraday *short* becomes a short delivery. Brokers typically charge a fee for auto square-off (check your broker's charges page).
+- **How short delivery is settled.** The clearing corporation buys the shares for you in an auction on the settlement day. If the auction also fails, the position is closed out at a price set by exchange rules (broadly, the higher of the highest price traded between the trade day and the auction day, or a fixed percentage above the auction-day close; as of Nov 2026 — verify the current rule on nseclearing.in). Either way, the cost can be far above any stop you planned.
+
 Keep three things separate in your mind: the **trading account** (with broker, holds funds), the **demat account** (with depository via the broker, holds shares), and the **bank account** (linked for pay-in and pay-out).` },
       { h: 'US & global', md: `> [!us] A US order may be routed to any of a dozen-plus exchanges, to a wholesaler, or to an alternative trading system. The best displayed price across venues is the **NBBO**, and brokers have a best-execution duty. This fragmented routing is covered in [[link:l2-us-structure]]. Clearing and settlement still converge on DTCC for stocks and OCC for listed options.
 
@@ -82,7 +86,7 @@ Europe has a similar chain (exchange, broker, central counterparty such as Eurex
       { q: "Which institution guarantees that your matched NSE trade settles even if the counterparty defaults?", o: ["Your broker", "SEBI", "NSE Clearing Ltd through novation", "Your bank"], a: 2, why: "The clearing corporation becomes the counterparty to both sides. SEBI regulates; it does not guarantee trades. Brokers and banks are not counterparties." },
       { q: "Why is short-selling an illiquid stock intraday more dangerous than buying it?", o: ["Short sellers pay higher brokerage", "If it locks at upper circuit you may be unable to buy back, leading to an auction and penalty", "Short sales settle on T+3", "Shorts cannot use stop-losses"], a: 1, why: "The unique risk is short delivery when you cannot cover. Brokerage and settlement cycles do not differ, and stops are possible but may not fill at a locked circuit." },
     ],
-    refs: ['Larry Harris — Trading and Exchanges: Market Microstructure for Practitioners (book)', 'NSE Clearing Ltd — Clearing and settlement process (nseclearing.in)', 'SEBI — Circular on T+1 rolling settlement (2021) and optional T+0 settlement (2024) (sebi.gov.in)', 'SEC — Shortening the securities transaction settlement cycle, final rule (2023) (sec.gov)', 'CDSL / NSDL — Investor FAQs on demat accounts (cdslindia.com, nsdl.co.in)'],
+    refs: ['Larry Harris — Trading and Exchanges: Market Microstructure for Practitioners (book)', 'NSE Clearing Ltd — Clearing and settlement process; auction and close-out of short deliveries (nseclearing.in)', 'SEBI — Circular on T+1 rolling settlement (2021) and optional T+0 settlement (2024) (sebi.gov.in)', 'SEC — Shortening the securities transaction settlement cycle, final rule (2023) (sec.gov)', 'CDSL / NSDL — Investor FAQs on demat accounts (cdslindia.com, nsdl.co.in)'],
   });
 
   L({
@@ -106,7 +110,7 @@ Most Indian broker apps show the top five price levels on each side (this is oft
 | 1,900 | 999.95 | 1,000.35 | 1,700 |
 | 4,100 | 999.90 | 1,000.40 | 3,000 |
 
-- **Best bid** ₹1,000.10, **best ask** ₹1,000.20, spread ₹0.10, which is one **tick** here.
+- **Best bid** ₹1,000.10, **best ask** ₹1,000.20, spread ₹0.10. In this stylised book prices step in ₹0.05 **ticks**, so the spread is two ticks. (The real tick for a stock depends on its price band; see the India section.)
 - If you send a market buy for 500 shares, all 500 fill at ₹1,000.20 because 900 are offered there.
 - A market buy for 5,000 shares eats 900 at 1,000.20, 2,100 at 1,000.25 and 2,000 at 1,000.30. Your average price is higher than the best ask. That is **market impact** or **slippage**.
 
@@ -127,18 +131,18 @@ Round-trip spread cost ≈ Spread × Quantity (buying at ask, selling at bid)
 
 **Example 1 — liquid large-cap.** Bid ₹1,000.10, ask ₹1,000.20. Mid ₹1,000.15. Spread % = 0.10 / 1,000.15 × 100 ≈ 0.01%. For 500 shares the round-trip spread cost is about 0.10 × 500 = ₹50.
 
-**Example 2 — thin small-cap.** Bid ₹248.00, ask ₹249.20. Mid ₹248.60. Spread % = 1.20 / 248.60 × 100 ≈ 0.48%. For ₹1,00,000 of stock (about 402 shares) the round-trip spread cost is about 1.20 × 402 = ₹482, nearly ten times the liquid case for a smaller position.
+**Example 2 — thin small-cap.** Bid ₹248.00, ask ₹249.20. Mid ₹248.60. Spread % = 1.20 / 248.60 × 100 ≈ 0.48%. For ₹1,00,000 of stock (about 401 shares at the ₹249.20 ask) the round-trip spread cost is about 1.20 × 401 = ₹481, nearly ten times the liquid case for a smaller position.
 
 If your target is 0.5% on the trade, the small-cap spread alone consumes almost all of it.` },
-      { h: 'India', md: `> [!india] Nifty and Bank Nifty futures, and near-the-money Nifty options, are among the most heavily traded contracts in the world by contract count. Liquidity in individual stock options is far thinner. Before trading any stock intraday, check its average traded value and whether it is in the F&O segment (F&O stocks must meet liquidity criteria set by SEBI and NSE).
+      { h: 'India', md: `> [!india] Nifty index options have been among the most heavily traded derivative contracts in the world by contract count (see the Futures Industry Association's annual volume surveys), and Nifty and Bank Nifty futures are very liquid. Liquidity in individual stock options is far thinner. Before trading any stock intraday, check its average traded value and whether it is in the F&O segment (F&O stocks must meet liquidity criteria set by SEBI and NSE).
 
-Tick sizes on NSE depend on the price of the stock and are revised from time to time (as of Nov 2026 — verify on nseindia.com). A stock with a ₹0.05 tick trading at ₹50 has a minimum spread of 0.1%; the same tick on a ₹2,500 stock is only 0.002%.` },
+NSE uses price-based tick sizes for equities, reviewed periodically: lower-priced stocks get a smaller tick (as small as ₹0.01) and higher-priced stocks larger ones (as of Nov 2026 — verify the current tick table on nseindia.com). The principle to remember: the minimum possible spread is one tick, so tick size divided by price is a floor on your spread cost. Illustration: a ₹0.05 tick on a ₹50 stock is a 0.1% floor; the same tick on a ₹2,500 stock is only 0.002%.` },
       { h: 'US & global', md: `> [!us] US large-caps like Apple or Nvidia usually trade with a one-cent spread on a share price in the hundreds of dollars, a tiny percentage. Low-priced US small-caps can show spreads of several percent, especially in pre-market. US quotes also aggregate across many venues into the NBBO.` },
       { h: 'Common misconceptions', md: `- **"Large bid size means price will go up."** Displayed size can be cancelled in milliseconds. Depth is information, not a promise.
 - **"The last traded price is what I will get."** You get the ask when buying at market and the bid when selling.
 - **"Spread doesn't matter, brokerage is zero."** Zero brokerage does nothing about spread or impact.
 - **"Volume equals liquidity."** High volume at a wide spread during a news spike is not the same as tight, deep liquidity.` },
-      { h: 'When it fails', md: `Liquidity disappears exactly when you need it most. On a sharp news drop, the bid side of a mid-cap can thin from thousands of shares to a few hundred within seconds. Suppose you are long 2,000 shares at ₹480 with a stop-loss market order at ₹472. When it triggers, the visible bids are 300 at ₹471, 400 at ₹469, 500 at ₹466 and 800 at ₹462. Your fill averages roughly ₹466. Your planned loss was ₹16,000; your actual loss is about ₹28,000. Nothing was wrong with your analysis. The failure was trading a size that the book could not absorb under stress.` },
+      { h: 'When it fails', md: `Liquidity disappears exactly when you need it most. On a sharp news drop, the bid side of a mid-cap can thin from thousands of shares to a few hundred within seconds. Suppose you are long 2,000 shares at ₹480 with a stop-loss market order at ₹472. When it triggers, the visible bids are 300 at ₹471, 400 at ₹469, 500 at ₹466 and 800 at ₹462. Your fill averages roughly ₹466 (₹465.75). Your planned loss was ₹16,000; your actual loss is about ₹28,500. Nothing was wrong with your analysis. The failure was trading a size that the book could not absorb under stress.` },
       { h: 'Exercise', md: `1. In the Chart Lab, load a Midcap chart and a Nifty chart. Note how the simulated spread differs.
 2. Copy the depth table above into your Journal and calculate the average fill for market buys of 1,000, 3,000 and 6,000 shares.
 3. Pick three stocks you might trade. Record their typical spread (in ticks and %) at 09:20, 11:30 and 15:15 for a week in paper mode.
@@ -149,7 +153,7 @@ Tick sizes on NSE depend on the price of the stock and are revised from time to 
       { q: "Bid ₹500.00, ask ₹500.50. You buy 200 at market and immediately sell 200 at market. Ignoring other charges, what do you lose?", o: ["₹0, prices didn't move", "₹50", "₹100", "₹500"], a: 2, why: "You buy at ₹500.50 and sell at ₹500.00, losing ₹0.50 × 200 = ₹100. The spread is a real cost even with no price movement." },
       { q: "Which is the best evidence that a stock can absorb your 1,000-share intraday order?", o: ["It rose 8% today", "Its spread is usually one tick and several thousand shares rest at each of the top levels", "A large bid of 50,000 shares is showing", "It has high RSI"], a: 1, why: "Consistently tight spread and depth well above your size indicate liquidity. A one-off large bid can be cancelled; price change and RSI say nothing about depth." },
     ],
-    refs: ['Larry Harris — Trading and Exchanges: Market Microstructure for Practitioners (book)', 'Maureen O\'Hara — Market Microstructure Theory (book)', 'NSE — Market depth and tick size information (nseindia.com)', 'SEC — Investor.gov: Understanding bid and ask (investor.gov)'],
+    refs: ['Larry Harris — Trading and Exchanges: Market Microstructure for Practitioners (book)', 'Maureen O\'Hara — Market Microstructure Theory (book)', 'NSE — Market depth and tick size information (nseindia.com)', 'Futures Industry Association — annual exchange volume surveys (fia.org)', 'SEC — Investor.gov: glossary entries on bid price, ask price and spread (investor.gov)'],
   });
 
   L({
@@ -197,7 +201,7 @@ You are long 300 shares at ₹1,400, stop trigger ₹1,386.
 Stop slippage = |Fill price − Trigger price| × Quantity
 :::
 
-The stop-limit avoids small slippage but exposes you to rare large losses. Many traders choose a stop-limit with a buffer of a few ticks to a few ATR-percent in liquid stocks, and monitor it.` },
+The stop-limit avoids small slippage but exposes you to rare large losses. Many traders choose a stop-limit with a buffer of a few ticks up to a small fraction of the ATR in liquid stocks, and monitor it.` },
       { h: 'India', md: `> [!india] At 09:15 IST after a gap, a market order in a stock can fill far from the previous close. In index options on expiry day, premiums can move 30–50% in minutes; a market buy order there can fill much higher than the screen showed. Also note the **freeze quantity**: orders above an exchange-set size per order in index derivatives are rejected and must be split (iceberg orders do this automatically).` },
       { h: 'US & global', md: `> [!us] US brokers offer stop, stop-limit, trailing stop, and time-in-force options such as GTC (good till cancelled). Stops are usually held by the broker and sent to market on trigger, often on the consolidated last sale. Extended-hours sessions usually accept limit orders only. The SEC's Investor.gov guide on order types is a good plain-language reference.` },
       { h: 'Common misconceptions', md: `- **"A stop-loss guarantees my loss amount."** Only a filled stop limits loss, and the fill may be worse than the trigger.
@@ -218,7 +222,7 @@ The stop-limit avoids small slippage but exposes you to rare large losses. Many 
       { q: "A stop-limit order's main risk compared with a stop-market order is that it…", o: ["costs more brokerage", "may not fill in a fast move, leaving you in a growing loss", "always fills at a worse price", "cannot be used intraday"], a: 1, why: "The limit protects price but sacrifices execution. Brokerage is the same; fills are at the limit or better, not always worse; and it is fine intraday." },
       { q: "Why do many Indian brokers block SL-M orders in illiquid options?", o: ["SEBI bans all stop orders", "A market order on trigger could fill far from fair value in a wide spread", "Options cannot fall", "Exchanges charge extra for them"], a: 1, why: "In wide-spread options, a triggered market order can fill disastrously. There is no blanket SEBI ban on stops, and options certainly can fall." },
     ],
-    refs: ['SEC — Investor.gov: Types of orders (investor.gov)', 'NSE — Order types and trading system features, NEAT/NOW FAQs (nseindia.com)', 'Larry Harris — Trading and Exchanges: Market Microstructure for Practitioners (book)', 'Zerodha Varsity — Introduction to stock markets: order types (zerodha.com/varsity)'],
+    refs: ['SEC — Investor.gov: Types of orders (investor.gov)', 'NSE — Trading system (NEAT) and order types, equity segment FAQs (nseindia.com)', 'Larry Harris — Trading and Exchanges: Market Microstructure for Practitioners (book)', 'Zerodha Varsity — Introduction to stock markets: order types (zerodha.com/varsity)'],
   });
 
   L({
@@ -239,7 +243,7 @@ These look similar on a chart, but what can go wrong, and how much, is completel
 | Intraday cash | Exposure till close | Can exceed margin | Up to about 5x (20% margin) | Same day | STT 0.025% on sell |
 | Futures | Obligation | Unlimited in principle | Often 6–10x | Expiry | STT 0.05% on sell |
 | Long option | Right | Premium paid | High, built-in | Expiry; time decay | STT 0.15% of premium on sell |
-| Short option | Obligation | Unlimited (calls) / large (puts) | High | Expiry | Margin like futures |
+| Short option | Obligation | Unlimited (calls) / large (puts) | High | Expiry | STT 0.15% of premium on the opening sale; SPAN + exposure margin blocked |
 
 STT figures as of Nov 2026 (Budget 2026, effective 1 Apr 2026) — verify on incometaxindia.gov.in or your broker's charges page.
 
@@ -269,13 +273,21 @@ Exposure-to-margin leverage = Notional / Margin
 - Intrinsic = 25,100 − 25,000 = 100. P&L = (100 − 120) × 65 = −₹1,300. Direction was right; the trade still lost because the move was smaller than the premium paid.` },
       { h: 'India', md: `> [!india] Index lot sizes for contracts from Jan 2026: Nifty 65, Bank Nifty 30, Fin Nifty 60, Midcap Select 120, Sensex 20 (as of Nov 2026 — verify on nseindia.com/bseindia.com). Nifty has weekly options expiring on Tuesday; Bank Nifty has monthly contracts only. Stock F&O is available only in stocks that meet eligibility criteria.
 
-Intraday cash in India is often called MIS; positions are squared off automatically by the broker near the close. Futures and options can be intraday (MIS) or carried (NRML) with higher margin.` },
+Intraday cash in India is often called MIS; positions are squared off automatically by the broker near the close. Futures and options can be intraday (MIS) or carried (NRML) with higher margin.
+
+### Settlement at expiry: index versus stock derivatives
+| Contract | Exercise style | Settlement at expiry |
+|---|---|---|
+| Index futures and options (Nifty, Bank Nifty, Sensex) | Options are European (exercised only at expiry) | Cash-settled against the final settlement price |
+| Stock futures and options | Options are European | **Physically settled**: open positions turn into delivery of shares |
+
+Physical settlement matters even to an intraday trader who "forgets" a position: an in-the-money stock option or a stock future held into expiry becomes an obligation to take or give delivery of the full lot, needing the full cash or shares, and brokers often square off such positions early or raise margin in expiry week. In-the-money long options exercised at expiry attract STT on the intrinsic (settlement) value at 0.15% from 1 Apr 2026 (as of Nov 2026 — verify on incometaxindia.gov.in and your broker's charges page). Check how your broker charges exercise and physical delivery before deciding whether to hold an option into expiry.` },
       { h: 'US & global', md: `> [!us] US intraday traders mostly trade stocks and ETFs (such as SPY or QQQ) in a margin account, plus listed options and CME futures (E-mini and Micro E-mini S&P 500). One equity option contract usually covers 100 shares. Micro futures exist precisely so small traders can size down; Indian index futures have no equivalent small contract.` },
       { h: 'Common misconceptions', md: `- **"Options are cheaper, so less risky."** A cheap option is cheap because it probably expires worthless.
 - **"Futures margin is my risk."** Your risk is the notional; margin is only the deposit.
 - **"Intraday means I can't lose more than my margin."** A gap or circuit move can produce a debit balance.
 - **"Selling options is like collecting rent."** It is collecting a small, frequent premium in exchange for occasional large losses.` },
-      { h: 'When it fails', md: `A beginner buys 2 lots of Bank Nifty futures at 56,000 with about ₹2.4 lakh margin, thinking "I'm risking ₹2.4 lakh". Bank Nifty falls 1.5% (840 points) on a surprise policy comment. Loss = 840 × 30 × 2 = ₹50,400, about 21% of the margin, in under an hour. If the account was ₹3 lakh, that one trade cost 17% of capital. The mistake was thinking in margin rather than notional: 2 lots = ₹33.6 lakh of exposure on a ₹3 lakh account, over 11x leverage.` },
+      { h: 'When it fails', md: `A beginner with a ₹5 lakh account buys 2 lots of Bank Nifty futures at 56,000, blocking about ₹4 lakh of margin (roughly 12% of notional; illustrative, check your broker's SPAN calculator), and thinks "I'm risking ₹4 lakh at most". Bank Nifty falls 1.5% (840 points) on a surprise policy comment. Loss = 840 × 30 × 2 = ₹50,400, about 12.6% of the margin and 10% of the whole account, in under an hour. The mistake was thinking in margin rather than notional: 2 lots = ₹33.6 lakh of exposure on a ₹5 lakh account, about 6.7x leverage. A 15% move against him, rare but possible around shocks, would wipe out the account entirely and could leave a debit.` },
       { h: 'Exercise', md: `1. Use the futures exposure calculator for 1 lot each of Nifty and Bank Nifty at current simulated prices. Write the notional and the rupee P&L of a 1% move.
 2. In the options payoff widget, plot a long 25,000 call at ₹120 and mark the breakeven.
 3. Journal: write in one line what you own in each segment.
@@ -301,9 +313,10 @@ Intraday cash in India is often called MIS; positions are squared off automatica
 
 In trading the same thing happens in minutes. **Margin** is the deposit; **leverage** is how many times larger the position is than the deposit. The sword cuts both ways at exactly the same speed. Beginners feel the upside in their imagination and the downside in their account.` },
       { h: 'Intermediate view', md: `### How margin works in India
-- **Cash intraday:** SEBI's peak-margin rules require brokers to collect upfront margin (VaR plus extreme-loss margin, with a minimum around 20% for most stocks). That caps intraday leverage near 5x for liquid stocks, less for volatile ones (as of Nov 2026 — verify with your broker).
+- **Cash intraday:** SEBI's peak-margin rules require brokers to collect upfront margin (VaR plus extreme-loss margin), and in practice brokers apply at least about 20% of trade value for intraday cash positions. That caps intraday leverage near 5x for liquid stocks, less for volatile ones (as of Nov 2026 — verify with your broker).
 - **Futures and short options:** the clearing corporation sets **SPAN margin** (worst-case one-day loss scenarios) plus **exposure margin**. The total is typically a low double-digit percentage of notional for index futures, higher around events.
 - **Long options:** you pay the full premium upfront; no further margin, but the leverage is built into the option.
+- **Intraday F&O:** under peak-margin rules, an intraday (MIS) futures or short-option position needs essentially the full exchange margin (SPAN plus exposure), the same as a carried position; the old large intraday discounts on F&O margin have largely gone (verify with your broker).
 - **Mark-to-market (MTM):** futures profits and losses are settled daily; if losses eat into margin, you must add funds or the broker closes positions.
 
 ### Effective leverage is what matters
@@ -388,15 +401,15 @@ Session times as of Nov 2026 — verify on nseindia.com.
 
 Why it matters: the first 15–30 minutes after 09:15 usually carry the widest spreads and the fastest moves of the day, and the official **closing price** is not simply the last trade at 15:29:59.` },
       { h: 'Intermediate view', md: `### The pre-open call auction
-During 09:00–09:08 buyers and sellers enter limit and market orders; you can modify and cancel them. The exchange then finds the single price at which the largest quantity can trade (the **equilibrium price**), matches all eligible orders at that price, and this becomes the opening price. The indicative equilibrium price is visible on NSE's pre-open page while orders come in.
+Since 7 Sep 2026, buyers and sellers can enter, modify and cancel limit and market orders from 09:00 to 09:05, then limit orders only until order entry closes at a random moment between 09:08 and 09:10, so nobody can game the last second. Matching runs 09:10–09:12, followed by a buffer to 09:15. (Before Sep 2026 order entry ended around 09:08. As of Nov 2026, verify on NSE.) The exchange then finds the single price at which the largest quantity can trade (the **equilibrium price**), matches all eligible orders at that price, and this becomes the opening price. The indicative equilibrium price is visible on NSE's pre-open page while orders come in.
 
 Why an auction? Overnight news creates uncertainty. Rather than letting the first few random orders set a wild opening print, an auction pools orders and finds a fairer price.
 
 ### Normal market
-Continuous price–time priority matching. Liquidity tends to be highest in the first hour and the last hour, with a lull around lunch. US data and European opens (around 12:30–13:30 IST depending on daylight saving) can add volatility in the afternoon.
+Continuous price–time priority matching. Liquidity tends to be highest in the first hour and the last hour, with a lull around lunch. The European open (London 08:00 local, which is 12:30 IST in British summer time and 13:30 IST in winter) and European data releases can add volatility in the afternoon. Most US economic data (08:30 ET) arrives at about 18:00–19:00 IST, after the NSE close, so its effect shows up in the next morning's gap.
 
 ### Closing price
-For the cash market, NSE computes the closing price as a **volume-weighted average of trades in the last 30 minutes** (15:00–15:30), not the final tick (verify the current methodology on NSE). This makes the close harder to manipulate. The 15:40–16:00 closing session lets you buy or sell at that official price.` },
+Since 3 Aug 2026, NSE runs a **Closing Auction Session (CAS)** for stocks that have F&O contracts: continuous trading in those stocks stops at 15:15, orders are collected (order entry 15:20–15:30, closing at a random moment between 15:28 and 15:30), and the auction matches at a single price by 15:35. That auction price is the official close. For other stocks the close is still a **volume-weighted average of trades in the last 30 minutes** of the session, not the final tick. Both methods make the close harder to manipulate than a last-trade rule. The post-close session, now **15:50–16:00**, lets you buy or sell at the official closing price. Equity F&O trading ends at 15:40. (Source: SEBI circular on CAS, Jan 2026; NSE circulars. As of Nov 2026, verify on NSE.)` },
       { h: 'Advanced view', md: `- **Opening gaps** are set in the auction. If the auction prints 1% above yesterday's close, the gap already reflects overnight information; chasing it in the first minute means paying the widest spreads of the day.
 - **Index derivatives** have their own pre-open for futures (introduced in late 2023, verify scope), so Nifty futures open with a discovered price rather than a scramble.
 - **Expiry days** (Nifty weekly on Tuesday as of Nov 2026) see heavy options activity late in the session; hedging flows from option writers can push the index around the close.
@@ -416,6 +429,7 @@ Professionals tag every trade with its **time bucket** in their journal. Very of
 Tradable quantity at price P = min(cumulative buys ≥ P, cumulative sells ≤ P)
 Opening price = the P with the largest tradable quantity
 :::
+If two prices tie on tradable quantity, exchange rules break the tie (broadly, the price leaving the smaller unmatched quantity, then the price closer to the previous close). If too few orders match, the opening price is set from the first trades of the normal market instead.
 Here the opening price is ₹1,400, with 6,000 shares matched; 500 buy shares remain unfilled and carry into the normal market.` },
       { h: 'India', md: `> [!india] Practical rules for a beginner: (1) Do not place market orders in the pre-open; use limits. (2) Consider waiting until 09:20–09:30 before your first trade so the opening range and spread settle. (3) Know your broker's auto square-off time and be flat 10 minutes before it. (4) Market holidays and special sessions (for example the Diwali Muhurat trading session) are published by NSE each year.
 
@@ -424,7 +438,7 @@ BSE runs the same structure for Sensex stocks; prices are linked by arbitrage, s
 [[chart:NIFTY:15:vwap,vol]]` },
       { h: 'US & global', md: `> [!us] NYSE and Nasdaq also open and close with auctions (opening and closing cross). Regular session 09:30–16:00 ET, with pre-market and after-hours sessions that are thinner and more volatile. Tokyo extended its close to 15:30 JST in Nov 2024. Session overlaps are covered in [[link:l2-overnight]].` },
       { h: 'Common misconceptions', md: `- **"The 09:15 candle is the open price set by the first trader."** It is set by the pre-open auction.
-- **"The closing price is the last trade."** For NSE cash it is a 30-minute VWAP-style calculation.
+- **"The closing price is the last trade."** On NSE it is the Closing Auction price for F&O stocks (from Aug 2026) and a last-30-minute VWAP for other stocks.
 - **"More volatility at the open means more profit."** It means more opportunity and more cost; spreads and slippage are highest then.
 - **"I can trade in the closing session at any price."** Only at the closing price.` },
       { h: 'When it fails', md: `A beginner sees Reliance indicated 1.5% higher in the pre-open and places a market buy at 09:07 for 200 shares. The auction prints at ₹1,421; within the first five minutes, sellers who were waiting for strength push it to ₹1,408. Loss ₹2,600 before any plan was made. The failure: entering in the most uncertain minutes with no level, no stop and a market order. The auction is fair, but fairness does not mean the price will continue.` },
@@ -434,7 +448,7 @@ BSE runs the same structure for Sensex stocks; prices are linked by arbitrage, s
     ],
     check: [
       { q: "Why does NSE run a pre-open call auction instead of starting continuous trading at 09:00?", o: ["To give brokers time to log in", "To pool overnight orders and discover a single fair opening price", "To allow only institutions to trade", "To collect STT"], a: 1, why: "The auction concentrates liquidity and reduces random opening prints after overnight news. It is open to all participants and has nothing to do with tax." },
-      { q: "You want to sell your holding at exactly the official NSE closing price. When can you do this?", o: ["09:00–09:08", "15:29 with a market order", "In the closing session 15:40–16:00", "Never"], a: 2, why: "The closing session trades at the official closing price. A 15:29 market order trades at the then-prevailing price, which may differ." },
+      { q: "You want to sell your holding at exactly the official NSE closing price. When can you do this?", o: ["09:00–09:10", "15:29 with a market order", "In the post-close session 15:50–16:00", "Never"], a: 2, why: "The post-close session (15:50–16:00 since Aug 2026) trades at the official closing price. A 15:29 market order trades at the then-prevailing price (and for F&O stocks continuous trading has already stopped at 15:15 for the closing auction). Pre-open trades set the opening price, not the close." },
     ],
     refs: ['NSE — Trading hours and pre-open session (nseindia.com)', 'NSE — Closing price computation FAQ (nseindia.com)', 'BSE — Trading hours and call auction (bseindia.com)', 'Larry Harris — Trading and Exchanges: Market Microstructure for Practitioners (book)'],
   });
@@ -450,7 +464,9 @@ Many beginners only meet SEBI rules when an order is rejected or margin suddenly
 
 > [!warn] Rules change. Everything in this lesson is as of Nov 2026 and must be verified on sebi.gov.in and your broker's notices before you rely on it.` },
       { h: 'Intermediate view', md: `### 1. Upfront and peak margin (2020–2021)
-Brokers must collect margin **before** the trade, and the exchange checks your margin at several random snapshots during the day. Result: intraday cash leverage is effectively capped at about 5x for most stocks, lower for volatile ones. The old "20x intraday leverage" offers are gone.
+Brokers must collect margin **before** the trade, and the clearing corporation checks each client's margin at several random snapshots during the day; the highest requirement seen (the "peak") must have been covered. Result: intraday cash leverage is effectively capped at about 5x for most stocks, lower for volatile ones. The old "20x intraday leverage" offers are gone.
+
+If a snapshot shows a shortfall, the clearing corporation levies a **short-margin penalty** (a percentage of the shortfall, higher for repeat cases) on the broker, which brokers normally pass on to the client. The penalty slabs and how brokers treat same-day credits (such as proceeds from selling delivery holdings) change from time to time (as of Nov 2026 — verify on nseclearing.in and with your broker).
 
 ### 2. Client money protection
 Brokers must report client balances to exchanges, cannot use one client's money for another, and must settle running accounts (return unused funds) periodically. Securities given as margin are **pledged** in your demat account rather than transferred to the broker.
@@ -474,7 +490,7 @@ Rules also change the **microstructure** you trade. Fewer weekly expiries concen
 
 Professionals keep a short "regulatory changes" note in their trading plan and review it monthly. When a rule changes contract size or margin, any backtest using old lot sizes or charges must be re-run.` },
       { h: 'The maths', md: `**Effect of lot-size increase on minimum risk.** A trader whose rule is "risk 1% of capital per trade" with a 40-point stop on Nifty:
-- Old lot 25: risk per lot = 40 × 25 = ₹1,000, needs ₹1,00,000 capital.
+- Old lot 25 (before the Nov 2024 resizing): risk per lot = 40 × 25 = ₹1,000, needs ₹1,00,000 capital.
 - Current lot 65: risk per lot = 40 × 65 = ₹2,600, needs ₹2,60,000 capital.
 
 :::formula
@@ -563,7 +579,7 @@ If Nifty is up 60 points, almost the whole move came from one bank. You now know
       { q: "Nifty at 24,000. A stock with 10% weight rises 3%. Approximate points contribution?", o: ["3", "24", "72", "240"], a: 2, why: "24,000 × 0.10 × 0.03 = 72 points." },
       { q: "Bank Nifty is up 1.5% but your bank stock is up 0.2%. What does this tell you?", o: ["Your stock is strong", "Your stock is weak relative to its sector", "Bank Nifty will fall", "Nothing"], a: 1, why: "Relative to its sector, it is lagging. That says nothing directly about Bank Nifty's future." },
     ],
-    refs: ['NSE Indices — Nifty 50 and Nifty Bank index methodology and factsheets (niftyindices.com)', 'BSE / Asia Index — S&P BSE Sensex methodology (asiaindex.co.in)', 'SEBI — Circular on eligibility criteria for non-benchmark indices for derivatives (2025) (sebi.gov.in)', 'NSE — India VIX methodology (nseindia.com)', 'S&P Dow Jones Indices — S&P U.S. Indices methodology (spglobal.com)'],
+    refs: ['NSE Indices — Nifty 50 and Nifty Bank index methodology and factsheets (niftyindices.com)', 'BSE / Asia Index — BSE Sensex methodology (asiaindex.co.in)', 'SEBI — Circular on eligibility criteria for non-benchmark indices for derivatives (2025) (sebi.gov.in)', 'NSE — India VIX methodology (nseindia.com)', 'S&P Dow Jones Indices — S&P U.S. Indices methodology (spglobal.com)'],
   });
 
   L({
@@ -584,7 +600,7 @@ For an investor holding for years, these are small. For an intraday trader makin
 | GST | 18% on brokerage + exchange + SEBI fees | same | same | same |
 | Brokerage | Typically ₹20 or 0.03% per order, whichever lower, at discount brokers | Often ₹0 at discount brokers | Typically ₹20 per order | Typically ₹20 per order |
 
-STT from 1 Apr 2026 (Budget 2026); NSE charges from 1 Mar 2026 (including IPFT). Delivery sells also attract a depository (DP) charge per scrip.
+STT from 1 Apr 2026 (Budget 2026); NSE charges from 1 Mar 2026 (including IPFT). Delivery sells also attract a depository (DP) charge per scrip. In-the-money options **exercised** at expiry pay STT of 0.15% on the settlement (intrinsic) value, not on premium, so holding a deep in-the-money option to expiry can cost much more STT than selling it before expiry. BSE's transaction charges differ from NSE's.
 
 ### Hidden costs
 - **Spread**: half the spread on entry and half on exit if you trade at market.
@@ -615,7 +631,7 @@ STT 0.15% × 8,450 = 12.68; transaction ≈ 5.77; SEBI ≈ 0.02; GST ≈ 8.24; s
 Breakeven move (per unit) = Total round-trip charges / Quantity
 :::` },
       { h: 'Advanced view', md: `- **Cost as a fraction of expected move.** Compare charges with your typical target. Example 2's ₹968 is 30% of a 50-point target, but only 10% of a 150-point target. Small-target scalping in futures is very hard after the 2026 STT increase.
-- **Spread dominates in options.** A one-tick spread of ₹0.05 on a ₹120 premium is tiny, but a ₹1 spread in a far strike is 0.8% each way.
+- **Spread dominates in options.** A one-tick spread of ₹0.05 on a ₹120 premium is tiny (about 0.04% round trip), but a ₹1 spread on the same premium costs about 0.8% of premium per round trip, and on a ₹10 far-strike premium a ₹1 spread costs 10%.
 - **Frequency.** Ten round trips a day at ₹97 each = ₹970/day ≈ ₹2.1 lakh over 220 trading days on a modest account. That number belongs at the top of your trading plan.
 - **Charges are dated data.** This app stores rates with an as-of date; when STT or exchange fees change, re-run old backtests.` },
       { h: 'India', md: `> [!india] Check your contract note against your own calculation for the first ten trades. Differences usually come from per-order brokerage caps, DP charges, or call-and-trade fees. Use the calculator below with your broker's actual brokerage.
@@ -630,7 +646,7 @@ Breakeven move (per unit) = Total round-trip charges / Quantity
 - **"I'll worry about costs once I'm profitable."** Costs decide whether you become profitable.` },
       { h: 'When it fails', md: `A trader's 1-minute Nifty futures strategy wins 60% of trades, averaging +20 points on winners and −20 on losers. Gross expectancy = 0.6 × 20 − 0.4 × 20 = +4 points per trade = ₹260 per lot. Charges ≈ ₹968 per round trip. Net expectancy ≈ **−₹708 per trade**. The strategy "works" on the chart and loses steadily in the account.` },
       { h: 'Exercise', md: `1. Enter Examples 1–3 into the charges calculator and confirm the totals.
-2. Compute breakeven in points for 1 lot of Bank Nifty futures (lot 30) at 56,000 with a 100-point target.
+2. Compute breakeven in points for 1 lot of Bank Nifty futures (lot 30) at 56,000 with a 100-point target. (Check: charges ≈ ₹999, so breakeven ≈ 33 points, and charges take about a third of the ₹3,000 gross.)
 3. In your Journal, add a "charges" column to every paper trade from today.` },
     ],
     check: [
@@ -662,7 +678,7 @@ Triggered by a 10%, 15% or 20% move in Nifty 50 or Sensex. They halt trading in 
 - **Trade-for-trade (T2T) / BE series**: every trade must be settled by delivery; intraday squaring off is not allowed.
 
 ### F&O ban
-Each F&O stock has a **market-wide position limit (MWPL)**. When open interest across all participants exceeds 95% of MWPL, the stock enters the **ban period**: no fresh positions, only reductions. It exits when OI falls below 80%. The computation method was revised in 2025 (verify on NSE).` },
+Each F&O stock has a **market-wide position limit (MWPL)**. When open interest across all participants exceeds 95% of MWPL, the stock enters the **ban period**: no fresh positions, only reductions. It exits when OI falls below 80%. The computation method was revised in 2025, with OI measured on a futures-equivalent (delta-based) basis (verify on NSE). A client who increases a position during the ban is penalised by the exchange, and brokers usually block such orders; even an intraday trade that adds to a position and is closed the same day can count.` },
       { h: 'Advanced view', md: `- **Magnet effect.** Research on price limits in several markets suggests prices can accelerate as they approach a band, as traders rush to trade before a lock. Evidence varies by market and period; treat it as a risk, not a strategy.
 - **Liquidity cliff.** In a 5%-band small-cap, you can be at −4% with an orderly book and at −5% locked one minute later.
 - **F&O ban effects.** Since no new positions are allowed, existing short positions cannot be added to and some are covered; derivative prices can decouple slightly from cash. Exchanges publish the ban list daily.
@@ -755,7 +771,7 @@ FII/DII net = Gross buy − Gross sell (₹ crore)
   });
 
   Q([
-    { id: 'L1-M2-q01', module: 'L1-M2', d: 1, q: "NSE normal market hours (as of Nov 2026)?", o: ["09:00–15:30", "09:15–15:30", "09:15–16:00", "10:00–15:30"], a: 1, why: "Continuous trading runs 09:15–15:30 IST; pre-open is 09:00–09:15 and the closing session 15:40–16:00." },
+    { id: 'L1-M2-q01', module: 'L1-M2', d: 1, q: "NSE normal market hours (as of Nov 2026)?", o: ["09:00–15:30", "09:15–15:30", "09:15–16:00", "10:00–15:30"], a: 1, why: "Continuous trading runs 09:15–15:30 IST. The pre-open session spans 09:00–09:15 (order entry to about 09:10, matching 09:10–09:12, then a buffer), F&O stocks go into the Closing Auction Session 15:15–15:35, and the post-close session runs 15:50–16:00. 09:00 is the pre-open start, 16:00 the end of the post-close session, and there is no 10:00 start." },
     { id: 'L1-M2-q02', module: 'L1-M2', d: 2, q: "In a pre-open auction, at ₹500 cumulative buys are 8,000 and cumulative sells 6,500; at ₹502 buys 6,000 and sells 7,500. Which price matches more shares?", o: ["₹500 (6,500 shares)", "₹502 (6,000 shares)", "Both equal", "Neither"], a: 0, why: "Tradable = min(buys, sells): ₹500 → 6,500, ₹502 → 6,000. The auction picks the larger." },
     { id: 'L1-M2-q03', module: 'L1-M2', d: 2, q: "How is NSE's cash-market closing price determined?", o: ["Last trade at 15:30", "Volume-weighted average of the last 30 minutes", "Average of open and close", "Set by SEBI"], a: 1, why: "NSE uses a weighted average of trades in the final 30 minutes to reduce manipulation of the close." },
     { id: 'L1-M2-q04', module: 'L1-M2', d: 2, q: "Which change came from SEBI's Oct 2024 index-derivatives measures?", o: ["Removal of all stop orders", "One weekly-expiry index per exchange", "STT abolished on options", "T+3 settlement"], a: 1, why: "The circular limited weekly expiries to one benchmark index per exchange, among other measures." },
@@ -1066,7 +1082,7 @@ The square-root rule is an approximation (markets trend and mean-revert at diffe
     { id: 'L1-M3-q04', module: 'L1-M3', d: 2, q: "Body 2, lower wick 7, upper wick 0.3, after a decline at the previous day's low. Best label?", o: ["Shooting star", "Hammer", "Marubozu", "Bearish engulfing"], a: 1, why: "Long lower wick ≥ 2× body, tiny upper wick, after a decline: hammer." },
     { id: 'L1-M3-q05', module: 'L1-M3', d: 2, q: "What is the main difference between a hammer and a hanging man?", o: ["Colour", "Wick length", "The prior trend in which it appears", "Volume"], a: 2, why: "They share the same shape; context (after a decline vs after a rise) names them." },
     { id: 'L1-M3-q06', module: 'L1-M3', d: 3, q: "Hammer high ₹502.50, low ₹496.00. Entry one tick (₹0.05) above high, stop one tick below low. Risk budget ₹1,300. Shares?", o: ["150", "196", "260", "197"], a: 1, why: "Entry 502.55, stop 495.95, risk 6.60; 1,300 / 6.60 ≈ 196.97 → 196 shares. Always round down; 197 would exceed the risk budget." },
-    { id: 'L1-M3-q07', module: 'L1-M3', d: 2, q: "Candle 1: O 300, C 306 (green). Candle 2: O 307, C 302. Is it dark cloud cover?", o: ["Yes: it opened above the prior close and closed below the prior body midpoint of 303", "No: it must close below 300", "No: dark cloud requires a red first candle", "No: it is a bullish harami"], a: 0, why: "Midpoint of candle 1's body = 303; candle 2 opened above the prior close and closed at 302, below the midpoint: dark cloud cover. The first candle must be green, not red." },
+    { id: 'L1-M3-q07', module: 'L1-M3', d: 2, q: "Candle 1: O 300, C 306 (green). Candle 2: O 307, C 302. Is it dark cloud cover?", o: ["Yes: it opened above the prior close and closed below the prior body midpoint of 303", "No: it must close below 300", "No: dark cloud requires a red first candle", "No: it is a bullish harami"], a: 0, why: "Midpoint of candle 1's body = 303; candle 2 opened above the prior close and closed at 302, below the midpoint but inside the body: dark cloud cover under the relaxed intraday definition (the classic daily definition wants the open above the prior high). Closing below 300 would make it a bearish engulfing; the first candle must be green, not red; and a harami needs the second body inside the first." },
     { id: 'L1-M3-q08', module: 'L1-M3', d: 2, q: "An inside bar is best described as…", o: ["A reversal signal", "A candle whose range sits within the prior candle's range, showing compression", "A large expansion candle", "A gap"], a: 1, why: "Inside bars show contraction; outside bars show expansion." },
     { id: 'L1-M3-q09', module: 'L1-M3', d: 3, q: "Bullish engulfing entry ₹1,000, stop ₹992, but VWAP resistance is at ₹1,004. What is the realistic R:R to that first obstacle?", o: ["0.5", "1.0", "2.0", "4.0"], a: 0, why: "Risk 8, reward to VWAP 4: R:R = 0.5. A pattern does not create room to the next level." },
     { id: 'L1-M3-q10', module: 'L1-M3', d: 1, q: "What is the overall evidence status of candlestick pattern lore in this academy?", o: ["Established", "Subjective framework", "Proven profitable", "Illegal"], a: 1, why: "Tests are mixed and mostly weak after costs, so patterns are labelled subjective." },
@@ -1135,7 +1151,7 @@ Average lag of a 20 SMA ≈ 9.5 bars; on a 5-minute chart that is about 47 minut
 - **"Price bounces off the 20 EMA."** Sometimes. Often it slices through it.
 - **"A crossover tells me a new trend has started."** It tells you a move has already happened.
 - **"Optimising the period (e.g. 17 instead of 20) will improve results."** Usually that is curve-fitting.` },
-      { h: 'When it fails', md: `On a range-bound Bank Nifty day between 55,800 and 56,050, a 9/20 EMA crossover system on 5-minute candles flips long and short six times. Each signal arrives after a ~60-point move has already happened, near the edge of the range. Average loss per trade ≈ 45 points = ₹1,350 per lot plus ≈ ₹400 charges. Six trades: about −₹10,500. The averages worked as designed; the market had no trend to follow.` },
+      { h: 'When it fails', md: `On a range-bound Bank Nifty day between 55,800 and 56,050, a 9/20 EMA crossover system on 5-minute candles flips long and short six times. Each signal arrives after a ~60-point move has already happened, near the edge of the range. Average loss per trade ≈ 45 points = ₹1,350 per lot plus ≈ ₹1,000 charges (1 lot of Bank Nifty futures at about 56,000, 2026 rates). Six trades: about −₹14,100. The averages worked as designed; the market had no trend to follow.` },
       { h: 'Exercise', md: `1. In the Chart Lab, add 9 and 20 EMAs to a synthetic Nifty day; count crossovers and mark which were followed by a move of at least 2× the 5-min ATR.
 2. Compute a 5-period EMA by hand for ten closes and compare with the app's indicator values.
 3. Journal: write how you will use MAs (filter, pullback zone or not at all).` },
@@ -1212,7 +1228,7 @@ Notice that a ₹2 up-move lifted RSI meaningfully. The first AvgGain/AvgLoss is
       { q: "AvgGain = 1.0, AvgLoss = 1.0. RSI?", o: ["0", "50", "70", "100"], a: 1, why: "RS = 1; RSI = 100 − 100/2 = 50." },
       { q: "Price is in a strong uptrend and RSI(14) is 76. Which is the most defensible interpretation?", o: ["Short immediately", "Momentum is strong; overbought alone is not a reason to short", "RSI is broken", "Buy more because RSI will reach 100"], a: 1, why: "In trends, high RSI describes strength and can persist. It neither predicts a top nor guarantees continuation." },
     ],
-    refs: ['J. Welles Wilder — New Concepts in Technical Trading Systems (book, 1978)', 'Constance Brown — Technical Analysis for the Trading Professional (book)', 'Andrew Cardwell — RSI range rules (seminars; summarised in Brown, above)', 'Perry J. Kaufman — Trading Systems and Methods (book)'],
+    refs: ['J. Welles Wilder — New Concepts in Technical Trading Systems (book, 1978)', 'Constance Brown — Technical Analysis for the Trading Professional (book; RSI range shifts)','Perry J. Kaufman — Trading Systems and Methods (book)'],
   });
 
   L({
@@ -1342,7 +1358,7 @@ OBV_t = OBV_(t−1) + Volume_t if Close up; − Volume_t if Close down; unchange
 - **"Volume leads price."** Sometimes; often they move together.
 - **"Raw volume comparisons work across the day."** Use time-of-day RVOL.
 - **"OBV rising means institutions are accumulating."** It means up-closes had more volume; motives are unknown.` },
-      { h: 'When it fails', md: `A mid-cap breaks above its morning high at ₹540 on RVOL 3.1. A trader buys 300 shares at ₹541 with stop ₹536. The volume came from a large block sale crossing at the high, and once that block finishes, demand dries up. Price slides to ₹535 within 20 minutes; stopped for ₹1,500 plus charges. High volume confirmed activity, not direction or continuation.` },
+      { h: 'When it fails', md: `A mid-cap breaks above its morning high at ₹540 on RVOL 3.1. A trader buys 300 shares at ₹541 with stop ₹536. Much of the volume came from one large seller filling every bid at the high, and once that seller finishes, demand dries up. Price slides to ₹535 within 20 minutes; stopped for ₹1,500 plus charges. High volume confirmed activity, not direction or continuation.` },
       { h: 'Exercise', md: `1. In the Chart Lab, mark breakouts on synthetic charts and classify by RVOL (below 1, 1–2, above 2). Track what happened next over 30 examples.
 2. Calculate OBV for ten bars by hand.
 3. Journal: add an RVOL column to your trade log.` },
@@ -1366,7 +1382,7 @@ OBV_t = OBV_(t−1) + Volume_t if Close up; − Volume_t if Close down; unchange
     { id: 'L1-M4-q09', module: 'L1-M4', d: 3, q: "You are long Nifty futures (1 lot, 65) from 25,040 with VWAP at 25,010. A news headline drives price to 24,990 and it holds below VWAP for three bars. Your plan says VWAP loss invalidates the bias. Best action?", o: ["Add another lot at VWAP", "Exit per plan; loss ≈ 50 × 65 = ₹3,250 plus charges", "Remove the stop and wait", "Switch to a 1-min chart for a better reading"], a: 1, why: "The plan's invalidation has occurred; following it caps loss. Adding or removing stops increases risk." },
     { id: 'L1-M4-q10', module: 'L1-M4', d: 2, q: "Bar volume 1,20,000 at 12:15; average 12:15 volume 1,50,000. RVOL and reading?", o: ["0.8 — below-normal participation", "1.25 — above normal", "2.0 — spike", "Cannot compute"], a: 0, why: "1,20,000 / 1,50,000 = 0.8: less activity than usual for that time." },
     { id: 'L1-M4-q11', module: 'L1-M4', d: 2, q: "Which statement about volume is correct?", o: ["High volume means more buyers than sellers", "Every trade has a buyer and seller; volume measures activity, not direction", "Volume always leads price", "Low volume means price will fall"], a: 1, why: "Volume counts matched trades; direction must be read from price." },
-    { id: 'L1-M4-q12', module: 'L1-M4', d: 3, q: "A 9/20 EMA crossover system trades a range day with six signals, average loss 40 points, Bank Nifty lot 30, charges ~₹400 per trade. Approximate day result?", o: ["−₹2,400", "−₹7,200", "−₹9,600", "+₹7,200"], a: 2, why: "6 × (40 × 30 + 400) = 6 × 1,600 = −₹9,600." },
+    { id: 'L1-M4-q12', module: 'L1-M4', d: 3, q: "A 9/20 EMA crossover system trades a range day with six signals, average loss 40 points per trade on 1 lot of Bank Nifty futures (lot 30), charges ≈ ₹1,000 per round trip. Approximate day result?", o: ["−₹6,000", "−₹7,200", "−₹13,200", "+₹7,200"], a: 2, why: "6 × (40 × 30 + 1,000) = 6 × 2,200 = −₹13,200. −₹7,200 ignores charges, −₹6,000 counts only charges, and a run of losses cannot produce a gain." },
     { id: 'L1-M4-q13', module: 'L1-M4', d: 1, q: "Which indicator in this module has an 'established' evidence label for its calculation and benchmark role?", o: ["RSI crossover rules", "VWAP", "EMA crossovers", "Divergences"], a: 1, why: "VWAP's calculation and benchmark use are established facts; whether price respects it is a tendency." },
   ]);
 
@@ -1384,7 +1400,7 @@ SEBI has published studies of individual traders. Its study of equity intraday t
 Think of it like learning to fly. Most people who try to fly without training crash. Pilots survive because they follow procedures that keep small errors from becoming fatal. In trading, those procedures are risk rules.` },
       { h: 'Intermediate view', md: `### Four structural headwinds
 1. **Costs are certain; edge is uncertain.** Every trade pays STT, fees, GST, spread and slippage. A random strategy loses roughly its costs over time. See [[link:l1-india-costs]].
-2. **Competition.** Your counterparty is often a professional market maker, an arbitrage desk or an algorithm with faster data and lower costs. Intraday prices are close to efficient over short horizons.
+2. **Competition.** Your counterparty is often a professional market maker, an arbitrage desk or an algorithm with faster data and lower costs. Short-horizon price moves in liquid instruments are hard to predict, and whatever predictability exists is competed for by faster participants.
 3. **Leverage.** Intraday margin and futures magnify mistakes. A few bad days can remove months of gains.
 4. **Behaviour.** Humans cut winners early (to lock in the pleasure) and let losers run (to avoid the pain of admitting a loss), revenge-trade after losses and overtrade when bored. This "disposition effect" is well documented in finance research.
 
@@ -1420,7 +1436,7 @@ Loss after n consecutive losses at risk r = 1 − (1 − r)^n
 - **"I need a better strategy."** Most beginners need better risk control first.
 - **"Losses are just tuition."** Only if you are recording and learning from them.
 - **"If professionals make money, so can I with the same indicators."** Their edge is often execution, cost, information and risk management.` },
-      { h: 'When it fails', md: `A beginner starts with ₹3 lakh. His first ten trades win ₹42,000, mostly on one big Bank Nifty move. Convinced, he doubles size and removes his daily loss limit. A trending day against him produces four losing trades and one revenge trade: −₹68,000 in a day. He now needs +29% on ₹2.74 lakh to get back to start. The original "edge" was never measured; ten trades was luck plus leverage.` },
+      { h: 'When it fails', md: `A beginner starts with ₹3 lakh. His first ten trades win ₹42,000, mostly on one big Bank Nifty move. Convinced, he doubles size and removes his daily loss limit. A trending day against him produces four losing trades and one revenge trade: −₹68,000 in a day. His account falls from a peak of ₹3.42 lakh to ₹2.74 lakh, below where he started; he now needs about +25% just to regain the peak. The original "edge" was never measured; ten trades was luck plus leverage.` },
       { h: 'Exercise', md: `1. Use the risk-of-ruin widget with a 50% win rate, 1.5R average win and risk of 1%, 2% and 5% per trade. Write down what changes.
 2. Draft your first-year rules: risk per trade, daily loss limit, maximum trades per day, minimum target versus cost.
 3. Journal: commit to paper trading at least 100 trades before any live trade.
@@ -1454,7 +1470,7 @@ This makes every trade risk the same amount, whether the stop is tight or wide. 
 2. Setup: buy Reliance-style stock at ₹1,400; stop below structure at ₹1,388. Stop distance = ₹12.
 3. Add a slippage buffer for the stop, e.g. ₹0.50 → effective risk ₹12.50.
 4. Shares = 2,000 / 12.50 = **160**.
-5. Position value = 160 × 1,400 = ₹2,24,000 → leverage 1.12x. Check it is within your leverage ceiling.
+5. Position value = 160 × 1,400 = ₹2,24,000 → leverage 1.12x. Check it is within your leverage ceiling. If your ceiling is 1x (no borrowed money), capital is the binding limit: floor(2,00,000 / 1,400) = 142 shares, and your actual risk falls to 142 × 12.50 = ₹1,775. The position-size calculator shows exactly this when leverage is set to 1.
 6. Check liquidity: 160 shares is trivial for a Nifty heavyweight.
 
 ### Futures (lot-constrained)
@@ -1663,7 +1679,7 @@ Divide total round-trip friction by your risk per trade. This single number tell
 
 | Instrument | Risk per trade | Friction per trade | Cost in R |
 |---|---|---|---|
-| Large-cap cash, ₹1 lakh position | ₹1,000 | ≈ ₹83 charges + ₹20 spread + ₹30 slippage ≈ ₹133 | 0.13R |
+| Large-cap cash, ₹1 lakh position (100 × ₹1,000) | ₹1,000 | ≈ ₹83 charges + ₹10 spread (one ₹0.10 tick) + ₹20 slippage ≈ ₹113 | 0.11R |
 | Nifty futures 1 lot, 40-pt stop | ₹2,600 | ≈ ₹968 + 1–2 points slippage (₹65–130) ≈ ₹1,060 | 0.41R |
 | Nifty futures 1 lot, 15-pt stop (scalp) | ₹975 | ≈ ₹1,060 | 1.09R |
 
@@ -1702,7 +1718,7 @@ A strategy targeting 0.3% with a 0.2% stop has gross reward ₹300 and risk ₹2
 - **"My backtest includes brokerage, so it's realistic."** It also needs STT, fees, spread and slippage.
 - **"More trades = more profit."** More trades = more friction; profit depends on edge per trade.
 - **"Slippage averages out."** It is skewed against you on stops and breakouts.` },
-      { h: 'When it fails', md: `A trader's backtest of a 5-minute Bank Nifty futures breakout shows +₹1.8 lakh over a year with 600 trades, using brokerage only. Adding STT, exchange charges, GST and stamp duty (≈ ₹1,000 per round trip in total at Bank Nifty's lot of 30 and ~56,000) costs ≈ ₹6 lakh. Adding two points of slippage per side (₹120 per trade) costs a further ₹72,000. Net: about **−₹4.9 lakh**. The "strategy" was a cost-blind illusion.` },
+      { h: 'When it fails', md: `A trader's backtest of a 5-minute Bank Nifty futures breakout shows +₹1.8 lakh over a year with 600 trades, using brokerage only. Adding STT, exchange charges, GST and stamp duty (≈ ₹960 per round trip on top of brokerage, at Bank Nifty's lot of 30 and ~56,000; ≈ ₹1,000 including brokerage) costs ≈ ₹5.8 lakh. Adding two points of slippage per side (₹120 per trade) costs a further ₹72,000. Net: about **−₹4.7 lakh**. The "strategy" was a cost-blind illusion.` },
       { h: 'Exercise', md: `1. For your current paper strategy, compute friction per trade and cost in R. If cost in R is above 0.3, write how you will reduce it.
 2. Re-run your expectancy with full friction. Does it stay positive?
 3. Use the compounding widget to compare an account with +0.15R and +0.05R net per trade over 500 trades at 1% risk.

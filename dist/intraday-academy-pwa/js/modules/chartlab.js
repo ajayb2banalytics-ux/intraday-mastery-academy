@@ -2,10 +2,11 @@
 (function (root) {
   const IA = (root.IA = root.IA || {});
   const { h, toast, num } = IA.ui;
-  const IND = [['vol', 'Volume'], ['vwap', 'VWAP'], ['ema9', 'EMA 9'], ['ema20', 'EMA 20'], ['ema50', 'EMA 50'], ['sma20', 'SMA 20'], ['sma50', 'SMA 50'], ['bb', 'Bollinger'], ['kc', 'Keltner'], ['dc', 'Donchian'], ['st', 'Supertrend'], ['psar', 'PSAR'], ['ichimoku', 'Ichimoku'], ['vp', 'Vol. profile'], ['rsi', 'RSI'], ['macd', 'MACD'], ['stoch', 'Stochastic'], ['atr', 'ATR'], ['adx', 'ADX/DMI'], ['obv', 'OBV'], ['cci', 'CCI'], ['mfi', 'MFI'], ['willr', '%R'], ['roc', 'ROC'], ['cmf', 'CMF']];
+  const IND = [['vol', 'Volume'], ['vwap', 'VWAP'], ['ema9', 'EMA 9'], ['ema20', 'EMA 20'], ['ema50', 'EMA 50'], ['sma20', 'SMA 20'], ['sma50', 'SMA 50'], ['bb', 'Bollinger'], ['kc', 'Keltner'], ['dc', 'Donchian'], ['st', 'Supertrend'], ['psar', 'PSAR'], ['ichimoku', 'Ichimoku'], ['vp', 'Vol. profile'], ['rsi', 'RSI'], ['macd', 'MACD'], ['stoch', 'Stochastic'], ['atr', 'ATR'], ['adx', 'ADX/DMI'], ['obv', 'OBV'], ['cci', 'CCI'], ['mfi', 'MFI'], ['willr', '%R'], ['roc', 'ROC'], ['cmf', 'CMF'], ['wma20', 'WMA 20'], ['vwma20', 'VWMA 20'], ['stochf', 'Fast Stoch'], ['stochrsi', 'StochRSI'], ['adl', 'A/D line'], ['sd', 'Std dev'], ['mom', 'Momentum']];
 
   IA.views.chartlab = async (el) => {
     const qs = IA.query || new URLSearchParams(); const st = { preset: qs.get('preset') || 'NIFTY', seed: +(qs.get('seed') || 42), tf: 5, days: 5, ind: (qs.get('ind') || 'vol,vwap,ema20').split(','), data: null, imported: null };
+    const srcBox = h('div', { class: 'f' }); IA.sourcePicker(async (src) => { st.ds = src.kind === 'dataset' ? src.ds : null; await gen(); }).then((p) => { srcBox.replaceWith(p); if (qs.get('ds')) { p.select.value = qs.get('ds'); p.select.onchange(); } });
     const host = h('div', { class: 'card' }), ctrl = h('div', { class: 'form', style: { marginBottom: '10px' } }), chips = h('div', { class: 'row', style: { marginBottom: '10px', gap: '6px' } });
     const sel = (opts, v, f) => { const s = h('select', { class: 'i' }, opts.map(([a, b]) => h('option', { value: a, selected: String(a) === String(v) }, b))); s.onchange = () => f(s.value); return s; };
     ctrl.append(
@@ -14,18 +15,21 @@
       h('label', { class: 'f' }, 'Sessions', sel([[1, '1 day'], [3, '3 days'], [5, '5 days'], [10, '10 days'], [40, '40 days']], st.days, (v) => { st.days = +v; gen(); })),
       h('label', { class: 'f' }, 'Seed', (() => { const i = h('input', { class: 'i num', type: 'number', value: st.seed }); i.onchange = () => { st.seed = +i.value; gen(); }; return i; })()),
       h('div', { class: 'f', style: { justifyContent: 'flex-end' } }, h('button', { class: 'btn', type: 'button', onclick: () => { st.seed = Math.floor(Math.random() * 1e6); ctrl.querySelector('input').value = st.seed; st.imported = null; gen(); } }, 'New random market')),
-      h('div', { class: 'f', style: { justifyContent: 'flex-end' } }, h('button', { class: 'btn', type: 'button', onclick: importCsv }, 'Import CSV')));
+      srcBox);
     IND.forEach(([k, l]) => { const b = h('button', { class: 'btn sm ' + (st.ind.includes(k) ? 'sel' : 'ghost'), type: 'button', onclick: () => { st.ind = st.ind.includes(k) ? st.ind.filter((x) => x !== k) : [...st.ind, k]; b.classList.toggle('sel'); b.classList.toggle('ghost'); draw(); } }, l); chips.append(b); });
     const info = h('div', { class: 'small muted', style: { marginTop: '6px' } });
-    el.append(h('p', { class: 'muted' }, 'Generate synthetic markets with different regimes, toggle indicators, draw levels and trendlines, and practise reading charts. Import your own OHLCV CSV to study real data offline.'), host);
+    el.append(h('p', { class: 'muted' }, 'Generate synthetic markets with different regimes, or open a historical dataset you imported in Historical Data. Change timeframe (historical data is resampled upward within sessions), toggle indicators, draw levels and trendlines.'), host);
     const chart = new IA.Chart(host, { height: 380 }); host.prepend(IA.chartToolbar(chart)); host.append(info, h('div', { style: { height: '12px' } }), ctrl, chips);
     chart.onDraw = async () => { const k = annKey(); const all = await IA.db.get('annotations', {}); all[k] = chart.drawings; await IA.db.set('annotations', all); };
     const annKey = () => st.imported ? 'imp:' + st.imported.name : `${st.preset}:${st.seed}:${st.tf}:${st.days}`;
-    async function gen() { st.data = st.imported ? st.imported.candles : IA.gen.generate({ preset: st.preset, seed: st.seed, days: st.days, tfMin: st.tf === 9999 ? 1e9 : st.tf }).candles; chart.o.synthetic = !st.imported; chart.drawings = (await IA.db.get('annotations', {}))[annKey()] || []; draw(true); }
+    async function gen() {
+      if (st.ds) { const tf = st.tf === 9999 ? 1440 : st.tf; const base = st.ds.candles; const res = tf > st.ds.tfMin ? IA.dataimport.resample(base, tf) : base; const days = [...new Set(res.map((b) => b.d))]; const keep = new Set(days.slice(-Math.max(st.days, st.ds.tfMin >= 1440 || tf >= 1440 ? 250 : 1))); st.imported = { name: st.ds.name, candles: res.filter((b) => keep.has(b.d)) }; if (tf < st.ds.tfMin) toast(`Dataset is ${st.ds.tfLabel}; a lower timeframe cannot be created — showing ${st.ds.tfLabel}.`); }
+      else st.imported = null;
+      st.data = st.imported ? st.imported.candles : IA.gen.generate({ preset: st.preset, seed: st.seed, days: st.days, tfMin: st.tf === 9999 ? 1e9 : st.tf }).candles; chart.o.synthetic = !st.imported; chart.o.label = st.imported ? 'HISTORICAL · ' + st.imported.name : null; chart.drawings = (await IA.db.get('annotations', {}))[annKey()] || []; draw(true); }
     function draw(fresh) {
       chart.setTokens(st.data, st.ind, { keepView: !fresh }); const c = st.data, last = c[c.length - 1];
       const regimes = [...new Set(c.map((b) => b.regime).filter(Boolean))];
-      info.innerHTML = ''; info.append(`${c.length} bars · last close ${IA.fmtP(last.c)} · ${st.imported ? 'IMPORTED: ' + st.imported.name : 'synthetic seed ' + st.seed + (regimes.length ? ' · day regimes: ' + regimes.join(', ') : '')} · drawings saved per chart`);
+      info.innerHTML = ''; info.append(`${c.length} bars · last close ${IA.fmtP(last.c)} · ${st.imported ? 'HISTORICAL dataset: ' + st.imported.name + ' (your file, not live)' : 'synthetic seed ' + st.seed + (regimes.length ? ' · day regimes: ' + regimes.join(', ') : '')} · drawings saved per chart`);
     }
     async function importCsv() {
       const f = await IA.ui.pickFile('.csv,text/csv'); if (!f) return;
@@ -46,7 +50,7 @@
     const bad = out.filter((b) => b.h < Math.max(b.o, b.c) - 1e-9 || b.l > Math.min(b.o, b.c) + 1e-9).length; if (bad) throw new Error(`${bad} rows have high/low inconsistent with open/close`);
     if (out.length < 2) throw new Error('no valid rows'); out.sort((a, b) => a.t - b.t); return out;
   }
-  IA.parseOhlcv = parseOhlcv;
+  IA.parseOhlcv = (text) => { const r = IA.dataimport.importCsv(text); if (r.error) throw new Error(r.error); return r.candles; };
 
   // Auto-generated, auto-graded chart-reading questions computed from the data itself.
   const QGEN = [

@@ -80,7 +80,9 @@
         h('h4', { style: { marginTop: '12px' } }, 'Ask yourself'), h('ul', { class: 'small' }, ['Was every entry a setup from your written plan?', 'Was every stop placed where the idea is proved wrong — and sized to it?', 'Did you move a stop away from price or exit a winner early out of fear?', 'What did the hidden part of the session do after you exited? (Hindsight is information, not regret.)'].map((x) => h('li', null, x))),
         h('div', { class: 'row' }, acc.trades.length ? h('button', { class: 'btn primary', type: 'button', onclick: async () => { await toJournal(acc.trades, ins(), 'replay'); toast('Saved to journal (marked synthetic)'); m.close(); } }, 'Save trades to journal') : null, h('button', { class: 'btn', type: 'button', onclick: () => { m.close(); reset(); } }, 'New session'), h('button', { class: 'btn ghost', type: 'button', onclick: () => m.close() }, 'Close'))));
     }
-    reset(); return { cleanup: stop };
+    const keys = (e) => { if (/input|select|textarea/i.test(e.target.tagName)) return; if (e.key === 'ArrowRight' || e.key === 'n') { e.preventDefault(); if (e.shiftKey) { for (let k = 0; k < 6; k++) step(); } else step(); } else if (e.key === ' ') { e.preventDefault(); playBtn.click(); } else if (e.key === 'b') document.querySelector('.btn.buy')?.click(); else if (e.key === 's') document.querySelector('.btn.sell')?.click(); else if (e.key === 'x') [...document.querySelectorAll('button')].find((b) => b.textContent === 'Close position')?.click(); };
+    document.addEventListener('keydown', keys); top.append(h('div', { class: 'tiny dim' }, 'Keyboard (laptop): → or N next bar · Shift+→ six bars · Space play/pause · B buy · S sell · X close position'));
+    reset(); return { cleanup: () => { stop(); document.removeEventListener('keydown', keys); } };
   }
 
   // ---------- 2. Decision simulator ----------

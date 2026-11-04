@@ -1,7 +1,7 @@
 [
  {
   "id": "E2E-01",
-  "name": "All 99 lessons render every tab with no raw markup, NaN/undefined or failed embeds",
+  "name": "All 102 lessons render every tab with no raw markup, NaN/undefined or failed embeds",
   "ok": true,
   "detail": "[]"
  },
@@ -49,7 +49,7 @@
  },
  {
   "id": "E2E-07",
-  "name": "All 22 calculators render a result with default inputs (no NaN/undefined)",
+  "name": "All 24 calculators render a result with default inputs (no NaN/undefined)",
   "ok": true,
   "detail": "[]"
  },
@@ -105,13 +105,13 @@
   "id": "E2E-16",
   "name": "Paper trading: 1 lot fills next bar, survives reload, is squared off at session close with charges deducted",
   "ok": true,
-  "detail": "{'idx': 79, 'q': 65, 'f': 1} {'idx': 79, 'q': 65} {'q': 0, 't': 1, 'cash': 504943.6610929254, 'start': 500000, 'ch': 994.0889070745001}"
+  "detail": "{'idx': 79, 'q': 65, 'f': 1} {'idx': 79, 'q': 65} {'q': 0, 't': 1, 'cash': 485184.99512044515, 'start': 500000, 'ch': 976.5048795550001}"
  },
  {
   "id": "E2E-17",
   "name": "Backtester runs, labels results SYNTHETIC, shows KPIs, equity curve and trade list",
   "ok": true,
-  "detail": "Trades on chart (last 5 sessions)\nSYNTHETIC\n2026-03-27 15:25\nO 25140.6\nH 25216.8\nL 25129.1\nC 25216.8\nV 47,054\nVWAP 25345"
+  "detail": "Trades on chart (last 5 sessions)\nSYNTHETIC\n2026-03-27 15:25\nO 30237.4\nH 30291.9\nL 30209.8\nC 30266.4\nV 36,052\nVWAP 30673"
  },
  {
   "id": "E2E-18",
@@ -135,7 +135,7 @@
   "id": "E2E-21",
   "name": "Chart-reading drills: data-graded question and tap-the-pattern drill both score and record",
   "ok": true,
-  "detail": "{\"reading\": {\"n\": 1, \"ok\": 1}, \"pattern:bullish-engulfing\": {\"n\": 1, \"ok\": 1}}"
+  "detail": "{\"reading\": {\"n\": 1, \"ok\": 0}, \"pattern:bullish-engulfing\": {\"n\": 1, \"ok\": 0}}"
  },
  {
   "id": "E2E-22",
@@ -165,7 +165,7 @@
   "id": "E2E-26",
   "name": "Search finds lessons, indicators and strategies",
   "ok": true,
-  "detail": "50"
+  "detail": "52"
  },
  {
   "id": "E2E-27",

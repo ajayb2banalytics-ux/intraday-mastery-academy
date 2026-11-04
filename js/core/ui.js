@@ -90,7 +90,7 @@
     function run() {
       const vals = {}; fields.forEach((f) => { const raw = inputs[f.k].value; vals[f.k] = f.type === 'sel' || f.type === 'text' ? raw : raw === '' ? undefined : Number(raw); });
       res.innerHTML = '';
-      try { const out = compute(vals); if (out) res.append(out instanceof Node ? out : h('div', { html: out })); } catch (e) { res.append(h('div', { class: 'err' }, e.message)); }
+      try { const out = compute(vals); if (out) res.append(out instanceof Node ? out : h('div', null, String(out))); } catch (e) { res.append(h('div', { class: 'err' }, e.message)); }
     }
     box.append(form, res); setTimeout(run, 0); box._inputs = inputs; box._run = run;
     return box;
@@ -135,7 +135,7 @@
   }
   function download(name, text, type = 'application/json') { const a = h('a', { href: URL.createObjectURL(new Blob([text], { type })), download: name }); document.body.append(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500); }
   function pickFile(accept) { return new Promise((res) => { const i = h('input', { type: 'file', accept, style: { display: 'none' } }); i.onchange = () => { const f = i.files[0]; if (!f) return res(null); const r = new FileReader(); r.onload = () => res({ name: f.name, text: r.result }); r.readAsText(f); i.remove(); }; document.body.append(i); i.click(); }); }
-  function csv(rows, cols) { const q = (v) => { const s = v === null || v === undefined ? '' : String(v); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; }; return [cols.map((c) => q(c.label || c.k)).join(','), ...rows.map((r) => cols.map((c) => q(typeof c.get === 'function' ? c.get(r) : r[c.k])).join(','))].join('\n'); }
+  function csv(rows, cols) { const q = (v) => { let s = v === null || v === undefined ? '' : String(v); if (typeof v === 'string' && /^[=+\-@\t\r]/.test(s) && !Number.isFinite(Number(s))) s = "'" + s; /* neutralise spreadsheet formula injection */ return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; }; return [cols.map((c) => q(c.label || c.k)).join(','), ...rows.map((r) => cols.map((c) => q(typeof c.get === 'function' ? c.get(r) : r[c.k])).join(','))].join('\n'); }
   function parseCsv(text) { const rows = []; let row = [], f = '', q = false; for (let i = 0; i < text.length; i++) { const ch = text[i]; if (q) { if (ch === '"' && text[i + 1] === '"') { f += '"'; i++; } else if (ch === '"') q = false; else f += ch; } else if (ch === '"') q = true; else if (ch === ',') { row.push(f); f = ''; } else if (ch === '\n' || ch === '\r') { if (ch === '\r' && text[i + 1] === '\n') i++; row.push(f); rows.push(row); row = []; f = ''; } else f += ch; } if (f !== '' || row.length) { row.push(f); rows.push(row); } return rows.filter((r) => r.some((c) => c !== '')); }
   function table(cols, rows, { empty = 'Nothing yet.' } = {}) {
     if (!rows.length) return h('p', { class: 'muted' }, empty);

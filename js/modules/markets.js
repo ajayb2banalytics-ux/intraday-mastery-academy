@@ -1,14 +1,15 @@
 /* Market Intelligence: DST-safe global clock, market environments, dated specifications. */
 (function (root) {
   const IA = (root.IA = root.IA || {});
-  const { h, prose } = IA.ui;
+  const { h, prose, num } = IA.ui;
   const ZONES = ['Asia/Kolkata', 'America/New_York', 'Europe/London', 'Europe/Berlin', 'Asia/Tokyo', 'Asia/Singapore', 'Australia/Sydney', 'UTC'];
 
   IA.views.markets = (el, tab = 'clock') => {
-    const tabs = [['clock', 'Global clock'], ['india', 'India'], ['us', 'United States'], ['global', 'Europe & Asia'], ['assets', 'Other assets'], ['specs', 'Specs & dates']];
+    const tabs = [['clock', 'Global clock'], ['compare', 'Market comparison'], ['india', 'India'], ['us', 'United States'], ['global', 'Europe & Asia'], ['assets', 'Other assets'], ['specs', 'Specs & dates']];
     el.append(h('div', { class: 'tabs' }, tabs.map(([k, l]) => h('button', { class: k === tab ? 'on' : '', onclick: () => (location.hash = '#/markets/' + k) }, l))));
     if (tab === 'clock') return clock(el);
     if (tab === 'specs') return specs(el);
+    if (tab === 'compare') return compare(el);
     const trackOf = { india: 'india', us: 'us', global: 'global', assets: 'global' }[tab];
     const env = ENV[tab]; el.append(prose(env.md));
     if (env.sessions) { const box = h('div', { class: 'card', style: { marginTop: '12px' } }, h('h3', null, 'Sessions in your time zone')); const tz = IA.settings.tz || Intl.DateTimeFormat().resolvedOptions().timeZone; const today = IA.clock.localYmd(new Date(), 'UTC');
@@ -44,11 +45,45 @@
     tick(); const iv = setInterval(tick, 1000); return { cleanup: () => clearInterval(iv) };
   }
 
+  async function compare(el) {
+    el.append(h('p', { class: 'muted' }, 'Compare two markets on the numbers an intraday trader cares about: how far they move, how often they gap, what a round trip costs and when they trade. Use imported HISTORICAL datasets for real figures; synthetic presets only show the generator\'s settings.'));
+    const presets = { NIFTY: 'nse-fut', BANKNIFTY: 'nse-fut', RELIANCE: 'nse-cash', MIDCAP: 'nse-cash', SPY: 'us-stock', NVDA: 'us-stock', DAX: 'other', GOLD: 'other', BTC: 'other' };
+    const ds = await IA.datasets.list(); const opts = [...Object.keys(presets).map((k) => ['p:' + k, 'SYNTHETIC · ' + IA.gen.PRESETS[k].name]), ...ds.filter((d) => d.tfMin <= 1440).map((d) => ['d:' + d.id, 'HISTORICAL · ' + d.name])];
+    const mk = (v) => { const s = h('select', { class: 'i' }, opts.map(([a, b]) => h('option', { value: a, selected: a === v }, b))); return s; };
+    const A = mk('p:NIFTY'), B = mk('p:SPY'); const notional = h('input', { class: 'i num', type: 'number', value: 1000000 }); const out = h('div');
+    el.append(h('div', { class: 'card' }, h('div', { class: 'form' }, h('label', { class: 'f' }, 'Market A', A), h('label', { class: 'f' }, 'Market B', B), h('label', { class: 'f' }, 'Round-trip notional (in each market\'s currency)', notional), h('div', { class: 'f', style: { justifyContent: 'flex-end' } }, h('button', { class: 'btn primary', type: 'button', onclick: run }, 'Compare')))), out);
+    async function load(v) {
+      if (v.startsWith('p:')) { const k = v.slice(2); const c = IA.gen.generate({ preset: k, seed: 101, days: 120, tfMin: 1e9 }).candles; const ins = IA.exec.INSTR[k]; return { name: IA.gen.PRESETS[k].name, kind: 'SYNTHETIC', daily: c, ins, type: presets[k], exch: ins.cur === 'INR' ? 'NSE' : k === 'DAX' ? 'XETRA' : 'NYSE' }; }
+      const d = await IA.datasets.get(v.slice(2)); const daily = d.tfMin >= 1440 ? d.candles : IA.dataimport.resample(d.candles, 1440); return { name: d.name, kind: 'HISTORICAL', daily, ins: IA.datasets.instr(d), type: d.instrType, exch: d.exchange };
+    }
+    function stats(x) {
+      const c = x.daily; const rets = c.slice(1).map((b, i) => Math.log(b.c / c[i].c)); const m = rets.reduce((a, r) => a + r, 0) / rets.length; const sd = Math.sqrt(rets.reduce((a, r) => a + (r - m) ** 2, 0) / Math.max(1, rets.length - 1));
+      const rng = c.map((b) => (b.h - b.l) / b.o); const gaps = c.slice(1).map((b, i) => Math.abs(b.o / c[i].c - 1)); const atr = IA.ind.atr(c, 14).filter((v) => v != null); const last = c[c.length - 1];
+      const T = IA.INSTR_TYPES[x.type] || IA.INSTR_TYPES.other; const N = +notional.value || 0; let cost;
+      if (T.seg === 'us') cost = IA.risk.usCharges({ shares: Math.floor(N / last.c), buyPrice: last.c, sellPrice: last.c }).total; else if (T.seg === 'bps') cost = N * 2 * (T.bps || 2) / 1e4; else cost = IA.risk.indiaCharges({ segment: T.seg, buyValue: N, sellValue: N }).total;
+      const spread = (x.ins.spreadTicks || 1) * x.ins.tick / last.c * N;
+      const sess = IA.specs.sessions.find((s) => s.id === x.exch);
+      return { days: c.length, from: c[0].d, to: last.d, vol: sd * Math.sqrt(252), avgRange: rng.reduce((a, r) => a + r, 0) / rng.length, atrPct: atr.length ? atr[atr.length - 1] / last.c : null, gap: gaps.reduce((a, g) => a + g, 0) / gaps.length, bigGaps: gaps.filter((g) => g > 0.01).length / gaps.length, avgVol: c.reduce((a, b) => a + b.v, 0) / c.length, cost, costBps: N ? cost / N * 1e4 : null, spread, sess, rets: Object.fromEntries(c.slice(1).map((b, i) => [b.d, rets[i]])) };
+    }
+    async function run() {
+      out.innerHTML = ''; const a = await load(A.value), b = await load(B.value); const sa = stats(a), sb = stats(b); const P = IA.ui.pct; const cur = (x) => x.ins.cur;
+      const common = Object.keys(sa.rets).filter((d) => d in sb.rets); let corr = null; if (common.length > 10) { const xa = common.map((d) => sa.rets[d]), xb = common.map((d) => sb.rets[d]); const ma = xa.reduce((p, q) => p + q, 0) / xa.length, mb = xb.reduce((p, q) => p + q, 0) / xb.length; let cv = 0, va = 0, vb = 0; xa.forEach((v, i) => { cv += (v - ma) * (xb[i] - mb); va += (v - ma) ** 2; vb += (xb[i] - mb) ** 2; }); corr = cv / Math.sqrt(va * vb); }
+      const row = (l, f) => ({ l, a: f(sa, a), b: f(sb, b) });
+      const rows = [row('Data', (s, x) => `${x.kind} · ${s.days} days (${s.from} → ${s.to})`), row('Annualised volatility (daily closes)', (s) => P(s.vol, 1)), row('Average daily range (H−L)/O', (s) => P(s.avgRange, 2)), row('ATR(14) as % of price', (s) => (s.atrPct == null ? '—' : P(s.atrPct, 2))), row('Average overnight gap', (s) => P(s.gap, 2)), row('Days with gap > 1%', (s) => P(s.bigGaps, 0)), row('Round-trip charges on notional', (s, x) => `${IA.ui.money(s.cost, cur(x))} (${num(s.costBps, 1)} bps)`), row('Estimated spread cost (typical ticks)', (s, x) => IA.ui.money(s.spread, cur(x))), row('Main session (local)', (s) => (s.sess ? s.sess.main.map((m) => m.join('–')).join(', ') + ' ' + s.sess.tz : '—')), row('Typical tick / lot', (s, x) => `${x.ins.tick} / ${x.ins.lot}`)];
+      out.append(h('div', { class: 'card', style: { marginTop: '12px' } }, IA.ui.table([{ label: 'Measure', k: 'l' }, { label: a.name, k: 'a' }, { label: b.name, k: 'b' }], rows), h('p', { class: 'small' }, corr === null ? 'Return correlation: not enough overlapping dates (synthetic presets do not share a calendar; use two historical datasets covering the same dates).' : `Correlation of daily returns over ${common.length} common dates: ${num(corr, 2)}${a.kind === 'SYNTHETIC' || b.kind === 'SYNTHETIC' ? ' (synthetic series are generated independently — this number is meaningless for them)' : ''}.`), h('p', { class: 'small muted' }, 'Charges use the dated specifications in Settings and the instrument type of each dataset. The spread estimate is an assumption (ticks × tick size), not a measured quote. A market that moves more is not "better": higher volatility means wider stops and smaller positions for the same rupee risk.')));
+    }
+    run();
+  }
   function specs(el) {
     const S = IA.specs; el.append(h('p', { class: 'muted' }, 'Every number below is dated. Rates, lot sizes and session times change; edit them in Settings when your exchange or broker publishes changes. The app never fetches them online.'));
     el.append(h('div', { class: 'card' }, h('h3', null, `India — charges (as of ${S.india.asOf})`), h('p', { class: 'small muted' }, S.india.note), IA.ui.table([{ label: 'Segment', get: (g) => g.label }, { label: 'STT buy', get: (g) => (g.sttBuy * 100).toFixed(3) + '%', n: 1 }, { label: 'STT sell', get: (g) => (g.sttSell * 100).toFixed(3) + '%', n: 1 }, { label: 'Exchange txn', get: (g) => '₹' + Math.round(g.txn * 1e7) + '/cr', n: 1 }, { label: 'Stamp (buy)', get: (g) => (g.stampBuy * 100).toFixed(3) + '%', n: 1 }, { label: 'Brokerage (default)', get: (g) => g.brokerage.type === 'minOf' ? `min(₹${g.brokerage.flat}, ${g.brokerage.pct * 100}%)/order` : `₹${g.brokerage.flat}/order` }], Object.values(S.india.segments)), h('p', { class: 'small muted' }, `SEBI fee ₹${Math.round(S.india.sebiFeeRate * 1e7)}/crore · GST ${S.india.gstRate * 100}% on brokerage + exchange + SEBI fees.`)));
     el.append(h('div', { class: 'card', style: { marginTop: '12px' } }, h('h3', null, 'India — index derivatives'), h('p', { class: 'small muted' }, S.india.expiryNote), IA.ui.table([{ label: 'Symbol', k: 'sym' }, { label: 'Underlying', k: 'name' }, { label: 'Lot', k: 'lot', n: 1 }, { label: 'Tick', k: 'tick', n: 1 }, { label: 'Expiry', k: 'expiry' }, { label: 'As of', k: 'asOf' }], S.india.contracts)));
     el.append(h('div', { class: 'card', style: { marginTop: '12px' } }, h('h3', null, `United States (as of ${S.us.asOf})`), h('p', { class: 'small muted' }, S.us.note), IA.ui.table([{ label: 'Contract', k: 'sym' }, { label: 'Description', k: 'name' }, { label: 'Multiplier', k: 'multiplier', n: 1 }, { label: 'Tick', k: 'tick', n: 1 }, { label: 'Tick value $', k: 'tickValue', n: 1 }], S.us.contracts)));
+    const SRC = IA.specsSources; if (SRC) { const items = SRC.items; const cnt = (st) => items.filter((x) => x.status === st).length; const fstat = h('select', { class: 'i', style: { maxWidth: '220px' } }, [['all', 'All items'], ['unverified', 'Unverified / assumptions'], ['corrected', 'Corrected in Phase 2'], ['verified', 'Verified']].map(([a, b]) => h('option', { value: a }, b))); const tb = h('div');
+      const draw = () => { tb.innerHTML = ''; tb.append(IA.ui.table([{ label: 'Specification', k: 'path' }, { label: 'Value', get: (x) => (Array.isArray(x.value) ? (x.value.length > 4 ? x.value.length + ' dates' : JSON.stringify(x.value)) : String(x.value)) }, { label: 'Effective', get: (x) => x.effective || '—' }, { label: 'Status', get: (x) => h('span', { class: 'tag ' + (x.status === 'verified' ? 'up' : x.status === 'corrected' ? 'acc' : 'warn') }, x.status) }, { label: 'Source', get: (x) => (x.source ? h('a', { href: x.source, target: '_blank', rel: 'noopener noreferrer' }, x.source.replace(/^https?:\/\//, '').slice(0, 40) + '…') : '—') }, { label: 'Note', get: (x) => h('span', { class: 'small' }, x.note || '') }], items.filter((x) => fstat.value === 'all' || x.status === fstat.value))); };
+      fstat.onchange = draw; draw();
+      el.append(h('div', { class: 'card', style: { marginTop: '12px' } }, h('h3', null, `Provenance — checked ${SRC.checked}`), h('p', { class: 'small muted' }, `${items.length} specification items: ${cnt('verified')} verified against official or clearly identified sources, ${cnt('corrected')} corrected, ${cnt('unverified')} unverified (shown in amber — do not rely on them without checking). Broker commissions are assumptions, not regulations.`), fstat, h('div', { style: { marginTop: '8px' } }, tb))); }
+    el.append(h('div', { class: 'card', style: { marginTop: '12px' } }, h('h3', null, 'Exchange holidays (verified lists)'), IA.ui.table([{ label: 'Exchange', get: (r) => r[0] }, { label: 'Dates', get: (r) => h('span', { class: 'small mono' }, r[1].join(', ')) }], Object.entries(S.holidays || {})), h('p', { class: 'small muted' }, 'Special sessions (e.g. NSE Muhurat trading) and early closes are not holidays and are listed in the audit report. Add or edit dates in Settings → Market specifications.')));
     el.append(h('div', { class: 'card', style: { marginTop: '12px' } }, h('h3', null, 'Sessions (exchange-local time)'), IA.ui.table([{ label: 'Exchange', k: 'name' }, { label: 'Zone', k: 'tz' }, { label: 'Pre', get: (s) => s.pre ? s.pre.join('–') : '—' }, { label: 'Main', get: (s) => s.main.map((m) => m.join('–')).join(', ') }, { label: 'Post', get: (s) => s.post ? s.post.join('–') : '—' }, { label: 'Note', k: 'note' }], S.sessions)));
   }
 

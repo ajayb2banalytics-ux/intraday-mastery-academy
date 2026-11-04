@@ -11,13 +11,13 @@
     summary: 'Recognise the specific cognitive biases that show up in your own trades and attach a concrete countermeasure to each one.',
     evidence: 'established',
     sections: [
-      { h: 'Beginner view', md: `Your brain was built to survive in a world of quick, rough judgements. Those shortcuts — psychologists call them **heuristics** — are usually helpful. In markets they quietly cost you money, because markets punish exactly the habits that kept our ancestors alive: following the crowd, avoiding the pain of a loss, and seeing patterns everywhere.
+      { h: 'Beginner view', md: `Your brain relies on quick, rough judgements. Those shortcuts — psychologists call them **heuristics** — are usually helpful in daily life. In markets they can quietly cost you money, because markets often punish exactly these habits: following the crowd, avoiding the pain of a loss, and seeing patterns in noise. (Why we have these shortcuts is debated; what matters here is that they are measurable in trading records.)
 
 A **cognitive bias** is a predictable error in judgement. "Predictable" is the key word. If the error is predictable, you can catch it with a checklist, a rule or a journal entry, in the same way a pilot uses a pre-flight checklist instead of trusting memory.
 
 Think of biases as optical illusions for decisions. Knowing that two lines are the same length does not stop them *looking* different. Likewise, knowing about loss aversion does not stop you *feeling* it. The goal is not to stop feeling biases; it is to build a process that stops them from placing orders.
 
-> [!evidence] The existence of these biases (loss aversion, overconfidence, anchoring, the disposition effect) is well established in behavioural finance research, notably Kahneman and Tversky's prospect theory. How much any single bias costs *you* is something only your own journal can tell you.` },
+> [!evidence] The existence of these biases (loss aversion, overconfidence, anchoring, the disposition effect) is well documented in behavioural finance research — for example Kahneman and Tversky's prospect theory (1979), Shefrin and Statman's paper naming the disposition effect (1985) and Odean's study of individual brokerage accounts (1998). The size of each effect varies across studies, and some laboratory findings replicate less strongly than others. How much any single bias costs *you* is something only your own journal can tell you.` },
       { h: 'Intermediate view', md: `Here are the biases that matter most for an intraday trader, each with the behaviour you would actually see in your trade log and a countermeasure.
 
 | Bias | What it looks like in your trades | Countermeasure |
@@ -30,7 +30,7 @@ Think of biases as optical illusions for decisions. Knowing that two lines are t
 | Recency bias | Assuming today will trend because yesterday did | Classify the day type after the first hour, not before the open |
 | Hindsight bias | "I knew it would reverse" | Record your forecast *before* the outcome, then compare |
 | Sunk-cost fallacy | Averaging down because you are already in | Rule: never add to a losing intraday position |
-| Gambler's fallacy | "Five losers in a row — the next must win" | Each trade's odds are independent of your recent streak |
+| Gambler's fallacy | "Five losers in a row — the next must win" | The next trade's odds do not improve because of your streak |
 | Herding / social proof | Entering because a Telegram channel says so | Only trade setups that exist in your written playbook |
 
 **How to identify them.** You cannot spot a bias in real time with any reliability; you spot it in data. Tag each journal entry with the bias you suspect was present. After 50 trades, filter by tag and look at the P&L in R-multiples. A bias that appears in a small share of trades but accounts for most of your losses is your first target.` },
@@ -70,7 +70,7 @@ The setup did not change. Your *behaviour* turned a positive-expectancy process 
 
 Herding is amplified by the volume of tips on social media and messaging groups. SEBI has repeatedly warned investors about unregistered advisers and finfluencers (verify current circulars on sebi.gov.in). A tip is not a setup; if it is not in your playbook, it is not a trade.` },
       { h: 'Common misconceptions', md: `- **"Experienced traders don't have biases."** They have the same brains. They have better systems for catching biases.
-- **"If I know about a bias, I'm immune."** Knowledge alone helps little. Rules and friction do the heavy lifting.
+- **"If I know about a bias, I'm immune."** Evidence that awareness training alone removes biases is limited and mixed. Rules, pre-commitment and friction are more dependable because they do not rely on noticing the bias in the moment.
 - **"Cutting winners early is safe and conservative."** It feels safe, but it can turn a positive-expectancy method negative, as the maths section shows.
 - **"Discipline guarantees profit."** No. Discipline makes your results reflect your strategy. If the strategy has no edge, discipline just loses money steadily.` },
       { h: 'When it fails', md: `Bias checklists fail when they become ritual rather than thought. A realistic example:
@@ -91,18 +91,18 @@ The checklist existed but had no enforcement. The fix is an **order**, not a sen
 Then run the expectancy calculator with your own numbers.` },
     ],
     check: [
-      { q: 'A trader has a valid setup with positive expectancy but consistently exits winners at +1R and holds losers to −1.5R. Which bias is most directly at work, and what is its effect?', o: ['Gambler\'s fallacy; it increases win rate', 'Disposition effect; it can make expectancy negative even though the setup is unchanged', 'Hindsight bias; it has no effect on expectancy', 'Herding; it only matters for swing trades'], a: 1, why: 'Selling winners early and holding losers is the disposition effect. Shrinking wins and enlarging losses lowers expectancy and can turn it negative. The other options misname the behaviour or misstate its effect.' },
+      { q: 'A trader has a valid setup with positive expectancy but consistently exits winners at +1R and holds losers to −1.5R. Which bias is most directly at work, and what is its effect?', o: ["Disposition effect; it can make expectancy negative even though the setup is unchanged","Hindsight bias; it has no effect on expectancy","Herding; it only matters for swing trades","Gambler's fallacy; it increases win rate"], a: 0, why: 'Selling winners early and holding losers is the disposition effect. Shrinking wins and enlarging losses lowers expectancy and can turn it negative. The other options misname the behaviour or misstate its effect.' },
       { q: 'Which countermeasure is the most robust against loss aversion during an intraday trade?', o: ['Reminding yourself to stay calm', 'Reading more about loss aversion', 'Placing the stop as a live order at entry and treating any widening as a rule violation', 'Watching the chart more closely'], a: 2, why: 'Mechanical pre-commitment works better than willpower or knowledge. The other choices rely on in-the-moment self-control, which is exactly what the bias erodes.' },
-      { q: 'You followed every rule on a trade and lost 1R. How should it be graded in a process-focused journal?', o: ['As a good trade, since the decision followed the plan; the outcome was variance', 'As a bad trade because it lost', 'It should not be recorded', 'As a bad trade unless the next one wins'], a: 0, why: 'Grading by decision quality, not outcome, prevents you from rewarding rule-breaking that happens to win and punishing good process that happens to lose.' },
+      { q: 'You followed every rule on a trade and lost 1R. How should it be graded in a process-focused journal?', o: ["As a bad trade because it lost","It should not be recorded","As a bad trade unless the next one wins","As a good trade, since the decision followed the plan; the outcome was variance"], a: 3, why: 'Grading by decision quality, not outcome, prevents you from rewarding rule-breaking that happens to win and punishing good process that happens to lose.' },
     ],
-    refs: ['Daniel Kahneman — Thinking, Fast and Slow (book)', 'Kahneman & Tversky — Prospect Theory: An Analysis of Decision under Risk (Econometrica, 1979)', 'Hersh Shefrin — Beyond Greed and Fear (book)', 'Brett Steenbarger — The Psychology of Trading (book)', 'SEBI — Investor awareness (sebi.gov.in)'],
+    refs: ['Daniel Kahneman — Thinking, Fast and Slow (book)', 'Kahneman & Tversky — Prospect Theory: An Analysis of Decision under Risk (Econometrica, 1979)', 'Shefrin & Statman — The Disposition to Sell Winners Too Early and Ride Losers Too Long (Journal of Finance, 1985)', 'Terrance Odean — Are Investors Reluctant to Realize Their Losses? (Journal of Finance, 1998)', 'Hersh Shefrin — Beyond Greed and Fear (book)', 'Brett Steenbarger — The Psychology of Trading (book)', 'SEBI — Investor awareness (sebi.gov.in)'],
   },
   {
     id: 'l2-emotions', module: 'L2-M5', level: 2, track: 'psych', title: 'Fear, greed, FOMO and revenge trading', mins: 17,
     summary: 'Identify the physical and behavioural signs of fear, greed, FOMO and revenge trading, and apply pre-set circuit breakers before they cause damage.',
-    evidence: 'established',
+    evidence: 'mixed',
     sections: [
-      { h: 'Beginner view', md: `Emotions are not the enemy. They are information. Fear tells you something feels risky; excitement tells you something feels like an opportunity. The trouble is that in fast markets these signals tend to peak *after* price has already moved, so acting on them puts you late — buying near highs and selling near lows.
+      { h: 'Beginner view', md: `Emotions are not the enemy. They are information. Fear tells you something feels risky; excitement tells you something feels like an opportunity. The trouble is that in fast markets these feelings are often strongest *after* price has already moved, so acting on them can put you late — buying near highs and selling near lows.
 
 Four emotional states cause most of the damage for intraday traders:
 
@@ -111,7 +111,9 @@ Four emotional states cause most of the damage for intraday traders:
 - **FOMO (fear of missing out)** — chasing a move that has already run, entering without a setup because others are making money.
 - **Revenge trading** — trading to "win back" a loss, usually bigger and faster, with lower-quality setups.
 
-An analogy: driving angry. You are the same driver with the same car, but you take risks you would never take calmly. The answer is not to never get angry; it is to have a rule that you pull over.` },
+An analogy: driving angry. You are the same driver with the same car, but you take risks you would never take calmly. The answer is not to never get angry; it is to have a rule that you pull over.
+
+> [!evidence] Research does show that emotional arousal and stress change risk-taking — for example Lo and Repin (2002) measured physiological responses in professional traders during live trading. But the labels in this lesson (FOMO, revenge trading, tilt) and the specific rules (a 15-minute break, a 2R daily limit) come from practitioner books and coaching, not controlled trials. Treat them as sensible pre-commitment heuristics, not proven treatments.` },
       { h: 'Intermediate view', md: `**Learn your own warning signs.** Emotional states show up in the body and in behaviour before you consciously name them. Common signs traders report:
 
 | State | Physical / behavioural signs | Typical damaging action |
@@ -130,11 +132,11 @@ An analogy: driving angry. You are the same driver with the same car, but you ta
 5. **Size freeze** — size is fixed at the start of the day and cannot be increased intraday.
 
 **How to execute.** Write these on a card next to your screen and set the daily limit in your broker as a hard limit if your broker offers one. Many Indian brokers offer a kill switch that disables trading in a segment for the day (verify the feature with your broker).` },
-      { h: 'Advanced view', md: `**Emotion follows exposure.** The size of your position relative to your account is the biggest driver of emotional intensity. If a 1-lot Nifty trade makes your heart race, your size is too large *for you* even if the maths says it is affordable. A practical test: you should be able to calmly describe your stop and target out loud while in the trade.
+      { h: 'Advanced view', md: `**Emotion follows exposure.** In traders' own accounts, position size relative to the account is one of the biggest drivers of emotional intensity. If a 1-lot Nifty trade makes your heart race, your size is too large *for you* even if the maths says it is affordable. A practical test: you should be able to calmly describe your stop and target out loud while in the trade.
 
-**The tilt cycle.** Poker players call the emotionally compromised state "tilt". In trading it typically runs: loss → feeling of injustice ("the market hunted my stop") → urgency to recover → bigger size, weaker setups → bigger loss → despair or more aggression. Each stage reduces decision quality. The earlier you break the cycle, the cheaper it is. That is why consecutive-loss rules work better than end-of-day reflection alone.
+**The tilt cycle.** Poker players call the emotionally compromised state "tilt". In trading it typically runs: loss → feeling of injustice ("the market hunted my stop") → urgency to recover → bigger size, weaker setups → bigger loss → despair or more aggression. Each stage tends to reduce decision quality. The earlier you break the cycle, the cheaper it is. That is the reasoning behind consecutive-loss rules: they act during the session, while end-of-day reflection acts only after the damage is done.
 
-**FOMO is often a planning failure.** If you feel FOMO, ask: "Was this setup in my plan?" If yes, why were you not ready with an alert and an order? If no, it is not your trade. Some traders keep a "missed trades" log; reviewing it calmly often shows that many chased moves would have reversed.
+**FOMO is often a planning failure.** If you feel FOMO, ask: "Was this setup in my plan?" If yes, why were you not ready with an alert and an order? If no, it is not your trade. Some traders keep a "missed trades" log; reviewing it calmly shows what chasing would really have cost or earned, rather than what it felt like in the moment.
 
 **Fear after drawdowns.** After a losing streak, some traders stop taking valid signals and only take the ones they feel "sure" about — which are often not the best ones. The fix is reducing size (so fear drops) while keeping the *rules* the same.
 
@@ -151,7 +153,7 @@ Start with ₹5,00,000. Normal risk is 1% (₹5,000) per trade.
 - Angry, you risk 3% to "get it back" and lose ₹14,850 → ₹4,80,150.
 - You then risk 5% and lose ₹24,008 → ₹4,56,142.
 
-Total drawdown = 8.8%. Gain needed to recover = 0.088 ÷ 0.912 ≈ **9.6%**. At your normal 1% risk and an illustrative expectancy of +0.3R, that is roughly 32 trades of average performance just to get back to start. Three angry trades cost weeks.
+Total drawdown = ₹43,858 ≈ 8.8%. Gain needed to recover = 0.0877 ÷ 0.9123 ≈ **9.6%**. At your normal 1% risk (now about ₹4,560 on the smaller account) and an illustrative expectancy of +0.3R, each average trade adds about 0.3%, so recovery takes roughly 30 trades of average performance. Three angry trades cost weeks.
 
 [[widget:drawdown]]` },
       { h: 'India', md: `> [!india] Expiry days on Nifty weekly options (Tuesday as of Nov 2026 — verify current expiry days on NSE) are a classic FOMO trigger: cheap out-of-the-money options can multiply in minutes. Watching a ₹4 option become ₹40 creates intense urgency, yet most far out-of-the-money options expire worthless. A FOMO rule for expiry days: no new option buys after a fixed time, and no buying options whose premium has already multiplied intraday.
@@ -176,11 +178,11 @@ Countermeasures also fail when life stress is high — poor sleep, family or mon
 Use the drawdown calculator to see the recovery cost of your worst day.` },
     ],
     check: [
-      { q: 'You have just been stopped out twice in 20 minutes and feel an urge to re-enter immediately with double size. What does a well-designed rule set say?', o: ['Re-enter now; the move is due', 'Switch to options for more leverage', 'Take the mandatory break, then return at reduced size only if a planned setup appears', 'Remove stops to avoid being stopped out again'], a: 2, why: 'This is the start of the tilt cycle. A pre-set consecutive-loss rule stops it cheaply. The other options increase risk exactly when decision quality is lowest.' },
-      { q: 'Your account falls 20% after a series of oversized revenge trades. What percentage gain do you need to get back to the starting balance?', o: ['20%', '25%', '15%', '40%'], a: 1, why: 'Gain needed = 0.20 ÷ 0.80 = 25%. Losses need proportionally larger gains to recover.' },
-      { q: 'Which is the most useful response to repeated FOMO on moves you were not ready for?', o: ['Treat it as a planning gap: set alerts and conditional orders for playbook setups, and ignore moves outside the plan', 'Use market orders so you never miss', 'Follow more tip channels', 'Trade every breakout'], a: 0, why: 'FOMO often means the setup was not prepared or was not yours. Preparation addresses the first case; the playbook filters the second.' },
+      { q: 'You have just been stopped out twice in 20 minutes and feel an urge to re-enter immediately with double size. What does a well-designed rule set say?', o: ["Switch to options for more leverage","Take the mandatory break, then return at reduced size only if a planned setup appears","Remove stops to avoid being stopped out again","Re-enter now; the move is due"], a: 1, why: 'This is the start of the tilt cycle. A pre-set consecutive-loss rule stops it cheaply. The other options increase risk exactly when decision quality is lowest.' },
+      { q: 'Your account falls 20% after a series of oversized revenge trades. What percentage gain do you need to get back to the starting balance?', o: ["25%","15%","40%","20%"], a: 0, why: 'Gain needed = 0.20 ÷ 0.80 = 25%. Losses need proportionally larger gains to recover.' },
+      { q: 'Which is the most useful response to repeated FOMO on moves you were not ready for?', o: ["Follow more tip channels","Trade every breakout","Treat it as a planning gap: set alerts and conditional orders for playbook setups, and ignore moves outside the plan","Use market orders so you never miss"], a: 2, why: 'FOMO often means the setup was not prepared or was not yours. Preparation addresses the first case; the playbook filters the second.' },
     ],
-    refs: ['Mark Douglas — Trading in the Zone (book)', 'Brett Steenbarger — Enhancing Trader Performance (book)', 'Jared Tendler — The Mental Game of Trading (book)', 'NSE — Investor education (nseindia.com)'],
+    refs: ['Mark Douglas — Trading in the Zone (book)', 'Brett Steenbarger — Enhancing Trader Performance (book)', 'Jared Tendler — The Mental Game of Trading (book)', 'Andrew Lo & Dmitry Repin — The Psychophysiology of Real-Time Financial Risk Processing (Journal of Cognitive Neuroscience, 2002)', 'NSE — Investor education (nseindia.com)'],
   },
 
   {
@@ -212,7 +214,7 @@ The most dangerous cell is *bad decision, good outcome*, because it trains you t
 5. **Loss-limit respected** — yes/no.
 
 **How to execute.** Before entry, record setup name, grade, entry, stop, target, size. After exit, record outcome and whether each rule was followed. At day end, compute adherence %. A day at 100% adherence and −1.5R is a successful *process* day. A day at 60% adherence and +3R is a warning.` },
-      { h: 'Advanced view', md: `**Separate the strategy problem from the execution problem.** If your adherence is high and results are still poor over a large sample, the *strategy* needs work (or market conditions have changed). If adherence is low, you cannot judge the strategy at all — you have been trading a different, undocumented one. This separation is how professional desks review traders.
+      { h: 'Advanced view', md: `**Separate the strategy problem from the execution problem.** If your adherence is high and results are still poor over a large sample, the *strategy* needs work (or market conditions have changed). If adherence is low, you cannot judge the strategy at all — you have been trading a different, undocumented one. Trading coaches and many desk reviews use this separation.
 
 **Sample size matters.** With a 50% win-rate strategy, runs of six or more losses are normal over a few hundred trades. Judging a method after 15 trades is mostly reading noise. As a rule of thumb, gather at least 50–100 trades of the same setup at high adherence before drawing strong conclusions, and even then treat conclusions as provisional.
 
@@ -231,7 +233,7 @@ SD = √[ p(W − E)² + (1 − p)(L − E)² ]
 = √[ 0.5 × 1.5625 + 0.5 × 1.5625 ] = 1.25R
 :::
 
-Over 20 trades, SD of the total = 1.25 × √20 ≈ 5.6R. So a range of roughly −6R to +16R (±2 SD) is plausible, and a 20-trade losing stretch is entirely possible even with a genuine positive edge. Run the Monte Carlo simulator to see this visually.
+Over 20 trades, SD of the total = 1.25 × √20 ≈ 5.6R. So a range of roughly −6R to +16R (±2 SD) is plausible, and a 20-trade losing stretch is entirely possible even with a genuine positive edge. A direct simulation of this strategy (100,000 runs of 20 trades) finishes below zero in about 13% of runs — roughly 1 in 8. Over 300 trades at a 50% win rate, a run of six or more losses in a row shows up in about 9 out of 10 simulations. Run the Monte Carlo simulator to see this visually.
 
 [[widget:monte-carlo]]` },
       { h: 'India', md: `> [!india] Example process review for one Nifty futures day (1 lot = 65 units; lot size as of Jan 2026 — verify on NSE):
@@ -261,16 +263,16 @@ It also fails if you hide behind it. Example: a trader runs a mean-reversion set
 - "What pre-set threshold will make me re-examine this setup?"` },
     ],
     check: [
-      { q: 'Which of these trades is the most dangerous for long-term development?', o: ['Rules followed, lost 1R', 'Rules broken, won 2R', 'Rules followed, won 2R', 'No trade taken on a quiet day'], a: 1, why: 'A rule-breaking winner reinforces bad behaviour. A rule-following loser is normal variance, and skipping a quiet day is a valid decision.' },
+      { q: 'Which of these trades is the most dangerous for long-term development?', o: ["Rules followed, won 2R","No trade taken on a quiet day","Rules followed, lost 1R","Rules broken, won 2R"], a: 3, why: 'A rule-breaking winner reinforces bad behaviour. A rule-following loser is normal variance, and skipping a quiet day is a valid decision.' },
       { q: 'Your rule-adherence over 60 trades is 55% and results are negative. What can you conclude about the strategy?', o: ['It is broken and should be abandoned', 'Very little — you have not actually tested it, because most trades did not follow it', 'It works, because some trades won', 'Win rate is too low'], a: 1, why: 'With low adherence you were trading a different, undocumented method. Fix execution first, then evaluate the strategy.' },
-      { q: 'A strategy has expectancy +0.25R and per-trade SD of 1.25R. Over 16 trades, what is the approximate SD of the total result?', o: ['1.25R', '5R', '20R', '4R'], a: 1, why: 'SD of a sum of independent trades = SD × √n = 1.25 × 4 = 5R. That is large relative to the expected +4R, which is why short samples are noisy.' },
+      { q: 'A strategy has expectancy +0.25R and per-trade SD of 1.25R. Over 16 trades, what is the approximate SD of the total result?', o: ["5R","20R","4R","1.25R"], a: 0, why: 'SD of a sum of independent trades = SD × √n = 1.25 × 4 = 5R. That is large relative to the expected +4R, which is why short samples are noisy.' },
     ],
     refs: ['Annie Duke — Thinking in Bets (book)', 'Brett Steenbarger — The Daily Trading Coach (book)', 'Van K. Tharp — Trade Your Way to Financial Freedom (book)'],
   },
   {
     id: 'l2-routine', module: 'L2-M5', level: 2, track: 'psych', title: 'Building a pre-, during- and post-market routine', mins: 17,
     summary: 'Build a written daily routine covering preparation, in-session execution checks and post-market review that you can follow even on bad days.',
-    evidence: 'established',
+    evidence: 'mixed',
     sections: [
       { h: 'Beginner view', md: `A routine is a set of steps you do the same way every day, so that good behaviour does not depend on how you feel. Athletes warm up the same way before every match; surgeons follow a checklist before every operation. The point is not ceremony — it is to reduce the number of decisions you make while under pressure.
 
@@ -294,19 +296,19 @@ If you trade only one hour a day, your routine might take 30 minutes before and 
 - Trade only scenarios from your plan.
 - Every entry: setup name, grade, stop, target logged *before* the order.
 - Every hour (or after every trade): 30-second state check — urgency, frustration, fatigue.
-- Hard stop on the day: loss limit, maximum trades, or a fixed end time (many intraday traders stop by 14:30–15:00 IST to avoid the last half-hour unless it is part of their plan).
+- Hard stop on the day: loss limit, maximum trades, or a fixed end time (some intraday traders stop by 14:30–15:00 IST to avoid the last half-hour unless it is part of their plan).
 
 **Post-market (20–30 min)**
 1. Export trades; screenshot each entry and exit on the chart.
 2. Grade decisions (process) separately from outcomes.
 3. Write one thing done well and one thing to improve.
 4. Update your statistics: adherence %, R per setup.
-5. Shut down — close the platform. Rumination at night damages sleep and tomorrow's state.` },
+5. Shut down — close the platform. Replaying trades late at night can disturb sleep, and poor sleep affects tomorrow's state.` },
       { h: 'Advanced view', md: `**Routines should be minimal and sustainable.** A 40-step routine is abandoned within weeks. Keep the daily core short and add a weekly deeper review (60–90 minutes): statistics by setup, by time of day, by day type, and by emotional state. Monthly, review whether market conditions (volatility regime, trend vs range) have shifted. See [[link:l4-regimes]].
 
-**If–then planning.** Research on "implementation intentions" in psychology suggests that specific if–then plans improve follow-through compared with general goals. In trading this means rehearsing responses: "If I take two losses before 10:30, then I stop for 30 minutes and review screenshots before any new trade."
+**If–then planning.** Research on "implementation intentions" (Gollwitzer, 1999; meta-analysis by Gollwitzer and Sheeran, 2006) finds that specific if–then plans improve follow-through on goals compared with general intentions, with medium-sized average effects across many studies. Those studies were not about trading; applying them to trading is a reasonable extension, not a tested result. In trading this means rehearsing responses: "If I take two losses before 10:30, then I stop for 30 minutes and review screenshots before any new trade."
 
-**Rehearse failure.** Before the open, spend one minute imagining your worst likely scenario — a gap against your idea, a fast stop-out — and your scripted response. This reduces the shock and the impulsive reaction when it happens.
+**Rehearse failure.** Before the open, spend one minute imagining your worst likely scenario — a gap against your idea, a fast stop-out — and your scripted response. This is similar to the "pre-mortem" technique Gary Klein describes for teams. Its purpose is to have a response ready so the shock is smaller; this is a practitioner technique rather than a measured trading result.
 
 **Separate preparation from prediction.** The pre-market plan is not a forecast. It is a set of conditional responses. Traders who write "Nifty will go up today" anchor to that view; traders who write "If X then Y; if not-X then Z" stay flexible.
 
@@ -323,7 +325,7 @@ If you trade only one hour a day, your routine might take 30 minutes before and 
 | 11:30–13:30 | Often quieter; reduce activity or stop |
 | 13:30–14:45 | Secondary window (European open around 13:30 IST in winter, 12:30 in summer) |
 | 15:30 | Close; post-market review |` },
-      { h: 'US & global', md: `> [!us] For a trader in India trading US stocks, the US regular session (09:30–16:00 ET) runs late evening to early morning IST: 20:00–02:30 IST in US winter (EST), 19:00–01:30 IST in US summer (EDT). Your routine must protect sleep. Many Indian traders who trade US markets focus only on the first 60–90 minutes of the US session, then stop. Trading tired is a predictable source of errors.` },
+      { h: 'US & global', md: `> [!us] For a trader in India trading US stocks, the US regular session (09:30–16:00 ET) runs late evening to early morning IST: 20:00–02:30 IST in US winter (EST), 19:00–01:30 IST in US summer (EDT). Your routine must protect sleep. One common approach for traders in India is to trade only the first 60–90 minutes of the US session, then stop. Trading tired is a predictable source of errors.` },
       { h: 'Common misconceptions', md: `- **"Routines are for beginners."** Professionals rely on routines more, not less.
 - **"I'll review on the weekend."** Daily review while memory is fresh captures emotional context that a weekly review cannot.
 - **"A plan means predicting direction."** A plan is a set of if–then responses for different scenarios.
@@ -341,10 +343,10 @@ The countermeasure is a rule: **no routine, no trade**. If the pre-market steps 
 - "What is the one change I will make tomorrow?"` },
     ],
     check: [
-      { q: 'Your pre-market state score is 2/5 after poor sleep. What does a well-built routine prescribe?', o: ['Trade normally — feelings do not matter', 'Reduce size or skip trading, as pre-committed in your routine', 'Trade larger to finish early', 'Skip the stop-loss to avoid being shaken out'], a: 1, why: 'The state check exists to adjust risk on impaired days. The other options increase risk when decision quality is low.' },
-      { q: 'Which pre-market note is the most useful?', o: ['"Nifty will rally today."', '"If Nifty holds above yesterday\'s high after the first 15 minutes, look for VWAP pullback longs; if it falls back below, no longs before 10:30."', '"Be disciplined."', '"Watch the market closely."'], a: 1, why: 'A conditional, checkable plan supports execution without anchoring you to a forecast. The others are a prediction or are too vague to act on.' },
+      { q: 'Your pre-market state score is 2/5 after poor sleep. What does a well-built routine prescribe?', o: ["Skip the stop-loss to avoid being shaken out","Trade normally — feelings do not matter","Reduce size or skip trading, as pre-committed in your routine","Trade larger to finish early"], a: 2, why: 'The state check exists to adjust risk on impaired days. The other options increase risk when decision quality is low.' },
+      { q: 'Which pre-market note is the most useful?', o: ["\"Be disciplined.\"","\"Watch the market closely.\"","\"Nifty will rally today.\"","\"If Nifty holds above yesterday's high after the first 15 minutes, look for VWAP pullback longs; if it falls back below, no longs before 10:30.\""], a: 3, why: 'A conditional, checkable plan supports execution without anchoring you to a forecast. The others are a prediction or are too vague to act on.' },
     ],
-    refs: ['Brett Steenbarger — The Daily Trading Coach (book)', 'Atul Gawande — The Checklist Manifesto (book)', 'Peter Gollwitzer — Implementation intentions (American Psychologist, 1999)', 'NSE — Market timings (nseindia.com)'],
+    refs: ['Brett Steenbarger — The Daily Trading Coach (book)', 'Atul Gawande — The Checklist Manifesto (book)', 'Peter Gollwitzer — Implementation intentions: Strong effects of simple plans (American Psychologist, 1999)', 'Gollwitzer & Sheeran — Implementation intentions and goal achievement: A meta-analysis (Advances in Experimental Social Psychology, 2006)', 'Gary Klein — Performing a Project Premortem (Harvard Business Review, 2007)', 'NSE — Market timings (nseindia.com)'],
   },
 
   /* ============================ L2-M6 US market essentials ============================ */
@@ -370,16 +372,18 @@ Why it matters for you: your order may not be filled where you think. The qualit
 
 **Reg NMS** (Regulation National Market System, adopted 2005) is the rulebook that knits this together. Its main parts:
 - **Order Protection Rule (Rule 611)** — trading centres must have policies to prevent "trade-throughs", i.e. executing at a worse price than a protected displayed quote on another exchange.
-- **Access Rule (Rule 610)** — fair access to quotes and a cap on exchange access fees.
-- **Sub-Penny Rule (Rule 612)** — limits quoting increments (one cent for stocks priced at $1 or more, with recent SEC amendments allowing half-cent ticks for some tightly quoted stocks — verify current status on sec.gov).
+- **Access Rule (Rule 610)** — fair access to quotes, a cap on exchange access fees (30 mils, i.e. $0.003 per share, for stocks at $1 or more) and a ban on locking or crossing displayed quotes (Rule 610(e)).
+- **Sub-Penny Rule (Rule 612)** — limits quoting increments to one cent for stocks priced at $1 or more.
 - **Market data rules** — how consolidated quotes and trades are distributed.
+
+> [!us] Reg NMS is being reworked (as of Nov 2026 — verify on sec.gov). In September 2024 the SEC adopted amendments that would allow half-cent ticks for some tick-constrained stocks and cut the access-fee cap to 10 mils; in June 2026 the SEC Chairman extended exemptive relief from their compliance dates to the first business day of November 2027 and asked staff to review both rules. Also in June 2026 the SEC proposed rescinding Rule 611 (the trade-through rule) and Rule 610(e). Until something changes, assume one-cent ticks and the existing trade-through protection.
 
 **How a retail market order typically flows:** you click buy → broker routes to a wholesaler → wholesaler fills you at or inside the NBBO, often with a small "price improvement" → the trade is reported to the tape through a FINRA facility. Limit orders that cannot fill immediately are often sent on to an exchange to rest in the book.` },
       { h: 'Advanced view', md: `**Price improvement versus the counterfactual.** Wholesalers usually report price improvement relative to the NBBO. Critics argue that, without PFOF, more retail orders would interact on exchanges and could get better prices still; supporters argue retail gets fills at or inside the NBBO with low costs. Evidence is genuinely mixed and model-dependent.
 
 > [!evidence] Whether PFOF helps or hurts retail traders on net is an empirical-mixed question. Different studies reach different conclusions depending on how they measure execution quality. Treat any single claim with caution.
 
-**Disclosure.** Brokers publish order-routing reports under SEC **Rule 606**, showing where they send orders and what PFOF they receive. Market centres publish execution-quality statistics under **Rule 605** (amended by the SEC in 2024 to broaden coverage — verify compliance dates on sec.gov). Reading these tells you more about your broker than marketing does.
+**Disclosure.** Brokers publish order-routing reports under SEC **Rule 606**, showing where they send orders and what PFOF they receive. Market centres publish execution-quality statistics under **Rule 605**. The SEC amended Rule 605 in 2024 to cover larger brokers and add new metrics; the compliance date was later extended to 1 August 2026 and the SEC granted further limited exemptions in April 2026 (as of Nov 2026 — verify the current reporting status on sec.gov). Reading these tells you more about your broker than marketing does.
 
 **Dark pools and the tape.** Off-exchange prints appear on your time & sales with an exchange code indicating a FINRA trade reporting facility. A large dark print is *not* proof of institutional direction: it could be a hedge, an agency cross or one leg of a complex trade. Institutional jargon is not proof of institutional intent.
 
@@ -388,7 +392,9 @@ Why it matters for you: your order may not be filled where you think. The qualit
 - Hidden and midpoint orders on exchanges mean real size can be larger than displayed.
 - Intermarket sweep orders (ISOs) let fast participants take liquidity on several venues at once, which is why a level can disappear in milliseconds.
 
-**Policy is moving.** The SEC proposed several market-structure changes in 2022 (including an order-competition rule); some proposals were later withdrawn (verify the current status on sec.gov). Always date your knowledge.` },
+**Policy is moving.** In December 2022 the SEC proposed several market-structure changes, including an Order Competition Rule (which would have forced many retail orders into auctions) and a Regulation Best Execution. In June 2025 the SEC formally withdrew both, along with other pending proposals. The 2026 agenda has turned towards rolling back parts of Reg NMS (see the note above). Always date your knowledge.
+
+**Global contrast on PFOF.** The UK's FCA treats PFOF as incompatible with its conflict-of-interest rules, and the EU's 2024 MiFIR review bans it, with a transitional national opt-out that runs to 30 June 2026 (verify on fca.org.uk and esma.europa.eu). India has no PFOF model. The US remains the main market where retail order flow is routinely sold.` },
       { h: 'The maths', md: `**Price improvement and spread cost**
 
 :::formula
@@ -417,10 +423,10 @@ If you trade 40 round trips a month at that size, a half-cent per share on each 
     ],
     check: [
       { q: 'The NBBO for a stock is $20.00 × $20.02. A broker fills your market buy at $20.015. What happened?', o: ['A trade-through violation', 'Price improvement of $0.005 per share relative to the offer', 'You paid above the NBBO', 'The order went to an exchange auction'], a: 1, why: 'Filling below the offer is price improvement. A trade-through would be a fill worse than a protected displayed quote, which did not happen here.' },
-      { q: 'Which statement about payment for order flow is most accurate?', o: ['It is illegal in the US', 'It guarantees the best possible price', 'It is legal with disclosure (Rule 606), and its net effect on retail execution quality is debated', 'It only applies to options and not to stocks'], a: 2, why: 'PFOF is legal in the US with routing disclosure. Its overall effect on retail traders is empirically contested. It applies to both equities and options.' },
-      { q: 'You see a 500,000-share print on time & sales reported through a FINRA trade reporting facility. What can you safely conclude?', o: ['An institution is aggressively buying', 'A trade occurred off-exchange; direction and purpose are unknown', 'The stock will rise', 'It is a cancelled trade'], a: 1, why: 'Off-exchange prints do not reveal who initiated them or why. Inferring intent is speculation.' },
+      { q: 'Which statement about payment for order flow is most accurate?', o: ["It is legal with disclosure (Rule 606), and its net effect on retail execution quality is debated","It only applies to options and not to stocks","It is illegal in the US","It guarantees the best possible price"], a: 0, why: 'PFOF is legal in the US with routing disclosure. Its overall effect on retail traders is empirically contested. It applies to both equities and options.' },
+      { q: 'You see a 500,000-share print on time & sales reported through a FINRA trade reporting facility. What can you safely conclude?', o: ["It is a cancelled trade","An institution is aggressively buying","A trade occurred off-exchange; direction and purpose are unknown","The stock will rise"], a: 2, why: 'Off-exchange prints do not reveal who initiated them or why. Inferring intent is speculation.' },
     ],
-    refs: ['SEC — Regulation NMS (sec.gov)', 'SEC — Rule 605 and Rule 606 disclosures (sec.gov)', 'FINRA — OTC Transparency / ATS data (finra.org)', 'Larry Harris — Trading and Exchanges: Market Microstructure for Practitioners (book)', 'NSE — Trading system overview (nseindia.com)'],
+    refs: ['SEC — Regulation NMS (sec.gov)', 'SEC — Rule 605 and Rule 606 disclosures (sec.gov)', 'SEC — Proposed rescission of Rule 611 and Rule 610(e), June 2026 (sec.gov); summarised in Sidley Austin, SEC Proposes Rescission of the Order Protection Rule (sidley.com, June 2026)', 'SEC — Withdrawal of proposed rules incl. Order Competition Rule and Regulation Best Execution, June 2025 (sec.gov)', 'SEC — Exemptive relief, compliance dates for Rules 610(c) and 612 amendments (sec.gov, June 2026)', 'FINRA — OTC Transparency / ATS data (finra.org)', 'Larry Harris — Trading and Exchanges: Market Microstructure for Practitioners (book)', 'NSE — Trading system overview (nseindia.com)'],
   },
   {
     id: 'l2-us-sessions', module: 'L2-M6', level: 2, track: 'us', title: 'Premarket, regular and after-hours trading', mins: 17,
@@ -443,7 +449,7 @@ Important news — company earnings, many economic data releases — often comes
 
 US daylight saving time begins on the second Sunday of March and ends on the first Sunday of November. India does not use daylight saving, so the IST timings shift by one hour twice a year.
 
-**Auctions.** The regular session opens and closes with auctions (Nasdaq Opening and Closing Cross; NYSE opening and closing auctions). The closing auction is often one of the largest single liquidity events of the day because index funds and many institutions trade at the close. Market-on-close order cut-offs are a few minutes before 16:00 ET (verify exchange rules).
+**Auctions.** The regular session opens and closes with auctions (Nasdaq Opening and Closing Cross; NYSE opening and closing auctions). The closing auction is often one of the largest single liquidity events of the day because index funds and many institutions trade at the close. Market-on-close order entry cut-offs are around 15:50 ET at NYSE and Nasdaq (verify exchange rules; brokers often set earlier cut-offs).
 
 **How extended-hours trading behaves:**
 - Spreads are wider and displayed size is thin.
@@ -460,7 +466,15 @@ US daylight saving time begins on the second Sunday of March and ends on the fir
 
 **Earnings gaps.** A stock reports after the close and moves 8% after hours. The overnight move reflects a small number of participants. At the 09:30 open, the full market arrives; the gap can extend or fade. Professionals often wait for the first 5–30 minutes to see whether the gap is accepted (holds above key levels with volume) or rejected.
 
-**Regulatory protections differ.** Limit Up–Limit Down (LULD) bands, which pause trading in a stock after rapid moves, apply during regular hours; the market-wide circuit breakers based on the S&P 500 (7%, 13% and 20% declines) apply during regular hours as well. Extended-hours trading has fewer of these protections (verify current rules on sec.gov and exchange sites).
+**Regulatory protections differ.** Two halt mechanisms apply during the regular session only (as of Nov 2026 — verify on luldplan.com, nyse.com and sec.gov):
+
+| Mechanism | Trigger | Effect |
+|---|---|---|
+| Limit Up–Limit Down (LULD), per stock | Price reaches a band around a rolling 5-minute reference price — typically 5% for large, liquid stocks priced above $3, 10% for others above $3, wider for low-priced stocks; bands are doubled in the first 15 minutes and, for many stocks, the last 25 minutes | Trades outside the band are blocked; if the stock stays at the band for 15 seconds, a 5-minute trading pause follows, then a reopening auction |
+| Market-wide circuit breakers, S&P 500 | Level 1: −7%, Level 2: −13% from the prior close | 15-minute halt of all US stocks if hit before 15:25 ET; no halt for Levels 1–2 at or after 15:25 |
+| | Level 3: −20% | Trading halted for the rest of the day |
+
+Extended-hours trading does not have these protections, and a halted stock can reopen far from its last price.
 
 **Twenty-four-hour trading.** Several venues and brokers have launched or announced near round-the-clock trading in US stocks (verify current availability). For a trader in India this is tempting, but overnight liquidity is thin and fills can be poor.
 
@@ -481,12 +495,12 @@ You plan to risk $0.40 per share on 250 shares (planned risk = $100).
 In premarket, three-quarters of your risk is consumed by the spread before price moves. That is the core reason to cut size or avoid extended hours.` },
       { h: 'India', md: `> [!india] For a trader based in India, the US regular session runs 20:00–02:30 IST in US winter and 19:00–01:30 IST in US summer. The first hour of the US session (20:00–21:00 IST in winter) often carries the most volume and range, which is convenient. Trading after midnight while also trading NSE at 09:15 the next morning is a reliable way to accumulate fatigue errors. Pick one market for active trading per day.
 
-Indian markets have no equivalent of US extended-hours stock trading. NSE has a pre-open call auction (09:00–09:08 order entry) and a closing session; GIFT Nifty on NSE IX trades for much longer hours. See [[link:l2-overnight]].` },
+Indian markets have no equivalent of US extended-hours stock trading. NSE has a pre-open call auction (09:00–09:10 order entry), a Closing Auction Session for F&O stocks (15:15–15:35, from Aug 2026) and a post-close session at the closing price (15:50–16:00); GIFT Nifty on NSE IX trades for much longer hours. See [[link:l2-overnight]].` },
       { h: 'Common misconceptions', md: `- **"A premarket high is a strong level because it is on the chart."** It may be set by a few hundred shares.
 - **"My stop protects me after hours."** Many brokers do not trigger stops outside regular hours.
 - **"After-hours moves always continue at the open."** They can extend or fade; acceptance is unknown until the full market arrives.
 - **"US hours in IST are fixed."** They shift with US daylight saving time.` },
-      { h: 'When it fails', md: `Example: a stock reports earnings at 16:05 ET and jumps from $120 to $131 after hours. You buy 100 shares at $130.80 using a limit order at 21:30 ET. Overnight, the earnings call reveals weak guidance. At 08:00 ET premarket the stock trades $122. Your stop at $128 never triggered because your broker does not process stops outside regular hours, and there were no bids near your stop anyway. You are down $880 before the regular session opens. Thin liquidity plus news risk turned a planned $280 loss into a much larger one.` },
+      { h: 'When it fails', md: `Example: a stock reports earnings at 16:05 ET and jumps from $120 to $131 after hours. You buy 100 shares at $130.80 using a limit order at 16:40 ET. At 17:00 ET the earnings call reveals weak guidance. At 08:00 ET premarket the stock trades $122. Your stop at $128 never triggered because your broker does not process stops outside regular hours, and there were no bids near your stop anyway. You are down $880 before the regular session opens. Thin liquidity plus news risk turned a planned $280 loss into a much larger one.` },
       { h: 'Exercise', md: `1. Write the US session times in IST for both EST and EDT in your routine notes.
 2. Use [[chart:NVDA:23:vwap,vol]] in the chart lab and mark where volume is thinnest. Imagine the same chart in premarket with spreads ten times wider.
 3. With the R:R calculator, compute how much of your risk a $0.20 spread consumes on your typical size.
@@ -496,11 +510,11 @@ Indian markets have no equivalent of US extended-hours stock trading. NSE has a 
 **Journal prompt:** "If I trade extended hours, what are my reduced size and order rules, and have I confirmed how my broker handles stops?"` },
     ],
     check: [
-      { q: 'In December, what is the US regular session in IST?', o: ['19:00–01:30', '20:00–02:30', '18:30–01:00', '21:00–03:30'], a: 1, why: 'In December the US is on EST (UTC−5); IST is UTC+5:30, a 10.5-hour difference. 09:30 ET = 20:00 IST.' },
-      { q: 'You plan a $150 risk on 300 shares. In premarket the spread is $0.25. Roughly what fraction of your risk does a round-trip spread cost consume?', o: ['10%', '25%', '50%', '100%'], a: 2, why: 'Round-trip spread cost = 300 × 0.25 = $75, which is 50% of the $150 planned risk.' },
-      { q: 'Which is the most appropriate practice for extended-hours trading?', o: ['Market orders for speed', 'Normal size because news drives volume', 'Limit orders, reduced size, and confirming how the broker handles stops', 'Rely on LULD bands for protection'], a: 2, why: 'Thin liquidity, wide spreads, unprocessed stops and fewer protections all call for limits and smaller size.' },
+      { q: 'In December, what is the US regular session in IST?', o: ["18:30–01:00","21:00–03:30","19:00–01:30","20:00–02:30"], a: 3, why: 'In December the US is on EST (UTC−5); IST is UTC+5:30, a 10.5-hour difference. 09:30 ET = 20:00 IST.' },
+      { q: 'You plan a $150 risk on 300 shares. In premarket the spread is $0.25. Roughly what fraction of your risk does a round-trip spread cost consume?', o: ["25%","50%","100%","10%"], a: 1, why: 'Round-trip spread cost = 300 × 0.25 = $75, which is 50% of the $150 planned risk.' },
+      { q: 'Which is the most appropriate practice for extended-hours trading?', o: ["Limit orders, reduced size, and confirming how the broker handles stops","Rely on LULD bands for protection","Market orders for speed","Normal size because news drives volume"], a: 0, why: 'Thin liquidity, wide spreads, unprocessed stops and fewer protections all call for limits and smaller size.' },
     ],
-    refs: ['Nasdaq — Trading hours and Opening/Closing Cross (nasdaq.com)', 'NYSE — Auctions (nyse.com)', 'SEC — Investor Bulletin: Extended-hours trading (investor.gov)', 'SEC — Limit Up–Limit Down and market-wide circuit breakers (sec.gov)'],
+    refs: ['Nasdaq — Trading hours and Opening/Closing Cross (nasdaq.com)', 'NYSE — Auctions (nyse.com)', 'SEC — Investor Bulletin: Extended-hours trading (investor.gov)', 'SEC — Investor Bulletin: Measures to address market volatility (LULD and market-wide circuit breakers) (investor.gov)', 'LULD Plan — Plan to Address Extraordinary Market Volatility (luldplan.com)', 'NYSE — Rule 7.12 Trading halts due to extraordinary market volatility (nyse.com)'],
   },
   {
     id: 'l2-us-rules', module: 'L2-M6', level: 2, track: 'us', title: 'SEC, FINRA and the end of the PDT rule', mins: 18,
@@ -512,7 +526,7 @@ Indian markets have no equivalent of US extended-hours stock trading. NSE has a 
 - **SEC (Securities and Exchange Commission)** — the federal regulator. It writes and approves market rules, oversees exchanges and brokers, and enforces securities law.
 - **FINRA (Financial Industry Regulatory Authority)** — a self-regulatory organisation that supervises broker-dealers under SEC oversight. FINRA writes many of the day-to-day rules brokers must follow, including margin rules.
 
-Futures are separate: they are regulated by the **CFTC** with the **NFA** as the self-regulatory body. Options on stocks fall under the SEC; options and futures on indices traded on futures exchanges fall under the CFTC.
+Futures are separate: they are regulated by the **CFTC** with the **NFA** as the self-regulatory body. Options on stocks, ETFs and cash indices (for example SPX options on Cboe) are securities under the SEC. Futures, and options on futures (for example options on E-mini S&P 500 futures at CME), fall under the CFTC.
 
 For decades, the rule that small US traders talked about most was the **pattern-day-trader (PDT) rule**. It forced margin-account traders who day-traded frequently to keep at least $25,000 in equity. In April 2026 the SEC approved FINRA's proposal to remove the PDT definition and the $25,000 minimum, replacing it with risk-based intraday margin standards. When this applies to *your* account depends on your broker.` },
       { h: 'Intermediate view', md: `**The old PDT rule (for context)**
@@ -522,7 +536,9 @@ For decades, the rule that small US traders talked about most was the **pattern-
 - Many small traders worked around it with cash accounts, multiple brokers or offshore brokers.
 
 **What changed in 2026**
-> [!us] As of Nov 2026: the SEC approved (April 2026) FINRA's proposal to eliminate the pattern-day-trader definition and the $25,000 minimum equity requirement, replacing them with risk-based intraday margin standards. Broker implementation timing and the exact margin each broker applies vary — verify on finra.org, sec.gov and with your broker.
+> [!us] As of Nov 2026: the SEC approved (14 April 2026) FINRA's proposal to eliminate the pattern-day-trader definition and the $25,000 minimum equity requirement, replacing them with risk-based intraday margin standards under FINRA Rule 4210. FINRA Regulatory Notice 26-10 gives an effective date of 4 June 2026, with firms allowed to phase in implementation until 20 October 2027. Your broker may therefore still apply the old PDT rules for now. The exact intraday margin each broker applies also varies — verify on finra.org and with your broker.
+
+**How the new framework works (outline from FINRA Notice 26-10 — verify details):** instead of counting day trades, the broker tracks an intraday margin level for your account. If a trade leaves you with an **intraday margin deficit**, you must cover it promptly. A deficit left uncovered for 15 business days stays on record, and a pattern of late cover can lead to a 90-day restriction on opening new margin positions. Brokers can monitor in real time and block trades that would create a deficit, or check once at the end of the day.
 
 What does *not* change automatically:
 - Brokers can still set **house rules** stricter than FINRA minimums.
@@ -578,11 +594,11 @@ At maximum leverage you are already at the edge: almost any loss triggers a marg
 **Journal prompt:** "Am I trading more often because I have a better edge, or because the rules now let me?"` },
     ],
     check: [
-      { q: 'After the April 2026 SEC approval, what is the most accurate statement for a small US margin account?', o: ['Day trading is now unlimited at every broker immediately', 'The $25,000 PDT minimum is being replaced by risk-based intraday margin; timing and limits depend on each broker', 'FINRA abolished all margin requirements', 'Only cash accounts can day trade'], a: 1, why: 'The SEC approved removal of the PDT definition and minimum, replaced by risk-based intraday margin, with broker implementation varying. Margin rules and house rules still apply.' },
-      { q: 'You are short one in-the-money AAPL call at expiry and do not close it. What is the likely result?', o: ['It expires worthless', 'You are assigned and are short 100 shares, physically settled', 'You receive cash settlement only', 'Nothing until the next month'], a: 1, why: 'US single-stock options are physically settled; in-the-money options are generally exercised at expiry, so the short call holder is assigned 100 shares short.' },
-      { q: 'Who is the primary regulator for US futures trading?', o: ['FINRA', 'SEC', 'CFTC (with the NFA as self-regulatory body)', 'Federal Reserve'], a: 2, why: 'Futures and options on futures are regulated by the CFTC, with the NFA as the self-regulatory organisation.' },
+      { q: 'After the April 2026 SEC approval, what is the most accurate statement for a small US margin account?', o: ["Only cash accounts can day trade","Day trading is now unlimited at every broker immediately","The $25,000 PDT minimum is being replaced by risk-based intraday margin; timing and limits depend on each broker","FINRA abolished all margin requirements"], a: 2, why: 'The SEC approved removal of the PDT definition and minimum, replaced by risk-based intraday margin, with broker implementation varying. Margin rules and house rules still apply.' },
+      { q: 'You are short one in-the-money AAPL call at expiry and do not close it. What is the likely result?', o: ["You receive cash settlement only","Nothing until the next month","It expires worthless","You are assigned and are short 100 shares, physically settled"], a: 3, why: 'US single-stock options are physically settled; in-the-money options are generally exercised at expiry, so the short call holder is assigned 100 shares short.' },
+      { q: 'Who is the primary regulator for US futures trading?', o: ["SEC","CFTC (with the NFA as self-regulatory body)","Federal Reserve","FINRA"], a: 1, why: 'Futures and options on futures are regulated by the CFTC, with the NFA as the self-regulatory organisation.' },
     ],
-    refs: ['FINRA — Rule 4210 Margin Requirements (finra.org)', 'SEC — Release approving FINRA pattern day trading amendments, 2026 (sec.gov)', 'OCC — Exercise and assignment (theocc.com)', 'SEC — T+1 settlement (sec.gov)', 'RBI — Master Direction: Liberalised Remittance Scheme (rbi.org.in)'],
+    refs: ['FINRA — Rule 4210 Margin Requirements (finra.org)', 'FINRA — Regulatory Notice 26-10: FINRA Adopts New Intraday Margin Standards to Replace the Day Trading Margin Requirements (finra.org, April 2026)', 'SEC — Release approving FINRA pattern day trading amendments, 2026 (sec.gov)', 'OCC — Exercise and assignment (theocc.com)', 'SEC — T+1 settlement (sec.gov)', 'RBI — Master Direction: Liberalised Remittance Scheme (rbi.org.in)'],
   },
 
   {
@@ -599,8 +615,8 @@ The biggest shift in thinking: in India, most intraday speculation is concentrat
 | Main intraday products | Index options and futures, stock futures, cash intraday (MIS) | Stocks, ETFs, stock options, index options (SPX, 0DTE), futures (ES, NQ) on CME |
 | Regular hours | 09:15–15:30 IST | 09:30–16:00 ET (20:00–02:30 or 19:00–01:30 IST) |
 | Extended hours | Pre-open auction only for equities | Premarket, after-hours, some overnight trading |
-| Tick size | ₹0.05 for most stocks and index derivatives (verify per instrument) | $0.01 for most stocks ≥ $1 (some half-cent ticks — verify) |
-| Price bands | Stock-specific circuit bands; F&O stocks dynamic bands | LULD pauses; market-wide circuit breakers on S&P 500 |
+| Tick size | Price-band based: ₹0.01 for stocks below ₹250, larger ticks for higher-priced stocks; ₹0.05 for index futures and options (NSE framework revised 2024–2025 — verify per instrument) | $0.01 for stocks ≥ $1 (half-cent ticks adopted in 2024 but delayed to Nov 2027 — verify) |
+| Price bands | Stock-specific circuit bands; F&O stocks dynamic bands; market-wide index circuit breakers at 10%, 15% and 20% moves in Nifty or Sensex (verify on nseindia.com) | LULD pauses per stock; market-wide circuit breakers at 7%, 13% and 20% S&P 500 declines |
 | Settlement | T+1 for equities (optional T+0 for some stocks — verify) | T+1 for equities and option premiums |
 | Option style | Index and stock options European; stock options physically settled | Stock options American and physically settled; SPX European cash-settled |
 | Costs | Brokerage + STT + exchange charges + SEBI fee + GST + stamp duty | Commission (often zero) + small regulatory fees + spread/PFOF effects |
@@ -624,11 +640,12 @@ India — Nifty futures, 1 lot (65 units) bought and sold intraday at 25,000 →
 - STT 0.05% on sell ≈ ₹813 (on ₹16.28 lakh sell value).
 - NSE transaction charges ₹183/crore ≈ ₹59.
 - Brokerage, say ₹20 per order = ₹40, plus GST on brokerage and fees, stamp duty 0.002% on buy ≈ ₹33.
-- Gross profit = 40 × 65 = ₹2,600. Costs ≈ ₹960 → net ≈ ₹1,640.
+- SEBI fee ₹10/crore ≈ ₹3; GST 18% on (brokerage + exchange + SEBI fees) ≈ ₹18.
+- Gross profit = 40 × 65 = ₹2,600. Costs ≈ ₹968 → net ≈ ₹1,632 (matches the app's charges engine).
 
 US — 100 shares of a $250 stock, bought and sold intraday for a $1.00 gain:
-- Gross = $100. Commission $0 at many brokers; SEC fee and FINRA TAF on the sell side are a few cents; effective spread, say $0.01 per share each way = $2.
-- Net ≈ $97.
+- Gross = $100. Commission $0 at many brokers. On the sell side the SEC Section 31 fee (about $0.52 at the app's placeholder rate of $20.60 per million — the SEC resets this rate periodically) and FINRA TAF (about $0.02) apply. Effective spread, say $0.01 per share each way = $2.
+- Net ≈ $97.50.
 
 Statutory taxes are a much larger share of small intraday gains in Indian futures than in US stocks. Compare both calculators:
 
@@ -647,8 +664,8 @@ Statutory taxes are a much larger share of small intraday gains in Indian future
 **Journal prompt:** "Which of my rules depend on Indian market features (circuit bands, expiry days, pre-open) and would break in the US?"` },
     ],
     check: [
-      { q: 'A US stock falls 11% from the prior close at 11:00 ET. What restriction typically applies to short sellers for the rest of the day and the next day?', o: ['No restriction', 'Short sales only at a price above the current national best bid (Rule 201 SSR)', 'Shorting banned entirely', 'Shorting allowed only after hours'], a: 1, why: 'Rule 201 is triggered by a 10% decline and restricts short sales to prices above the national best bid; it does not ban shorting.' },
-      { q: 'Which difference most changes an India-trained trader\'s morning routine in the US?', o: ['Candles look different', 'The need to scan a large universe for stocks in play, liquidity and spread, rather than focusing on one index', 'VWAP is calculated differently', 'There are no options in the US'], a: 1, why: 'US intraday activity is spread across thousands of stocks, so selection by liquidity and catalyst becomes a core skill.' },
+      { q: 'A US stock falls 11% from the prior close at 11:00 ET. What restriction typically applies to short sellers for the rest of the day and the next day?', o: ["Short sales only at a price above the current national best bid (Rule 201 SSR)","Shorting banned entirely","Shorting allowed only after hours","No restriction"], a: 0, why: 'Rule 201 is triggered by a 10% decline and restricts short sales to prices above the national best bid; it does not ban shorting.' },
+      { q: 'Which difference most changes an India-trained trader\'s morning routine in the US?', o: ["There are no options in the US","Candles look different","The need to scan a large universe for stocks in play, liquidity and spread, rather than focusing on one index","VWAP is calculated differently"], a: 2, why: 'US intraday activity is spread across thousands of stocks, so selection by liquidity and catalyst becomes a core skill.' },
     ],
     refs: ['SEC — Rule 201 (Alternative uptick rule) (sec.gov)', 'NSE — Trading and settlement (nseindia.com)', 'SEBI — Margin framework circulars (sebi.gov.in)', 'RBI — Liberalised Remittance Scheme FAQs (rbi.org.in)', 'FINRA — BrokerCheck (brokercheck.finra.org)'],
   },
@@ -669,7 +686,7 @@ Statutory taxes are a much larger share of small intraday gains in Indian future
 Think of Europe as the bridge between Asia and the US: it digests Asian news and sets the tone before New York opens.` },
       { h: 'Intermediate view', md: `**Session times** (cash markets; as of Nov 2026 — verify on exchange websites):
 
-| Market | Local hours | IST in European winter (Nov–Mar) | IST in European summer (Mar–Oct) |
+| Market | Local hours | IST in European winter (late Oct–late Mar) | IST in European summer (late Mar–late Oct) |
 |---|---|---|---|
 | Xetra (DAX) | 09:00–17:30 CET | 13:30–22:00 | 12:30–21:00 |
 | Euronext Paris (CAC) | 09:00–17:30 CET | 13:30–22:00 | 12:30–21:00 |
@@ -706,7 +723,7 @@ Example (summer): DAX opens 09:00 CEST = 07:00 UTC = 12:30 IST.
 **Index point value example.** Euro Stoxx 50 futures (FESX) have a multiplier of €10 per index point (verify on eurex.com). At 5,000 points, one contract ≈ €50,000 notional; a 40-point move = €400. Use the futures-exposure widget to compare with Nifty futures:
 
 [[widget:futures-exposure]]` },
-      { h: 'India', md: `> [!india] From November to March, the European open at 13:30 IST falls in the last two hours of NSE trading; from April to October it is at 12:30 IST. Add a note in your routine: "European open check" at that time. Ask three questions: Are European futures moving strongly in one direction? Are US futures moving with them? Is Nifty reacting or ignoring them? Only a yes to the first two makes it a meaningful input.` },
+      { h: 'India', md: `> [!india] From late October to late March, the European open is at 13:30 IST, two hours before NSE closes. From late March to late October it is at 12:30 IST, three hours before the close. Add a note in your routine: "European open check" at that time. Ask three questions: Are European futures moving strongly in one direction? Are US futures moving with them? Is Nifty reacting or ignoring them? Only a yes to the first two makes it a meaningful input.` },
       { h: 'Common misconceptions', md: `- **"DAX and FTSE are interchangeable as 'Europe'."** Their sector make-ups differ greatly.
 - **"The DAX index level is directly comparable to price indices."** DAX includes dividends.
 - **"Europe opens at the same IST time all year."** It shifts with European daylight saving time.
@@ -719,9 +736,9 @@ Example (summer): DAX opens 09:00 CEST = 07:00 UTC = 12:30 IST.
 **Journal prompt:** "Did I use the European open as information, or as a reason to trade against my plan?"` },
     ],
     check: [
-      { q: 'In July, at what IST time does the Xetra DAX cash session open?', o: ['13:30', '12:30', '11:30', '14:30'], a: 1, why: 'In summer Germany uses CEST (UTC+2). 09:00 CEST = 07:00 UTC = 12:30 IST.' },
+      { q: 'In July, at what IST time does the Xetra DAX cash session open?', o: ["11:30","14:30","13:30","12:30"], a: 3, why: 'In summer Germany uses CEST (UTC+2). 09:00 CEST = 07:00 UTC = 12:30 IST.' },
       { q: 'Which European index is most directly sensitive to crude oil and metal prices because of its sector make-up?', o: ['DAX 40', 'FTSE 100', 'CAC 40', 'All equally'], a: 1, why: 'The FTSE 100 has heavy weightings in energy and mining; the DAX is more industrial/auto, the CAC more luxury and industrial.' },
-      { q: 'Why might a long-run DAX chart rise more than a CAC 40 chart even if the underlying companies performed similarly?', o: ['The DAX has more companies', 'The DAX is a total-return index that reinvests dividends; the CAC 40 headline is a price index', 'The DAX trades longer hours', 'Currency effects'], a: 1, why: 'Dividend reinvestment in a performance index adds to the index level over time, while a price index drops dividends.' },
+      { q: 'Why might a long-run DAX chart rise more than a CAC 40 chart even if the underlying companies performed similarly?', o: ["The DAX is a total-return index that reinvests dividends; the CAC 40 headline is a price index","The DAX trades longer hours","Currency effects","The DAX has more companies"], a: 0, why: 'Dividend reinvestment in a performance index adds to the index level over time, while a price index drops dividends.' },
     ],
     refs: ['Deutsche Börse — DAX index methodology (deutsche-boerse.com / stoxx.com)', 'London Stock Exchange — Trading hours (londonstockexchange.com)', 'Euronext — Trading hours (euronext.com)', 'Eurex — Euro Stoxx 50 futures specifications (eurex.com)', 'ECB — Monetary policy decisions (ecb.europa.eu)'],
   },
@@ -779,7 +796,7 @@ AEDT = UTC + 11 → IST = AEDT − 5:30; AEST = UTC + 10 → IST = AEST − 4:30
 :::
 
 Example: Hong Kong opens 09:30 HKT → 09:30 − 2:30 = 07:00 IST.
-Example: Tokyo afternoon session resumes 12:30 JST → 09:00 IST, just before NSE's pre-open ends.
+Example: Tokyo afternoon session resumes 12:30 JST → 09:00 IST, the moment NSE's pre-open order entry begins.
 
 **Currency effect on index returns.** If the Nikkei rises 2% in yen and the yen falls 1.5% against the dollar the same day, a dollar-based investor's return is roughly:
 
@@ -809,8 +826,8 @@ Write one line: "Asia risk-on / risk-off / mixed". If mixed, give it no weight. 
 **Journal prompt:** "Did I treat the Asian session as context, or did it make me trade before my opening setup appeared?"` },
     ],
     check: [
-      { q: 'At what IST time does the Hong Kong stock exchange cash session open?', o: ['06:30', '07:00', '07:30', '08:00'], a: 1, why: 'HKT is UTC+8, 2.5 hours ahead of IST. 09:30 HKT = 07:00 IST.' },
-      { q: 'The Nikkei rises 3% in yen terms while the yen falls 2% versus the US dollar. What is the approximate return for a dollar-based investor?', o: ['+5%', '+3%', '+0.9%', '−2%'], a: 2, why: '(1.03 × 0.98) − 1 ≈ 0.94%. The currency fall offsets much of the local gain.' },
+      { q: 'At what IST time does the Hong Kong stock exchange cash session open?', o: ["08:00","06:30","07:00","07:30"], a: 2, why: 'HKT is UTC+8, 2.5 hours ahead of IST. 09:30 HKT = 07:00 IST.' },
+      { q: 'The Nikkei rises 3% in yen terms while the yen falls 2% versus the US dollar. What is the approximate return for a dollar-based investor?', o: ["−2%","+5%","+3%","+0.9%"], a: 3, why: '(1.03 × 0.98) − 1 ≈ 0.94%. The currency fall offsets much of the local gain.' },
       { q: 'Which statement about GIFT Nifty is correct?', o: ['It is traded on SGX', 'It replaced SGX Nifty in July 2023 and trades on NSE International Exchange in GIFT City', 'It is the same as the Nifty spot index', 'It trades only during NSE hours'], a: 1, why: 'Nifty futures migrated from SGX to NSE IX in GIFT City in July 2023, trading in USD for much longer hours than NSE.' },
     ],
     refs: ['Japan Exchange Group — Trading hours (jpx.co.jp)', 'HKEX — Trading hours (hkex.com.hk)', 'KRX — Market hours (global.krx.co.kr)', 'SGX — Trading hours (sgx.com)', 'ASX — Trading hours (asx.com.au)', 'NSE International Exchange — GIFT Nifty (nseix.com)'],
@@ -826,8 +843,8 @@ The most direct cue is **GIFT Nifty** — Nifty 50 futures that trade on NSE Int
 
 Other cues: US index closes and futures, the US dollar, crude oil, US 10-year Treasury yields, Asian opens, and major overnight news. The skill is to combine them into a simple "risk-on / risk-off / mixed" picture — and then still let NSE's opening price action decide your trades.` },
       { h: 'Intermediate view', md: `**GIFT Nifty basics** (as of Nov 2026 — verify contract specifications and hours on nseix.com):
-- Quoted in index points, settled in **US dollars**, so trading it is not open to most Indian residents but anyone can watch the price.
-- Trades in two sessions totalling about 21 hours, roughly 06:30–15:40 IST and 16:35–02:45 IST.
+- Quoted in index points and settled in **US dollars**. Indian residents' access to it is restricted (verify current RBI and IFSCA rules), but anyone can watch the price.
+- Trades in two sessions, roughly 06:30–15:40 IST and 16:35–02:45 IST — a little over 19 hours in total (verify current hours on nseix.com).
 - It is a **futures** price. Its premium over the Nifty spot index includes **basis** (cost of carry minus expected dividends), not only sentiment.
 
 **Reading it properly:**
@@ -901,9 +918,9 @@ With five data points this number means almost nothing statistically — a singl
 **Journal prompt:** "Which overnight cue did I rely on today, what shared driver connected it to India, and did the open confirm or reject it?"` },
     ],
     check: [
-      { q: 'GIFT Nifty near-month is 24,860. Fair basis is about 70 points. Nifty previous close is 24,700. What is the approximate implied opening gap?', o: ['+160', '+90', '+70', '−70'], a: 1, why: 'Implied gap ≈ 24,860 − 70 − 24,700 = +90. Ignoring basis overstates the expected gap.' },
-      { q: 'Overnight, the S&P 500 fell 1.5% on a US tech earnings miss. Indian IT stocks have significant US client exposure, but today India has a surprise RBI policy announcement at 10:00 IST. How should you weight the US cue?', o: ['Heavily — US always leads India', 'As context for the open and IT sector; the domestic policy event can dominate after 10:00', 'Ignore all cues on RBI days', 'Short Nifty at the open regardless'], a: 1, why: 'The US move has a plausible channel into Indian IT and the open, but a scheduled domestic event is likely to dominate later. Cues are weighted by shared drivers and timing.' },
-      { q: 'You compute a 0.8 correlation between two markets using five days of data. What is the right interpretation?', o: ['The markets are strongly linked', 'The estimate is unreliable with so few observations; use longer rolling windows and check stability', 'Correlation is causation', 'The relationship will continue tomorrow'], a: 1, why: 'Five observations give a very noisy estimate. Correlation also does not imply causation or persistence.' },
+      { q: 'GIFT Nifty near-month is 24,860. Fair basis is about 70 points. Nifty previous close is 24,700. What is the approximate implied opening gap?', o: ["+90","+70","−70","+160"], a: 0, why: 'Implied gap ≈ 24,860 − 70 − 24,700 = +90. Ignoring basis overstates the expected gap.' },
+      { q: 'Overnight, the S&P 500 fell 1.5% on a US tech earnings miss. Indian IT stocks have significant US client exposure, but today India has a surprise RBI policy announcement at 10:00 IST. How should you weight the US cue?', o: ["Short Nifty at the open regardless","Heavily — US always leads India","As context for the open and IT sector; the domestic policy event can dominate after 10:00","Ignore all cues on RBI days"], a: 2, why: 'The US move has a plausible channel into Indian IT and the open, but a scheduled domestic event is likely to dominate later. Cues are weighted by shared drivers and timing.' },
+      { q: 'You compute a 0.8 correlation between two markets using five days of data. What is the right interpretation?', o: ["Correlation is causation","The relationship will continue tomorrow","The markets are strongly linked","The estimate is unreliable with so few observations; use longer rolling windows and check stability"], a: 3, why: 'Five observations give a very noisy estimate. Correlation also does not imply causation or persistence.' },
     ],
     refs: ['NSE International Exchange — GIFT Nifty contract specifications (nseix.com)', 'NSE — Nifty 50 index methodology (nseindia.com)', 'CME Group — E-mini S&P 500 trading hours (cmegroup.com)', 'John Hull — Options, Futures, and Other Derivatives (book)'],
   },
@@ -949,7 +966,7 @@ Lot sizes for MCX contracts change from time to time — always check the curren
 
 **Event intraday trading.** Crude and natural gas routinely spike within seconds of EIA releases. Spreads widen, stops slip. Many intraday traders either flatten before the release or trade only after the first 5–15 minutes. In IST, EIA's crude release at 10:30 ET is 21:00 IST in US winter and 20:00 IST in US summer.
 
-**Negative prices and contract mechanics.** In April 2020, the expiring NYMEX WTI contract settled below zero because of storage constraints at the delivery point. MCX contracts referencing WTI faced settlement questions at that time. The lesson: know how your contract settles, and avoid holding into expiry unless you understand delivery.
+**Negative prices and contract mechanics.** In April 2020, the expiring NYMEX WTI contract settled below zero because of storage constraints at the delivery point. MCX's crude contract for that month, which settles against WTI, also settled at a negative rupee price, leaving some long holders owing money (verify the details in MCX circulars of April 2020). The lesson: know how your contract settles, and avoid holding into expiry unless you understand delivery.
 
 **Regulated exchange vs unregulated venue.** MCX and NSE commodity futures are exchange-traded, cleared by a clearing corporation and regulated by SEBI. "Commodity CFDs" offered by offshore apps to Indian residents are a different product: typically over-the-counter, not cleared by an Indian clearing corporation, and SEBI/RBI have warned about unauthorised platforms (verify the RBI alert list of unauthorised forex platforms and SEBI cautions).
 
@@ -971,9 +988,9 @@ MCX gold (₹/10 g) ≈ Spot gold ($/troy oz) × USD/INR × (10 ÷ 31.1035) × (
 
 WTI $72, USD/INR 87 → MCX crude ≈ 72 × 87 = ₹6,264/bbl. If WTI falls 1% but the rupee weakens 0.5%, the rupee price falls only about 0.5%: (0.99 × 1.005) − 1 ≈ −0.5%.
 
-Gold example (illustrative, ignoring exact duty structure): $2,700/oz × 87 × 0.3215 ≈ ₹75,520 per 10 g before duties. Actual MCX prices include import duty and basis, so use this only to understand direction, not as an exact fair value.
+Gold example (illustrative prices, ignoring exact duty structure): $2,700/oz × 87 × 0.3215 ≈ ₹75,520 per 10 g before duties. Actual MCX prices include import duty and basis, so use this only to understand direction, not as an exact fair value.
 
-**3. Leverage.** If margin is 8% of notional on a crude lot worth ₹6.2 lakh, margin ≈ ₹49,600. A 3% move = ₹18,600, i.e. about 37% of margin.
+**3. Leverage.** If margin is 8% of notional on a crude lot worth ₹6.2 lakh, margin ≈ ₹49,600. A 3% move = ₹18,600, i.e. about 37.5% of margin.
 
 [[widget:futures-exposure]]` },
       { h: 'India', md: `> [!india] Practical notes (as of Nov 2026 — verify with MCX and your broker):
@@ -992,9 +1009,9 @@ Gold example (illustrative, ignoring exact duty structure): $2,700/oz × 87 × 0
 **Journal prompt:** "What scheduled events (EIA, OPEC+, US data) fall inside my commodity trading window this week, and what is my rule for each?"` },
     ],
     check: [
-      { q: 'WTI crude falls 2% overnight while USD/INR rises 1%. Roughly how does MCX crude move?', o: ['−3%', '−2%', 'About −1%', '+1%'], a: 2, why: 'Rupee price ≈ WTI × USD/INR: (0.98 × 1.01) − 1 ≈ −1.0%. The weaker rupee offsets part of the fall.' },
-      { q: 'You hold 2 lots of a crude contract with a 100-barrel lot. Price moves against you by ₹45. What is your loss?', o: ['₹4,500', '₹9,000', '₹900', '₹45,000'], a: 1, why: 'Loss = 45 × 100 × 2 = ₹9,000.' },
-      { q: 'Which statement best distinguishes MCX futures from commodity CFDs on an offshore app?', o: ['They are identical products', 'MCX futures are exchange-traded, centrally cleared and SEBI-regulated; offshore CFDs are OTC and may not be permitted for Indian residents', 'CFDs are safer because there is no margin', 'MCX futures cannot be traded intraday'], a: 1, why: 'The regulatory and clearing difference is fundamental; RBI and SEBI have warned about unauthorised platforms.' },
+      { q: 'WTI crude falls 2% overnight while USD/INR rises 1%. Roughly how does MCX crude move?', o: ["−2%","About −1%","+1%","−3%"], a: 1, why: 'Rupee price ≈ WTI × USD/INR: (0.98 × 1.01) − 1 ≈ −1.0%. The weaker rupee offsets part of the fall.' },
+      { q: 'You hold 2 lots of a crude contract with a 100-barrel lot. Price moves against you by ₹45. What is your loss?', o: ["₹9,000","₹900","₹45,000","₹4,500"], a: 0, why: 'Loss = 45 × 100 × 2 = ₹9,000.' },
+      { q: 'Which statement best distinguishes MCX futures from commodity CFDs on an offshore app?', o: ["MCX futures cannot be traded intraday","They are identical products","MCX futures are exchange-traded, centrally cleared and SEBI-regulated; offshore CFDs are OTC and may not be permitted for Indian residents","CFDs are safer because there is no margin"], a: 2, why: 'The regulatory and clearing difference is fundamental; RBI and SEBI have warned about unauthorised platforms.' },
     ],
     refs: ['MCX — Contract specifications and trading hours (mcxindia.com)', 'SEBI — Commodity derivatives circulars (sebi.gov.in)', 'US EIA — Weekly Petroleum Status Report and Natural Gas Storage Report (eia.gov)', 'CME Group — WTI and Henry Hub futures (cmegroup.com)', 'RBI — Alert list of unauthorised forex trading platforms (rbi.org.in)'],
   },
@@ -1017,7 +1034,7 @@ For Indian residents, the rules are strict. You may trade **exchange-traded curr
 - USD/INR futures: lot of USD 1,000, quoted in ₹ per USD.
 - Options on USD/INR and other pairs are European-style and cash-settled.
 - Trading hours: 09:00–17:00 IST for INR pairs; cross-currency pairs (e.g. EUR/USD) trade longer, to around 19:30 IST (verify).
-- **Underlying exposure requirement:** following RBI directions, participants in INR exchange-traded currency derivatives are expected to have an underlying exposure to hedge, with a de minimis limit up to which exposure need not be documented. RBI's framework was revised in 2024 (verify current RBI directions and exchange circulars). This has reduced speculative retail volume.
+- **Underlying exposure requirement:** RBI permits INR exchange-traded currency derivatives only for hedging a contracted foreign-exchange exposure. Under the RBI directions effective 3 May 2024, users may hold positions up to USD 100 million (combined across exchanges) without *documenting* the exposure, but they must still *have* it (RBI press release, April 2024 — verify current directions on rbi.org.in). A trader with no foreign-currency exposure is not covered by the hedging route. Exchange volumes in INR pairs fell sharply after the 2024 clarification.
 
 **Drivers of USD/INR:** RBI intervention (it often smooths volatility), FPI equity and debt flows, crude prices (India's import bill), the US Dollar Index (DXY), interest-rate differentials, and the trade balance.
 
@@ -1026,7 +1043,7 @@ For Indian residents, the rules are strict. You may trade **exchange-traded curr
 
 **Carry trades.** Borrowing in a low-yield currency (historically the yen) to hold a higher-yield one earns the rate differential while exchange rates are stable, but suffers abrupt losses when the funding currency rallies, as in the yen-carry unwind of August 2024.
 
-**Global spot forex and CFDs.** Retail forex outside India is offered by brokers regulated in some jurisdictions (for example the CFTC/NFA in the US, the FCA in the UK) and by many offshore entities with light regulation. Leverage of 30:1 to 50:1 on majors is common in regulated jurisdictions; offshore venues offer far higher. Offshore brokers often act as your counterparty, set their own prices and may have weak segregation of client funds. For Indian residents, this is outside the permitted framework regardless of how the app markets itself.
+**Global spot forex and CFDs.** Retail forex outside India is offered by brokers regulated in some jurisdictions (for example the CFTC/NFA in the US, the FCA in the UK) and by many offshore entities with light regulation. Regulators cap leverage on major pairs: 50:1 in the US (CFTC/NFA) and 30:1 for retail clients in the UK and EU (FCA/ESMA). Offshore venues offer far higher. Offshore brokers often act as your counterparty, set their own prices and may have weak segregation of client funds. For Indian residents, this is outside the permitted framework regardless of how the app markets itself.
 
 **Central-bank intervention risk.** The RBI and other central banks can intervene; the Swiss National Bank's removal of the EUR/CHF floor in January 2015 caused moves of well over 10% within minutes and wiped out several retail forex brokers. Gap risk exists even in "the most liquid market in the world".` },
       { h: 'The maths', md: `**1. Pip value**
@@ -1035,7 +1052,7 @@ For Indian residents, the rules are strict. You may trade **exchange-traded curr
 P&L = Price change × Contract size × Number of lots
 :::
 
-USD/INR futures, lot USD 1,000. You buy 5 lots at 87.2000 and sell at 87.2850. P&L = 0.0850 × 1,000 × 5 = ₹425.
+USD/INR futures, lot USD 1,000. You buy 5 lots at 87.2000 and sell at 87.2850. P&L = 0.0850 × 1,000 × 5 = ₹425 before costs. With a ₹0.0025 tick, each tick on one lot is worth ₹2.50, so this move is 34 ticks.
 
 **2. Forward premium (covered interest parity)**
 
@@ -1063,11 +1080,11 @@ Spot 87.00, r_INR = 6.5%, r_USD = 4.5%, t = 3 months (0.25):
 **Journal prompt:** "Would this currency trade be permitted under current RBI rules for me, and do I have an underlying exposure it hedges?"` },
     ],
     check: [
-      { q: 'Spot USD/INR is 86.00. Rupee rates are 7% and dollar rates 5% annually. Roughly what is the 6-month forward?', o: ['84.30', '86.85', '86.00', '89.00'], a: 1, why: 'Forward ≈ 86 × 1.035 ÷ 1.025 ≈ 86.84. The higher rupee rate creates a forward premium of about 1% over six months.' },
+      { q: 'Spot USD/INR is 86.00. Rupee rates are 7% and dollar rates 5% annually. Roughly what is the 6-month forward?', o: ["86.00","89.00","84.30","86.85"], a: 3, why: 'Forward ≈ 86 × 1.035 ÷ 1.025 ≈ 86.84. The higher rupee rate creates a forward premium of about 1% over six months.' },
       { q: 'Which of these is permitted for an Indian resident retail trader (as of Nov 2026, subject to RBI rules)?', o: ['Leveraged EUR/USD CFDs on an offshore app funded via UPI', 'USD/INR futures on NSE within RBI\'s underlying-exposure framework', 'XAU/USD spot on an international broker using LRS', 'Crypto-collateralised forex perpetuals'], a: 1, why: 'Indian residents may trade currency derivatives on recognised Indian exchanges within RBI rules. Offshore leveraged forex and CFDs are not permitted.' },
       { q: 'You buy 4 lots of USD/INR futures (lot USD 1,000) at 87.3000 and exit at 87.2400. What is the P&L?', o: ['−₹240', '+₹240', '−₹60', '−₹2,400'], a: 0, why: 'P&L = (87.24 − 87.30) × 1,000 × 4 = −0.06 × 4,000 = −₹240.' },
     ],
-    refs: ['NSE — Currency derivatives contract specifications (nseindia.com)', 'RBI — Master Direction on risk management and inter-bank dealings / exchange-traded currency derivatives (rbi.org.in)', 'RBI — Alert list of unauthorised forex trading platforms (rbi.org.in)', 'BIS — Triennial Central Bank Survey of FX markets (bis.org)', 'CFTC/NFA — Retail forex rules (nfa.futures.org)'],
+    refs: ['NSE — Currency derivatives contract specifications (nseindia.com)', 'RBI — Master Direction on risk management and inter-bank dealings / exchange-traded currency derivatives (rbi.org.in)', 'RBI — Press release: clarification on ETCD participation, implementation from 3 May 2024 (rbi.org.in, April 2024)', 'RBI — Alert list of unauthorised forex trading platforms (rbi.org.in)', 'BIS — Triennial Central Bank Survey of FX markets (bis.org)', 'CFTC/NFA — Retail forex rules (nfa.futures.org)'],
   },
 
   {
@@ -1151,15 +1168,16 @@ At 25× leverage the long liquidates at 60,000 × 0.96 ÷ 0.995 ≈ $57,889, jus
 [[widget:leverage]]` },
       { h: 'India', md: `> [!india] As of Nov 2026 — verify all of this; the rules have been changing:
 - Crypto is not legal tender in India, and there is no SEBI-regulated crypto derivatives market. SEBI does not regulate crypto exchanges.
-- Gains on "virtual digital assets" are taxed at a flat 30% (plus surcharge and cess) with no set-off of losses against other income, and 1% TDS applies on transfers above thresholds (Income-tax Act provisions from 2022 — verify current law and thresholds).
+- Gains on "virtual digital assets" are taxed at a flat 30% (plus surcharge and cess). Losses cannot be set off against other income or other VDA gains, and they cannot be carried forward. A 1% TDS applies on transfers above annual thresholds. These rules were introduced in 2022 as sections 115BBH and 194S of the Income-tax Act, 1961. The Income-tax Act, 2025, in force from 1 April 2026, carries them forward under new section numbers (verify current law, section numbers and thresholds on incometaxindia.gov.in).
+- How crypto *derivatives* (perpetuals, futures) are taxed — as VDA transfers or as business income — is not settled in a way this app can state with confidence. Get professional advice.
 - Virtual-asset service providers serving Indian users must register with FIU-IND under anti-money-laundering rules; FIU-IND has issued notices to offshore exchanges that were not registered (verify the current list of registered entities).
-- Some Indian-registered platforms offer crypto futures; their regulatory status differs from SEBI-regulated F&O. Offshore leveraged platforms carry legal, tax and recovery risks for Indian residents.
+- Some FIU-registered platforms offer crypto futures to Indian users. They are not SEBI-regulated F&O: there is no SEBI margin framework, no Indian clearing corporation guarantee and no SEBI investor-protection fund. Offshore leveraged platforms carry legal, tax and recovery risks for Indian residents. Whether Indian residents may send money abroad under LRS to trade leveraged crypto products is not something this app can confirm — verify with RBI rules and an adviser.
 Speak to a qualified tax adviser before trading crypto from India.` },
       { h: 'Common misconceptions', md: `- **"High leverage just means bigger profits."** It moves your liquidation price close to entry; small, normal moves wipe out the position.
 - **"Isolated margin cannot lose more than margin."** Usually true for that position, but fees, funding and ADL still apply.
 - **"Funding is negligible."** At elevated rates it can exceed your intraday edge.
 - **"A big exchange is safe."** Platform failure, freezes and hacks have happened at large venues.` },
-      { h: 'When it fails', md: `Example: you go long 0.5 BTC at $62,000 with 20× isolated leverage (margin $1,550, MMR 0.5%). Liquidation ≈ 62,000 × 0.95 ÷ 0.995 ≈ $59,196. Your stop is at $59,500, only 4% from entry. On a Sunday night a liquidation cascade drops mark price from $61,000 to $58,800 within two minutes; your stop slips through and the position is liquidated at about $59,200. You lose the full $1,550 plus fees. A slightly wider stop would not have helped; the leverage left no room.` },
+      { h: 'When it fails', md: `Example: you go long 0.5 BTC at $62,000 with 20× isolated leverage (margin $1,550, MMR 0.5%). Liquidation ≈ 62,000 × 0.95 ÷ 0.995 ≈ $59,196. Your stop is at $59,500, only 4% from entry. On a Sunday night a liquidation cascade drops mark price from $61,000 to $58,800 within two minutes; your stop slips through and the position is liquidated at about $59,200. You lose essentially all of the $1,550 margin plus fees (on many venues the small maintenance margin left at liquidation goes to a liquidation fee or the insurance fund — verify per venue). A slightly wider stop would not have helped; the leverage left no room.` },
       { h: 'Exercise', md: `1. Using the formulas, calculate long and short liquidation prices for BTC at $60,000 with leverage 3×, 10× and 25× (MMR 0.5%). Put them in a table.
 2. Open [[chart:BTC:44:vwap,atr,vol]] and compare the ATR with the distance to each liquidation price.
 3. Compute the daily funding cost of a $20,000 long at +0.03% per 8 hours.
@@ -1167,11 +1185,11 @@ Speak to a qualified tax adviser before trading crypto from India.` },
 **Journal prompt:** "Is my stop at least 2–3 ATR inside my liquidation price, and have I checked the legal and tax position for where I am trading?"` },
     ],
     check: [
-      { q: 'You are long $40,000 notional of an ETH perp. Funding is +0.02% every 8 hours. What do you pay per day?', o: ['$8', '$24', '$80', '$2.40'], a: 1, why: 'Per interval = 40,000 × 0.0002 = $8; three intervals = $24 per day, paid by longs to shorts when funding is positive.' },
-      { q: 'Long BTC at $50,000, 5× leverage, isolated, MMR 1%, fees ignored. What is the approximate liquidation price?', o: ['$40,000', '$40,404', '$45,000', '$49,500'], a: 1, why: 'Liquidation = 50,000 × (1 − 1/5) ÷ (1 − 0.01) = 40,000 ÷ 0.99 ≈ $40,404.' },
+      { q: 'You are long $40,000 notional of an ETH perp. Funding is +0.02% every 8 hours. What do you pay per day?', o: ["$2.40","$8","$24","$80"], a: 2, why: 'Per interval = 40,000 × 0.0002 = $8; three intervals = $24 per day, paid by longs to shorts when funding is positive.' },
+      { q: 'Long BTC at $50,000, 5× leverage, isolated, MMR 1%, fees ignored. What is the approximate liquidation price?', o: ["$45,000","$49,500","$40,000","$40,404"], a: 3, why: 'Liquidation = 50,000 × (1 − 1/5) ÷ (1 − 0.01) = 40,000 ÷ 0.99 ≈ $40,404.' },
       { q: 'Which is the most important difference between CME Bitcoin futures and a perpetual on an offshore venue?', o: ['CME futures cannot go down', 'CME is a regulated, centrally cleared exchange with dated contracts; the offshore venue may lack regulatory oversight and client-money protections', 'Offshore perps have lower risk', 'There is no difference'], a: 1, why: 'Regulation and clearing affect custody, fraud and recourse risk. Market risk exists on both.' },
     ],
-    refs: ['CME Group — Bitcoin and Ether futures specifications (cmegroup.com)', 'BitMEX — Perpetual contracts guide (bitmex.com)', 'Income Tax Department — Taxation of virtual digital assets, Section 115BBH and 194S (incometaxindia.gov.in)', 'FIU-IND — Registration of VDA service providers (fiuindia.gov.in)', 'European Securities and Markets Authority — MiCA (esma.europa.eu)'],
+    refs: ['CME Group — Bitcoin and Ether futures specifications (cmegroup.com)', 'BitMEX — Perpetual contracts guide (bitmex.com)', 'Income Tax Department — Taxation of virtual digital assets, Section 115BBH and 194S of the 1961 Act; corresponding provisions of the Income-tax Act, 2025 (incometaxindia.gov.in)', 'FIU-IND — Registration of VDA service providers (fiuindia.gov.in)', 'European Securities and Markets Authority — MiCA (esma.europa.eu)'],
   },
   {
     id: 'l3-rates', module: 'L3-M8', level: 3, track: 'global', title: 'Bond futures and interest-rate derivatives', mins: 19,
@@ -1236,7 +1254,7 @@ A SOFR future moves from 96.10 to 96.25 after weak US jobs data → implied rate
 - **"A higher bond price means higher yield."** It is the reverse.
 - **"Stocks and bonds always move opposite."** Their correlation changes with the inflation and policy regime.
 - **"Rates matter only for bond traders."** Yields affect every valuation and FPI flow.` },
-      { h: 'When it fails', md: `Example: you buy 10 lots of a GoI IRF expecting a rate cut at the RBI policy. The RBI cuts as expected, but its commentary signals a long pause. Yields *rise* 12 bp as markets price fewer future cuts. With an illustrative DV01 of ₹400 per lot, the loss is 12 × 400 × 10 = ₹48,000. The event outcome matched the forecast; the reaction did not. Rate markets trade expectations, not headlines.` },
+      { h: 'When it fails', md: `Example: you buy 10 lots of a 10-year GoI IRF expecting a rate cut at the RBI policy. The RBI cuts as expected, but its commentary signals a long pause. Yields *rise* 12 bp as markets price fewer future cuts. With a lot of ₹2 lakh face value and modified duration about 7 (verify the current lot on NSE), DV01 ≈ 7 × 2,00,000 × 0.0001 = ₹140 per lot, so the loss is 12 × 140 × 10 = ₹16,800. The event outcome matched the forecast; the reaction did not. Rate markets trade expectations, not headlines.` },
       { h: 'Exercise', md: `1. For a bond with modified duration 5 and price 100, compute the price change for +25 bp and −25 bp.
 2. Write the 08:30 ET US data release time in IST for both summer and winter in your routine notes.
 3. Watch one US CPI release in the simulator or by noting prices: record the move in US 10-year yields, Nasdaq futures and GIFT Nifty in the first 15 minutes.
@@ -1244,9 +1262,9 @@ A SOFR future moves from 96.10 to 96.25 after weak US jobs data → implied rate
 **Journal prompt:** "Which of my sectors are rate-sensitive, and what yield move overnight would make me reduce size?"` },
     ],
     check: [
-      { q: 'A bond has modified duration 6 and price 100. Yield falls by 20 bp. Approximately what happens to price?', o: ['Falls 1.2%', 'Rises 1.2%', 'Rises 0.12%', 'Rises 12%'], a: 1, why: 'ΔP/P ≈ −6 × (−0.002) = +1.2%. Yields down means prices up.' },
-      { q: 'A SOFR future trades at 95.80. What average SOFR does it imply for its reference period?', o: ['95.80%', '4.20%', '5.80%', '0.42%'], a: 1, why: 'Implied rate = 100 − 95.80 = 4.20%.' },
-      { q: 'The RBI cuts rates as widely expected but signals no further cuts. Bond yields rise. Why?', o: ['The cut was a mistake', 'Markets trade the expected path of rates; the guidance removed expected future cuts', 'Bonds always rise on cuts', 'Yields move only on inflation data'], a: 1, why: 'Prices reflect expectations. Guidance about the future path can outweigh the current decision.' },
+      { q: 'A bond has modified duration 6 and price 100. Yield falls by 20 bp. Approximately what happens to price?', o: ["Rises 1.2%","Rises 0.12%","Rises 12%","Falls 1.2%"], a: 0, why: 'ΔP/P ≈ −6 × (−0.002) = +1.2%. Yields down means prices up.' },
+      { q: 'A SOFR future trades at 95.80. What average SOFR does it imply for its reference period?', o: ["0.42%","95.80%","4.20%","5.80%"], a: 2, why: 'Implied rate = 100 − 95.80 = 4.20%.' },
+      { q: 'The RBI cuts rates as widely expected but signals no further cuts. Bond yields rise. Why?', o: ["Bonds always rise on cuts","Yields move only on inflation data","The cut was a mistake","Markets trade the expected path of rates; the guidance removed expected future cuts"], a: 3, why: 'Prices reflect expectations. Guidance about the future path can outweigh the current decision.' },
     ],
     refs: ['CME Group — Treasury futures and SOFR futures specifications (cmegroup.com)', 'NSE — Interest rate futures (nseindia.com)', 'RBI — Monetary policy statements (rbi.org.in)', 'Frank Fabozzi — Bond Markets, Analysis and Strategies (book)', 'Eurex — Bund futures specifications (eurex.com)'],
   },
@@ -1326,8 +1344,8 @@ Intermarket check: copper up 1.5% overnight on China stimulus news (explains Met
     ],
     check: [
       { q: 'At 11:00 IST, Nifty is +0.5%, Nifty IT is −0.2% and Nifty Bank is +0.9%. US 10-year yields rose 10 bp overnight. Where should a trader using sector rotation look for long setups?', o: ['IT stocks, because they are cheap', 'Leading bank stocks with their own setups and stops', 'Any stock — sectors do not matter', 'Only Nifty options'], a: 1, why: 'Banks are leading; IT is lagging with a plausible driver (higher yields). Rotation narrows where you look; you still need a setup.' },
-      { q: 'In which environment is the stock–bond correlation most likely to turn positive (both falling together)?', o: ['Low and stable inflation', 'Rising inflation that pushes yields up', 'Falling interest rates', 'Never'], a: 1, why: 'When inflation drives yields higher, bond prices fall and equity valuations also suffer, so both can fall together, as in 2022.' },
-      { q: 'A sector with beta 1.5 to Nifty rises 0.9% while Nifty rises 0.6%. What is its approximate beta-adjusted excess return?', o: ['+0.3 pp', '0 pp', '+0.9 pp', '−0.3 pp'], a: 1, why: 'Expected = 1.5 × 0.6 = 0.9%; actual 0.9% → excess ≈ 0. Raw outperformance was only beta.' },
+      { q: 'In which environment is the stock–bond correlation most likely to turn positive (both falling together)?', o: ["Rising inflation that pushes yields up","Falling interest rates","Never","Low and stable inflation"], a: 0, why: 'When inflation drives yields higher, bond prices fall and equity valuations also suffer, so both can fall together, as in 2022.' },
+      { q: 'A sector with beta 1.5 to Nifty rises 0.9% while Nifty rises 0.6%. What is its approximate beta-adjusted excess return?', o: ["−0.3 pp","+0.3 pp","0 pp","+0.9 pp"], a: 2, why: 'Expected = 1.5 × 0.6 = 0.9%; actual 0.9% → excess ≈ 0. Raw outperformance was only beta.' },
     ],
     refs: ['John J. Murphy — Intermarket Analysis (book)', 'Moskowitz & Grinblatt — Do Industries Explain Momentum? (Journal of Finance, 1999)', 'NSE Indices — Sectoral indices (niftyindices.com)', 'Sam Stovall — Standard & Poor\'s Guide to Sector Investing (book)'],
   },
@@ -1394,6 +1412,8 @@ Expected 1-day move ≈ Index × (VIX ÷ 100) ÷ √252
 
 Nifty 25,000, India VIX 16 → 25,000 × 0.16 ÷ 15.87 ≈ **252 points** (one standard deviation, implied). At India VIX 25 → ≈ 394 points.
 
+Convention note: √252 assumes volatility comes only on trading days. NSE's India VIX calculation measures time to expiry in calendar time, so some traders divide by √365 instead, giving about 209 points at VIX 16. Neither is exact. Weekends, holidays and event days carry uneven variance, and the result is an implied one-standard-deviation band, not a forecast. Roughly a third of days should move more than this even if the estimate is perfect.
+
 **3. Rolling correlation shift (illustrative):** 60-day correlation of Nifty IT with Nasdaq = 0.55; 20-day = 0.10. The recent relationship has weakened; cross-market cues for IT deserve less weight.
 
 [[widget:position-size]]` },
@@ -1410,9 +1430,9 @@ Nifty 25,000, India VIX 16 → 25,000 × 0.16 ÷ 15.87 ≈ **252 points** (one s
 **Journal prompt:** "Which regime am I in, what did I change because of it (size, setups, trade count), and which correlation did I rely on today?"` },
     ],
     check: [
-      { q: 'Nifty is at 24,000 and India VIX is 20. What is the approximate one-standard-deviation 1-day implied move?', o: ['About 120 points', 'About 302 points', 'About 480 points', 'About 4,800 points'], a: 1, why: '24,000 × 0.20 ÷ √252 ≈ 24,000 × 0.20 ÷ 15.87 ≈ 302 points.' },
+      { q: 'Nifty is at 24,000 and India VIX is 20. What is the approximate one-standard-deviation 1-day implied move?', o: ["About 480 points","About 4,800 points","About 120 points","About 302 points"], a: 3, why: '24,000 × 0.20 ÷ √252 ≈ 24,000 × 0.20 ÷ 15.87 ≈ 302 points.' },
       { q: 'ATR doubles versus last month. To keep rupee risk the same with an ATR-based stop, what should you do?', o: ['Keep quantity the same', 'Roughly halve quantity', 'Double quantity', 'Remove the stop'], a: 1, why: 'Stop distance doubles, so quantity must roughly halve to keep risk per trade constant.' },
-      { q: 'The 60-day correlation between two markets is 0.6 and the 20-day correlation is −0.1. What is the most reasonable interpretation?', o: ['The long-term relationship is confirmed', 'The relationship is unstable recently; reduce reliance on it for cues or hedges', 'Correlation does not matter', 'The markets will soon re-correlate'], a: 1, why: 'A sharp divergence between short and long windows signals instability; treat cross-market inferences cautiously.' },
+      { q: 'The 60-day correlation between two markets is 0.6 and the 20-day correlation is −0.1. What is the most reasonable interpretation?', o: ["The relationship is unstable recently; reduce reliance on it for cues or hedges","Correlation does not matter","The markets will soon re-correlate","The long-term relationship is confirmed"], a: 0, why: 'A sharp divergence between short and long windows signals instability; treat cross-market inferences cautiously.' },
     ],
     refs: ['Robert Engle — Autoregressive Conditional Heteroscedasticity (Econometrica, 1982)', 'Tim Bollerslev — Generalized ARCH (Journal of Econometrics, 1986)', 'NSE — India VIX methodology (nseindia.com)', 'Cboe — VIX white paper (cboe.com)', 'Euan Sinclair — Volatility Trading (book)'],
   },
@@ -1447,7 +1467,7 @@ Caveats: every contract has a buyer and a seller, so "new longs" always come wit
 
 **Gamma exposure basics**
 - Gamma is highest for at-the-money options and increases sharply as expiry approaches.
-- Standard GEX models assume dealers are **long calls and short puts** sold by customers — or the reverse — and sum gamma × OI across strikes with a sign. Different assumptions produce different, sometimes opposite, results.
+- A common GEX convention assumes customers mostly *sell* calls (for example covered calls) and *buy* puts (protection), which leaves dealers **long calls and short puts**. The model sums gamma × OI across strikes with that sign. Other vendors use the reverse or try to infer sides from trade data; different assumptions produce different, sometimes opposite, results.
 - The **"gamma flip" level** is the price at which estimated net GEX changes sign. Above it the model says dealers are long gamma (dampening); below it, short gamma (amplifying).
 
 **How some traders use it:** in an estimated positive-GEX environment they favour mean-reversion around large-OI strikes; in negative GEX they expect larger ranges and favour trend setups. These are hypotheses to test.` },
@@ -1460,7 +1480,7 @@ Caveats: every contract has a buyer and a seller, so "new longs" always come wit
 - **Gamma explosion:** short-gamma positions near expiry can force rapid hedging, accelerating moves through a strike.
 - **Max pain** — the strike where option buyers collectively lose most — is a popular idea with weak support; treat it as subjective.
 
-**Regulatory context in India.** SEBI introduced measures from late 2024 to curb expiry-day speculation in index derivatives — fewer weekly expiries per exchange, larger contract sizes, upfront collection of option premium, and removal of calendar-spread margin benefit on expiry day (verify current circulars on sebi.gov.in). Expiry-day patterns from earlier years may not apply now.
+**Regulatory context in India.** SEBI introduced measures from late 2024 to curb expiry-day speculation in index derivatives — one weekly index expiry per exchange, a higher minimum contract value, upfront collection of option premium, removal of the calendar-spread margin benefit on expiry day, an extra extreme-loss margin on short options on expiry day, and intraday monitoring of position limits (verify current circulars on sebi.gov.in). Expiry-day patterns from earlier years may not apply now.
 
 **Vanna and charm.** Beyond gamma, dealer hedges change with implied volatility (vanna) and with time (charm). Late-day drifts on expiry are sometimes attributed to charm flows. These are speculative explanations; useful vocabulary, not tradable rules.` },
       { h: 'The maths', md: `**1. Gamma exposure at one strike (per 1% move)**
@@ -1504,8 +1524,8 @@ Use [[chart:NIFTY:88:vwap,vol]] in the chart lab to rehearse an expiry afternoon
 **Journal prompt:** "Which assumption did my OI or GEX reading depend on, and what price action would show it was wrong today?"` },
     ],
     check: [
-      { q: 'Bank Nifty futures fall 0.8% while OI rises 7%. What does the classic price–OI matrix label this, and what is the main caveat?', o: ['Long build-up; it guarantees a rally', 'Short build-up; it describes aggressive selling with new positions but does not forecast the next move', 'Short covering; it means shorts are exiting', 'Long unwinding; OI must fall'], a: 1, why: 'Price down with OI up is labelled short build-up. Every new contract has both a buyer and a seller, so it is a description of aggression, not a forecast.' },
-      { q: 'An estimated net GEX at a strike is +₹500 crore under the assumption that dealers are long calls and short puts. If the true positioning is the opposite, what happens to the estimate?', o: ['It stays +₹500 crore', 'It becomes about −₹500 crore', 'It doubles', 'It becomes zero'], a: 1, why: 'Reversing the sign assumption reverses each strike\'s contribution, flipping the net. This shows why GEX is model-dependent.' },
+      { q: 'Bank Nifty futures fall 0.8% while OI rises 7%. What does the classic price–OI matrix label this, and what is the main caveat?', o: ["Long unwinding; OI must fall","Long build-up; it guarantees a rally","Short build-up; it describes aggressive selling with new positions but does not forecast the next move","Short covering; it means shorts are exiting"], a: 2, why: 'Price down with OI up is labelled short build-up. Every new contract has both a buyer and a seller, so it is a description of aggression, not a forecast.' },
+      { q: 'An estimated net GEX at a strike is +₹500 crore under the assumption that dealers are long calls and short puts. If the true positioning is the opposite, what happens to the estimate?', o: ["It doubles","It becomes zero","It stays +₹500 crore","It becomes about −₹500 crore"], a: 3, why: 'Reversing the sign assumption reverses each strike\'s contribution, flipping the net. This shows why GEX is model-dependent.' },
       { q: 'Why does gamma risk on short options increase sharply on expiry day?', o: ['Theta falls to zero', 'Gamma of at-the-money options rises sharply as time to expiry shrinks', 'OI always rises on expiry', 'Lot sizes change on expiry'], a: 1, why: 'Near expiry, ATM option delta changes very fast with small price moves, so short-gamma positions lose quickly when price moves through the strike.' },
     ],
     refs: ['Cboe — Options volume and 0DTE data (cboe.com)', 'NSE — Option chain and open interest data (nseindia.com)', 'SEBI — Measures to strengthen equity index derivatives framework, circular Oct 2024 (sebi.gov.in)', 'Sheldon Natenberg — Option Volatility and Pricing (book)', 'Ni, Pearson & Poteshman — Stock price clustering on option expiration dates (Journal of Financial Economics, 2005)'],
@@ -1531,7 +1551,7 @@ Use [[chart:NIFTY:88:vwap,vol]] in the chart lab to rehearse an expiry afternoon
     {"id":"L2-M6-q03","module":"L2-M6","d":1,"q":"Which disclosure rule requires US brokers to report where they route orders and PFOF received?","o":["Rule 605","Rule 606","Rule 611","Rule 201"],"a":1,"why":"Rule 606 covers broker routing disclosures. Rule 605 covers execution quality; 611 is order protection; 201 is the short-sale restriction."},
     {"id":"L2-M6-q04","module":"L2-M6","d":2,"q":"In August, at what IST time does the US regular session open?","o":["19:00","18:00","20:00","21:00"],"a":0,"why":"In August the US is on EDT (UTC−4), 9.5 hours behind IST. 09:30 ET = 19:00 IST."},
     {"id":"L2-M6-q05","module":"L2-M6","d":2,"q":"You plan $200 risk on 400 shares. The premarket spread is $0.20. What fraction of your risk does a round-trip spread cost consume?","o":["10%","20%","80%","40%"],"a":3,"why":"Round trip = 400 × 0.20 = $80, which is 40% of $200."},
-    {"id":"L2-M6-q06","module":"L2-M6","d":2,"q":"What did the SEC approve in April 2026 regarding the pattern-day-trader rule?","o":["Raising the minimum to $50,000","Banning day trading in margin accounts","Eliminating the PDT definition and $25,000 minimum in favour of risk-based intraday margin, with broker timing varying","Applying PDT to cash accounts"],"a":2,"why":"FINRA's proposal replaced PDT with risk-based intraday margin standards; implementation depends on each broker."},
+    {"id":"L2-M6-q06","module":"L2-M6","d":2,"q":"What did the SEC approve in April 2026 regarding the pattern-day-trader rule?","o":["Raising the minimum to $50,000","Banning day trading in margin accounts","Eliminating the PDT definition and $25,000 minimum in favour of risk-based intraday margin, with broker timing varying","Applying PDT to cash accounts"],"a":2,"why":"FINRA's proposal replaced PDT with risk-based intraday margin standards. FINRA Notice 26-10 gives an effective date of 4 June 2026, and firms may phase it in until 20 October 2027, so timing depends on each broker."},
     {"id":"L2-M6-q07","module":"L2-M6","d":2,"q":"You are short an in-the-money US single-stock call at expiry and do nothing. What is the most likely result?","o":["Cash settlement of the difference","Assignment: you deliver (become short) 100 shares per contract","The option expires worthless","Your broker converts it to a put"],"a":1,"why":"US single-stock options are physically settled; in-the-money options are generally exercised, so short calls are assigned."},
     {"id":"L2-M6-q08","module":"L2-M6","d":1,"q":"What is the settlement cycle for US equities as of Nov 2026?","o":["T+1","T+0","T+2","T+3"],"a":0,"why":"US equities moved to T+1 settlement in May 2024."},
     {"id":"L2-M6-q09","module":"L2-M6","d":3,"q":"A US stock is down 10.5% from the prior close at 13:00 ET. You want to short a breakdown below the day low. What changes?","o":["Nothing","Shorting is banned for a week","You must use a market order","Rule 201 SSR: short sales are allowed only at prices above the national best bid, so you cannot hit the bid to enter"],"a":3,"why":"SSR restricts shorts to prices above the best bid for the rest of that day and the next, changing breakdown execution."},
@@ -1560,7 +1580,7 @@ Use [[chart:NIFTY:88:vwap,vol]] in the chart lab to rehearse an expiry afternoon
     {"id":"L3-M8-q08","module":"L3-M8","d":3,"q":"Short 2 ETH perps at $3,000 each, 20× isolated, MMR 0.5%. What is the approximate liquidation price?","o":["$3,134","$3,150","$3,015","$2,850"],"a":0,"why":"Short liquidation = 3,000 × (1 + 1/20) ÷ (1 + 0.005) = 3,150 ÷ 1.005 ≈ $3,134 — about 4.5% above entry."},
     {"id":"L3-M8-q09","module":"L3-M8","d":2,"q":"A bond has modified duration 8 and price 100. Yield rises 15 bp. What is the approximate price change?","o":["+1.2%","−0.12%","−12%","−1.2%"],"a":3,"why":"ΔP/P ≈ −8 × 0.0015 = −1.2%."},
     {"id":"L3-M8-q10","module":"L3-M8","d":2,"q":"A SOFR future rises from 96.00 to 96.20 after US data. What did the market do?","o":["Priced higher rates","Nothing meaningful","Priced about 20 bp lower average rates for that period","Priced higher inflation"],"a":2,"why":"Implied rate = 100 − price: from 4.00% to 3.80%, i.e. about 20 bp more easing priced."},
-    {"id":"L3-M8-q11","module":"L3-M8","d":1,"q":"How are crypto gains on virtual digital assets taxed in India (as of Nov 2026, verify)?","o":["Like equity short-term gains at 20%","Flat 30% plus surcharge and cess, with no set-off of losses against other income, and TDS on transfers above thresholds","Tax-free","Only on withdrawal to a bank"],"a":1,"why":"The 2022 VDA provisions set a flat 30% rate, restrict loss set-off and add 1% TDS above thresholds — verify current law."},
+    {"id":"L3-M8-q11","module":"L3-M8","d":1,"q":"How are crypto gains on virtual digital assets taxed in India (as of Nov 2026, verify)?","o":["Like equity short-term gains at 20%","Flat 30% plus surcharge and cess, with no set-off of losses against other income, and TDS on transfers above thresholds","Tax-free","Only on withdrawal to a bank"],"a":1,"why":"The 2022 VDA provisions, carried into the Income-tax Act, 2025, set a flat 30% rate, bar loss set-off and add 1% TDS above thresholds — verify current law."},
     {"id":"L3-M8-q12","module":"L3-M8","d":3,"q":"You hold MCX natural gas short into the US weekly storage report. What is the main execution risk?","o":["Sudden spikes with gaps through stops, wider spreads and slippage around the release","Low volatility","Exchange closure","No price change"],"a":0,"why":"Natural gas is highly volatile around EIA storage data and weather revisions; stops can fill far from planned levels."},
     {"id":"L4-M4-q01","module":"L4-M4","d":1,"q":"What does a rising relative-strength line of Nifty Bank ÷ Nifty 50 indicate?","o":["Bank Nifty is falling","Nifty is outperforming banks","Volatility is rising","Banks are outperforming the broad index"],"a":3,"why":"The ratio rises when the numerator outperforms the denominator."},
     {"id":"L4-M4-q02","module":"L4-M4","d":2,"q":"Nifty is at 25,500 and India VIX is 18. What is the approximate one-standard-deviation 1-day implied move?","o":["About 145 points","About 459 points","About 289 points","About 4,590 points"],"a":2,"why":"25,500 × 0.18 ÷ √252 ≈ 4,590 ÷ 15.87 ≈ 289 points."},

@@ -22,10 +22,9 @@
   };
 
   function run(candles, cfg) {
-    const C = Object.assign({ side: 1, entry: [{ id: 'ema_cross' }], stop: { type: 'atr', mult: 1.5 }, target: { rr: 2 }, capital: 100000, riskPct: 1, slippageTicks: 1, tick: 0.05, costBps: 3, eodExit: true, noEntryLastBars: 3, maxTradesPerDay: 3, lot: 1 }, cfg);
+    const C = Object.assign({ side: 1, entry: [{ id: 'ema_cross' }], stop: { type: 'atr', mult: 1.5 }, target: { rr: 2 }, capital: 100000, riskPct: 1, slippageTicks: 1, tick: 0.05, costBps: 3, eodExit: true, noEntryLastBars: 3, maxTradesPerDay: 3, lot: 1, maxVolPct: 0 }, cfg);
     if (!candles || candles.length < 30) return { error: 'Need at least 30 bars.' };
-    const sigs = C.entry.map((e) => { const S = SIGNALS[e.id]; return S.fn(candles, Object.assign({}, S.params, e.params || {}), C.side); });
-    const entrySig = candles.map((_, i) => sigs.every((s) => s[i]));
+    const entrySig = C.signal ? C.signal : (() => { const sigs = C.entry.map((e) => { const S = SIGNALS[e.id]; return S.fn(candles, Object.assign({}, S.params, e.params || {}), C.side); }); return candles.map((_, i) => sigs.every((s) => s[i])); })();
     const atr = I().atr(candles, 14);
     const lastOfDay = candles.map((b, i) => i === candles.length - 1 || candles[i + 1].d !== b.d);
     const barsLeft = new Array(candles.length).fill(0); for (let i = candles.length - 1, k = 0; i >= 0; i--) { k = lastOfDay[i] ? 0 : k + 1; barsLeft[i] = k; }
@@ -42,7 +41,8 @@
         const stop = fill - C.side * stopDist, target = C.target.rr ? fill + C.side * stopDist * C.target.rr : null;
         const riskAmt = (equity * C.riskPct) / 100; let qty = Math.floor(riskAmt / stopDist / C.lot) * C.lot;
         qty = Math.min(qty, Math.floor(equity / fill / C.lot) * C.lot);
-        if (qty > 0) { pos = { entryI: i, entry: fill, stop, target, qty, stopDist }; dayCount[b.d] = (dayCount[b.d] || 0) + 1; }
+        let partial = false; if (C.maxVolPct > 0) { const cap = Math.floor((b.v * C.maxVolPct) / C.lot) * C.lot; if (qty > cap) { qty = cap; partial = true; } }
+        if (qty > 0) { pos = { entryI: i, entry: fill, stop, target, qty, stopDist, partial }; dayCount[b.d] = (dayCount[b.d] || 0) + 1; }
       }
       // 2) manage open position within this bar
       if (pos) {
@@ -55,7 +55,7 @@
         if (exit != null) {
           const gross = C.side * (exit - pos.entry) * pos.qty, costs = cost(pos.entry * pos.qty) + cost(exit * pos.qty);
           const net = gross - costs; equity += net;
-          trades.push({ entryI: pos.entryI, exitI: i, entryT: candles[pos.entryI].t, exitT: b.t, entry: pos.entry, exit, qty: pos.qty, gross, costs, net, R: net / (pos.stopDist * pos.qty), why, side: C.side > 0 ? 'long' : 'short', day: b.d });
+          trades.push({ entryI: pos.entryI, exitI: i, entryT: candles[pos.entryI].t, exitT: b.t, entry: pos.entry, exit, qty: pos.qty, gross, costs, net, R: net / (pos.stopDist * pos.qty), why, side: C.side > 0 ? 'long' : 'short', day: b.d, partial: pos.partial });
           pos = null; curve.push({ i, eq: equity });
         }
       }
@@ -111,5 +111,28 @@
     return res;
   }
 
-  IA.bt = { SIGNALS, run, monteCarlo, riskOfRuinSim, groupStats, walkForward };
+  // In-sample optimisation over a parameter grid, then ONE out-of-sample run of the chosen parameters.
+  // The optimiser only ever receives candles[0..split): OOS bars are never visible to it.
+  function optimiseOOS(candles, cfg, grid, { isFrac = 0.6, metric = 'avgR', minTrades = 20 } = {}) {
+    const days = [...new Set(candles.map((b) => b.d))]; const cutDay = days[Math.floor(days.length * isFrac)]; const split = candles.findIndex((b) => b.d === cutDay);
+    const IS = candles.slice(0, split), OOS = candles.slice(split);
+    const keys = Object.keys(grid); const combos = keys.reduce((acc, k) => acc.flatMap((a) => grid[k].map((v) => ({ ...a, [k]: v }))), [{}]);
+    const apply = (p) => { const c = JSON.parse(JSON.stringify(cfg)); c.stop = c.stop || { type: 'atr', mult: 1.5 }; c.target = c.target || { rr: 2 }; c.entry = c.entry || []; keys.forEach((k) => { const [a, b] = k.split('.'); if (a === 'stop') c.stop[b] = p[k]; else if (a === 'target') c.target[b] = p[k]; else { const e = c.entry.find((x) => x.id === a); if (e) e.params = { ...(e.params || {}), [b]: p[k] }; } }); return c; };
+    const rows = combos.map((p) => { const r = run(IS, apply(p)); return { params: p, ...(r.stats || {}) }; });
+    const ok = rows.filter((r) => (r.n || 0) >= minTrades); const best = (ok.length ? ok : rows).slice().sort((a, b) => (b[metric] || -1e9) - (a[metric] || -1e9))[0];
+    const oos = run(OOS, apply(best.params));
+    return { rows, best, oos: oos.stats || { n: 0 }, oosRun: oos, combos: combos.length, isBars: IS.length, oosBars: OOS.length, cutDay, degradation: best[metric] ? (oos.stats?.[metric] ?? 0) / best[metric] : null };
+  }
+  // Random-entry benchmark: same exits, sizing, costs, side and number of entries, but entry bars chosen at random.
+  // p = share of random runs whose net P&L >= the strategy's. Small p is necessary, not sufficient, evidence of an edge.
+  function randomEntryTest(candles, cfg, { runs = 200, seed = 5 } = {}) {
+    const base = run(candles, cfg); if (base.error) return base; const n = base.trades.length; if (n < 5) return { error: 'Need at least 5 trades in the strategy run.' };
+    const lastOfDay = candles.map((b, i) => i === candles.length - 1 || candles[i + 1].d !== b.d); const left = new Array(candles.length).fill(0); for (let i = candles.length - 1, k = 0; i >= 0; i--) { k = lastOfDay[i] ? 0 : k + 1; left[i] = k; }
+    const eligible = candles.map((_, i) => i).filter((i) => i > 15 && left[i] >= (cfg.noEntryLastBars ?? 3));
+    const r = IA.gen.rng(seed); const nets = [];
+    for (let k = 0; k < runs; k++) { const sig = new Array(candles.length).fill(false); for (let j = 0; j < n * 2; j++) sig[eligible[Math.floor(r() * eligible.length)]] = true; const x = run(candles, { ...cfg, signal: sig, maxTradesPerDay: 99 }); const tr = x.trades.slice(0, n); nets.push(tr.reduce((a, t) => a + t.net, 0)); }
+    const strat = base.stats.net; const p = (nets.filter((x) => x >= strat).length + 1) / (runs + 1); nets.sort((a, b) => a - b);
+    return { strategyNet: strat, trades: n, runs, p, randomMedian: nets[Math.floor(runs / 2)], random95: nets[Math.floor(runs * 0.95)], random5: nets[Math.floor(runs * 0.05)] };
+  }
+  IA.bt = { SIGNALS, run, monteCarlo, riskOfRuinSim, groupStats, walkForward, optimiseOOS, randomEntryTest };
 })(typeof window !== 'undefined' ? window : globalThis);

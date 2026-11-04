@@ -1,49 +1,58 @@
-# Intraday Mastery — Global Professional Trading Academy
+# Intraday Mastery — Global Professional Trading Academy (v2.0.0)
 
-An offline, mobile-first personal trading university: 99 lessons across four levels, 357 assessment questions, 38 indicators, 30 strategies, 22 candlestick patterns, a chart laboratory, three simulators, a backtester, a trading journal with analytics, 22 calculators and a DST-safe global market clock. No backend, no account, no paid APIs, no live data.
+An offline, mobile-first personal trading academy for phones and laptops. It includes:
+- 102 lessons across four levels, 373 assessment questions and a readiness exam;
+- reference libraries of 38 indicators, 30 strategies and 22 candlestick patterns;
+- a chart laboratory and a Concepts Lab of 15 graded chart-reading exercise types;
+- historical CSV import with validation;
+- chart replay, a decision simulator and paper trading;
+- a backtester with out-of-sample and overfitting tests;
+- a trading journal with analytics, 24 calculators that each show their formula, a market comparison lab and a DST-safe global market clock.
 
-> Educational software only. Not investment advice, not a broker, no order routing. All charts and simulations use synthetic data unless you import your own. Trading can lose all of your capital.
+There is no backend, no account, no paid API and no live data.
+
+> Educational software only. It is not investment advice or a broker, and it does not route orders. Charts and simulations use **SYNTHETIC** data unless you import your own (**HISTORICAL**). Trading can lose all of your capital.
+
+**Start here:** `INSTALL.md` (phone and laptop, two minutes).
 
 ## Two ways to run it
-
-**1. Single file (simplest).** Open `intraday-academy-standalone.html` in Chrome, Edge, Safari or Firefox — on a laptop or phone. Everything is inside the one file. Your progress is stored in that browser's IndexedDB.
-*Phone tip:* save the file to your phone, open it in Chrome (Android) or Files → Safari (iOS). Keep using the same browser so your data stays in one place.
-
-**2. Installable PWA (best on mobile).** Host the `pwa/` folder on any static web host with HTTPS (GitHub Pages, Netlify, S3 + CloudFront, or `python3 -m http.server` on your own machine for testing). Open it once online, then use *Add to Home Screen* / *Install app*. The service worker caches every file; it then works fully offline.
-
-Service workers are not allowed on `file://`, so the single-file version has no install prompt — but it still works offline because it never fetches anything.
+1. **Single file.** Open `intraday-academy-standalone.html` in a browser. Everything is inside the one file, and it makes no network requests.
+2. **Installable PWA.** Host the `pwa/` folder on any HTTPS static host and open it once. Then use *Install app* (laptop Chrome/Edge) or *Add to Home Screen* (phone). It then works fully offline.
 
 ## Your data
-Stored only on your device (IndexedDB). **Settings → Download full backup** exports everything (progress, notes, bookmarks, journal, paper account, checklists, settings, custom specs) as one JSON file; **Restore** brings it back on any device. The journal also exports/imports CSV.
+Your data is stored only on your device, in the browser's IndexedDB. To move it between phone and laptop:
+1. Open **Settings → Download full backup** on one device. This creates one JSON file with a SHA-256 checksum.
+2. Open **Restore** on the other device and load that file.
 
 ## Keeping market specifications current
-Lot sizes, STT, exchange charges, stamp duty, session times and FX rates are data with an `asOf` date (defaults as of 4 Nov 2026). Edit them in **Settings → Market specifications** when SEBI, NSE, the SEC or your broker change something. Add exchange holidays there too.
-
-## Using real data
-Chart Lab and the Quant Lab backtester import OHLCV CSV files (`date[,time],open,high,low,close[,volume]`). Imported data is labelled as yours; synthetic data is always labelled **SYNTHETIC**.
+Lot sizes, taxes, exchange charges, session times, holidays and FX rates are stored as dated data. Each changing value shows its source and effective date in **Markets → Specifications**, and you can edit them in **Settings**. Items not verified against an official source are labelled UNVERIFIED.
 
 ## Project layout
 ```
-index.html              entry (multi-file PWA)
-sw.js, manifest.webmanifest, icons/
-css/app.css             design system (dark terminal default, light optional)
-js/files.js             ordered script list (used by index, service worker, build)
-js/engines/             pure maths — indicators, risk & costs, options, generator, backtest, clock, execution
-js/content/             curriculum, 99 lessons, question banks, indicators, strategies, patterns, psychology, library
-js/core/                db (IndexedDB), ui (markdown, forms, quiz), chart (canvas), progress, app (router)
-js/modules/             the 16 sections
-tests/                  engines.test.js (Node), validate-content.js (Node), e2e.py + smoke.py (Playwright)
-tools/build.py          builds dist/ (standalone HTML, PWA copy, ZIP)
-docs/                   architecture, curriculum, requirements register, QA report, status, content spec
+index.html, sw.js, manifest.webmanifest, icons/   multi-file PWA
+css/app.css                 design system (dark default, light optional)
+js/files.js                 ordered script list (index, service worker and build all use it)
+js/engines/                 pure maths: indicators, risk and costs, options, generator, backtest, clock,
+                            execution, specs (+ sources), dataimport, structure
+js/content/                 curriculum, 102 lessons, question banks, indicators, strategies, patterns,
+                            psychology, library
+js/core/                    db (IndexedDB), ui, chart (canvas), progress, app (router), boot
+js/modules/                 the sections (dashboard … historical data, concepts lab, settings)
+tests/                      Node unit suites, Python cross-validation, Playwright e2e/security/mobile suites
+tools/                      build.py (dist/), report.py (reports from test results), fixtures, regime report
+docs/                       architecture, curriculum, requirements, QA and validation reports, audit/
 ```
 
 ## Development
 ```
-node tests/engines.test.js          # 111 known-answer tests of every calculation engine
-node tests/validate-content.js      # schema + coverage check for all content
-python3 -m http.server 8765 &       # serve
-python3 tests/smoke.py              # every route loads without errors
-python3 tests/e2e.py                # 31 end-to-end functional tests (headless Chrome)
-python3 tools/build.py              # build dist/
+node tests/engines.test.js && node tests/dataimport.test.js && node tests/structure.test.js && node tests/backtest-audit.test.js
+node tests/validate-content.js
+python3 tests/crosscheck.py                       # independent validation vs numpy/pandas, ta, SciPy
+python3 tools/build.py                            # build dist/
+cd dist/intraday-academy-pwa && python3 -m http.server 8765 &
+python3 tests/smoke.py http://localhost:8765/ file://$PWD/dist/intraday-academy-standalone.html
+python3 tests/e2e.py URL OUT.json ; python3 tests/e2e_phase2.py URL OUT.json
+python3 tests/security.py SERVED FILE OUT.json ; python3 tests/mobile_a11y.py SERVED AXE_JS OUT.json
+python3 tools/report.py                           # regenerate all reports from saved results
 ```
-Requires Node 18+ and Python 3 with Playwright for the browser tests; the app itself needs only a browser.
+To work on it you need Node 18+, plus Python 3 with Playwright, numpy, pandas, scipy and `ta` for the test suites. To use the app you only need a browser.

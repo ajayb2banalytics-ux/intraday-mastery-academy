@@ -12,8 +12,8 @@
   const roundTick = (p, tick) => Math.round(p / tick) * tick;
 
   const PRESETS = {
-    NIFTY: { name: 'Nifty 50 (synthetic)', price: 25800, tick: 0.05, dayVol: 0.009, minutes: 375, open: '09:15', vol: 9e5 },
-    BANKNIFTY: { name: 'Bank Nifty (synthetic)', price: 57500, tick: 0.05, dayVol: 0.011, minutes: 375, open: '09:15', vol: 4e5 },
+    NIFTY: { name: 'Nifty 50 (synthetic)', price: 25800, tick: 0.1, dayVol: 0.009, minutes: 375, open: '09:15', vol: 9e5 },
+    BANKNIFTY: { name: 'Bank Nifty (synthetic)', price: 57500, tick: 0.2, dayVol: 0.011, minutes: 375, open: '09:15', vol: 4e5 },
     RELIANCE: { name: 'Large-cap NSE stock (synthetic)', price: 1480, tick: 0.1, dayVol: 0.014, minutes: 375, open: '09:15', vol: 6e5 },
     MIDCAP: { name: 'Mid-cap NSE stock (synthetic)', price: 640, tick: 0.05, dayVol: 0.022, minutes: 375, open: '09:15', vol: 3e5 },
     SPY: { name: 'US index ETF (synthetic)', price: 680, tick: 0.01, dayVol: 0.010, minutes: 390, open: '09:30', vol: 8e5 },

@@ -29,7 +29,7 @@
 - Time exit at 15:10 IST regardless.`,
       management: `After 1R, book half and move the stop on the rest to entry. Trail below each higher 5-minute swing low (long). Do not add to the position.`,
       winExample: `**Nifty futures, 1 lot (65).** Opening range 25,780–25,826. At 09:40 a candle closes at 25,838 on twice the average volume, above VWAP. Buy at 25,842. Stop at range midpoint 25,803 (39 points, ₹2,535 risk). 1R = 25,881, 2R = 25,920. Half-booking is not possible on one lot, so the stop moves to entry at 25,881. Price reaches 25,921 at 11:05; exit at 25,920. Gross ₹5,070. After roughly ₹1,000 of charges (as of Nov 2026, verify with [[widget:charges-india]]) the net is about ₹4,070.`,
-      loseExample: `**Bank Nifty futures, 1 lot (30).** Range 56,940–57,110. A 09:35 candle closes at 57,128 with good volume. Buy at 57,135, stop at midpoint 57,025 (110 points, ₹3,300). Within two candles a large private bank slips on a broker downgrade; price closes at 57,060, back inside the range, then trades 57,020. Stopped at 57,020 after one tick of slippage: −115 points, ₹3,450 plus about ₹1,000 costs. This is the normal ORB loss: a break that had no follow-through.`,
+      loseExample: `**Bank Nifty futures, 1 lot (30).** Range 56,940–57,110. A 09:35 candle closes at 57,128 with good volume. Buy at 57,135, stop at midpoint 57,025 (110 points, ₹3,300). Within two candles a large private bank slips on a broker downgrade; price closes at 57,060, back inside the range, then trades 57,020. Stopped at 57,020 after one tick of slippage: −115 points, ₹3,450 plus about ₹1,000 costs. This is the characteristic ORB loss: a break that had no follow-through.`,
       failure: `- Range days where price oscillates across both edges.
 - Gap days where the opening range is huge and already contains the day's move.
 - Expiry days and event days with whipsaw.
@@ -38,7 +38,7 @@
 - Taking the second and third break after the first failed.
 - Using the full opposite side of a wide range as the stop and oversizing anyway.
 - Ignoring costs: a 40-point stop on Nifty with ₹1,000 charges is already about 0.4R of drag.`,
-      backtest: `In the Quant Lab, load a preset such as NIFTY on 5-minute bars and choose the **Opening-range breakout** signal with bars = 3 (15 minutes). Run long and short separately. Then add **Volume spike** and **Close on the trade side of VWAP** as filters and compare. Use walk-forward with 4 folds and Monte Carlo on the trade list. You need at least 200 trades per side, across trending and ranging regimes, before the average R tells you anything. Remember the data is synthetic: repeat the test on real downloaded data via CSV import. See [[link:l3-significance]].`,
+      backtest: `In the Quant Lab, load a preset such as NIFTY on 5-minute bars and choose the **Opening-range breakout** signal with bars = 3 (15 minutes). Run long and short separately. Then add **Volume spike** and **Close on the trade side of VWAP** as filters and compare. Use walk-forward with 4 folds and Monte Carlo on the trade list. The preloaded config differs from the written rule in three ways: the stop is 1.5 × ATR rather than the range midpoint, there is no volume filter unless you add it, and the 13:30 entry cut-off is not modelled (the engine only blocks entries in the last 3 bars of the session). You need at least 200 trades per side, across trending and ranging regimes, before the average R tells you anything. Remember the data is synthetic: repeat the test on real downloaded data via CSV import. See [[link:l3-significance]].`,
       chart: `[[chart:NIFTY:11:vwap,vol]]`,
       btConfig: { side: 1, entry: [{ id: 'orb', params: { bars: 3 } }, { id: 'vwap_side', params: {} }], stop: { type: 'atr', mult: 1.5 }, target: { rr: 2 } },
     },
@@ -60,7 +60,7 @@
       confirmation: `- Crossing candle volume above its 20-bar average.
 - The next candle does not close back through VWAP.
 - Nifty (for a stock) on the same side of its own VWAP.`,
-      stop: `1.2 × ATR(14) beyond VWAP, or below the low of the crossing candle, whichever is further from entry but no more than 1.5 × ATR.`,
+      stop: `Below the low of the crossing candle or 1.2 × ATR(14) below entry, whichever is further from entry, capped at 1.5 × ATR from entry (mirror for shorts).`,
       target: `2R, or the upper 2-standard-deviation VWAP band, whichever comes first.`,
       sizing: `0.5–1% risk per trade. Whole lots or shares, rounded down.`,
       rr: `1:2 planned. Expect frequent small losses on choppy days where price criss-crosses VWAP.`,
@@ -69,7 +69,7 @@
 - Time stop: if the trade has not reached 1R in 60 minutes, exit at market.
 - Flat by 15:10 IST.`,
       management: `Move stop to entry at 1R. Do not re-enter more than twice in a day; repeated crosses mean the market is balanced and the setup is not present.`,
-      winExample: `**Reliance (NSE), 250 shares.** VWAP ₹1,476.40 at 10:30 after price had been below it since the open. A candle closes at ₹1,477.90 on 1.6 × average volume. Buy at ₹1,478.20. ATR(14) on 5 minutes is ₹2.10; stop at ₹1,475.40 (₹2.80 risk, ₹700 total). Target 2R = ₹1,483.80. Reached at 12:15. Gross ₹1,400; intraday STT is 0.025% on the sell value (about ₹93) plus brokerage and fees, net roughly ₹1,250.`,
+      winExample: `**Reliance (NSE), 250 shares.** VWAP ₹1,476.40 at 10:30 after price had been below it since the open. A candle closes at ₹1,477.90 on 1.6 × average volume. Buy at ₹1,478.20. ATR(14) on 5 minutes is ₹2.10. The crossing candle's low ₹1,475.40 is further than 1.2 × ATR below entry (₹1,475.68) and inside the 1.5 × ATR cap (₹1,475.05), so the stop is ₹1,475.40 (₹2.80 risk, ₹700 total). Target 2R = ₹1,483.80. Reached at 12:15. Gross ₹1,400; intraday STT is 0.025% on the sell value (about ₹93) plus brokerage and fees, net roughly ₹1,220 (as of Nov 2026, verify with [[widget:charges-india]]).`,
       loseExample: `**Nifty futures, 1 lot (65).** At 11:00 price reclaims VWAP 25,912 with a close at 25,921. Buy at 25,924, stop 25,896 (28 points, ₹1,820). Over the next hour price drifts sideways and slips back to 25,905, closes below VWAP twice; exit at 25,903 for −21 points (₹1,365) plus about ₹1,000 costs. Net loss ≈ ₹2,365, more than the gross. On low-volatility days costs make small VWAP trades especially expensive.`,
       failure: `- Balanced, low-range days where VWAP is flat and price oscillates around it.
 - The first 30 minutes, when VWAP moves fast with every candle.
@@ -78,9 +78,9 @@
 - Using spot index VWAP that has no real volume.
 - Re-entering every cross on a choppy day.
 - Forgetting VWAP resets daily; yesterday's VWAP is a different tool (anchored VWAP).`,
-      backtest: `Quant Lab: choose **Price crosses VWAP** for the side you want. Then add **ADX above threshold** (min 20) to see whether filtering out flat days changes the result. Compare with and without the filter on the same seed and also across 5+ seeds. Collect at least 200 trades; check results by hour of entry, because VWAP behaviour early and late in the day differs. See [[link:l1-vwap]].`,
+      backtest: `Quant Lab: choose **Price crosses VWAP** for the side you want. Then add **ADX above threshold** (min 20) to see whether filtering out flat days changes the result. Compare with and without the filter on the same seed and also across 5+ seeds. The preloaded config uses volume ≥ 1 × the 20-bar average and a 1.2 × ATR stop; it does not model the 45-minute start delay, the VWAP-band target, the 60-minute time stop or the two-closes exit. Collect at least 200 trades; check results by hour of entry, because VWAP behaviour early and late in the day differs. See [[link:l1-vwap]].`,
       chart: `[[chart:RELIANCE:7:vwap,vol]]`,
-      btConfig: { side: 1, entry: [{ id: 'vwap_reclaim', params: {} }, { id: 'volume_spike', params: { k: 1.2 } }], stop: { type: 'atr', mult: 1.2 }, target: { rr: 2 } },
+      btConfig: { side: 1, entry: [{ id: 'vwap_reclaim', params: {} }, { id: 'volume_spike', params: { k: 1 } }], stop: { type: 'atr', mult: 1.2 }, target: { rr: 2 } },
     },
     {
       id: 'vwap-pullback', n: 3, name: 'VWAP pullback', family: 'trend', evidence: 'mixed',
@@ -105,8 +105,8 @@
       exits: `- A 5-minute close more than 0.2% beyond VWAP against you.
 - Target or trailing stop.
 - Exit by 15:10 IST.`,
-      management: `At 1R move stop to entry; trail under the most recent 5-minute higher low. Take only the first two pullbacks of the day; later ones are more likely to fail as the trend matures.`,
-      winExample: `**Bank Nifty futures, 1 lot (30).** Gap-up day, price above VWAP since 09:20. At 11:10 VWAP is 57,240; price dips to 57,252 on light volume, then a candle closes at 57,290 above the prior high. Buy at 57,295. Stop 57,180 (115 points, ₹3,450). Day high 57,460 is 1.4R; target 2.5R = 57,582. Stop moved to entry at 1R. Price reaches 57,500 by 13:00 and stalls; trail exit at 57,470 gives +175 points, ₹5,250 gross, about ₹4,250 net.`,
+      management: `At 1R move stop to entry; trail under the most recent 5-minute higher low. Take only the first two pullbacks of the day; the working assumption is that later ones fail more as the trend matures, which your journal should confirm or reject.`,
+      winExample: `**Bank Nifty futures, 1 lot (30).** Gap-up day, price above VWAP since 09:20. At 11:10 VWAP is 57,240; price dips to 57,252 on light volume, then a candle closes at 57,290 above the prior high. Buy at 57,295. Stop 57,180 (115 points, ₹3,450). Day high 57,460 is 1.4R; target 2.5R = 57,582.50. Stop moved to entry at 1R. Price reaches 57,500 by 13:00 and stalls; trail exit at 57,470 gives +175 points, ₹5,250 gross, about ₹4,250 net.`,
       loseExample: `**Infosys, 300 shares.** Uptrend morning, VWAP ₹1,612. Pullback to ₹1,613.50, resumption candle closes ₹1,616.20. Buy at ₹1,616.40, stop ₹1,610.30 (₹6.10, ₹1,830 risk). At 13:40 a US tech futures sell-off drags IT stocks; price slices through VWAP and closes at ₹1,608. Stop fills at ₹1,610.10 with slippage: −₹1,890 plus charges. The trend premise broke on outside news, which no chart rule can foresee.`,
       failure: `- Afternoon reversals after a morning trend.
 - Days with no trend, where the setup conditions are met loosely and price simply rotates around VWAP.
@@ -137,7 +137,7 @@
       stop: `Below the pullback swing low, or 1.5 × ATR(14), whichever is tighter but not tighter than 0.8 × ATR.`,
       target: `2R; or prior swing high if it lies beyond 1.5R.`,
       sizing: `0.5–1% risk. [[widget:position-size]]`,
-      rr: `1:2. Many trend days give 3R or more; many choppy days give −1R in a row.`,
+      rr: `1:2. A trailed trade on a trend day can exceed 2R; choppy days can produce several −1R losses in a row. Neither tells you the average; only a test does.`,
       exits: `- 5-minute close below the 20 EMA after entry.
 - Target or stop.
 - 15:10 IST time exit.`,
@@ -180,7 +180,7 @@
       exits: `- Opposite crossover.
 - Stop or target.
 - 15:10 IST.
-- If the crossover happens after 14:30, ignore it: there is not enough session left for a trend to develop, and the backtester's no-entry-in-last-bars rule mirrors this.`,
+- If the crossover happens after 14:30, ignore it: there is not enough session left for a trend to develop. The backtester does not model this cut-off exactly: it only blocks entries in the last 3 bars of the session.`,
       management: `No discretionary overrides. The value of a crossover system is that it is fully mechanical; once you start skipping signals you are trading a different, untested strategy.`,
       winExample: `**Bank Nifty futures, 1 lot (30).** At 10:20 the 9 EMA crosses above the 21 EMA at 56,880 with ADX 24. Buy at 56,892. ATR 70; stop 56,787 (105 points, ₹3,150). Target 2R = 57,102. A steady rally reaches 57,110 by 12:40. Gross ₹6,300, net about ₹5,300.`,
       loseExample: `**Nifty futures, 1 lot (65).** 9/21 cross up at 25,860, ADX 21. Buy at 25,864, stop 1.5 × ATR (22) = 33 points at 25,831 (₹2,145). Price rises 12 points, then the averages cross back down 25 minutes later. Exit on the reverse crossover at 25,846: −18 points, ₹1,170 gross plus ₹1,000 costs. A sideways day can deliver five such whipsaws in a row.`,
@@ -193,7 +193,7 @@
 - Trading it on 1-minute bars where the number of signals multiplies costs.
 - Switching off the system after three losses, then switching it back on after the trend you missed. A mechanical rule only has a measurable expectancy if you take every signal.
 - Believing a crossover "means" institutions are buying. It means two averages crossed, nothing more.`,
-      backtest: `Quant Lab: **Fast EMA crosses slow EMA** with fast 9, slow 21. Run a parameter grid (5/13, 9/21, 13/34, 20/50) and look at the whole grid: if only one pair works, it is likely luck. Add **ADX above threshold** as a filter. Walk-forward 4 folds. Expect hundreds of signals per year on 5-minute data; use at least 300. See [[link:l4-walkforward]].`,
+      backtest: `Quant Lab: **Fast EMA crosses slow EMA** with fast 9, slow 21. Run a parameter grid (5/13, 9/21, 13/34, 20/50) and look at the whole grid: if only one pair works, it is likely luck. Add **ADX above threshold** as a filter. The preloaded config has no VWAP confirmation, no 0.02% tangle filter and a fixed 2R target (not the reverse-crossover exit). Walk-forward 4 folds. Expect hundreds of signals per year on 5-minute data; use at least 300. See [[link:l4-walkforward]].`,
       chart: `[[chart:BANKNIFTY:5:ema9,ema20,adx]]`,
       btConfig: { side: 1, entry: [{ id: 'ema_cross', params: { fast: 9, slow: 21 } }, { id: 'adx_trend', params: { n: 14, min: 20 } }], stop: { type: 'atr', mult: 1.5 }, target: { rr: 2 } },
     },
@@ -231,7 +231,7 @@
 - Confusing the line with support or resistance.
 - Not warming up the indicator, so the first signals of the day are based on too few bars.
 - Taking the counter-trend flip on a strongly trending day and then trading the next flip in revenge.`,
-      backtest: `Quant Lab: **Supertrend flips direction** with n 10, m 3, plus **ADX above threshold** min 20. Run long and short. Compare multipliers 2, 3, 4 and periods 7, 10, 14 as a grid; look for a broad plateau of similar results, not a single best cell. Because results swing between regimes, use at least 300 trades and walk-forward.`,
+      backtest: `Quant Lab: **Supertrend flips direction** with n 10, m 3, plus **ADX above threshold** min 20. Run long and short. The preloaded config uses a fixed 2 × ATR stop, not the Supertrend line, and a fixed 2R target; the 09:45–14:30 window is not modelled. Compare multipliers 2, 3, 4 and periods 7, 10, 14 as a grid; look for a broad plateau of similar results, not a single best cell. Because results swing between regimes, use at least 300 trades and walk-forward.`,
       chart: `[[chart:NIFTY:17:st,adx]]`,
       btConfig: { side: 1, entry: [{ id: 'supertrend_flip', params: { n: 10, m: 3 } }, { id: 'adx_trend', params: { n: 14, min: 20 } }], stop: { type: 'atr', mult: 2 }, target: { rr: 2 } },
     },
@@ -263,16 +263,16 @@
       exits: `- Target, stop or 15:10.
 - Reversion: exit if RSI makes a new low below the entry signal's low.`,
       management: `Reversion trades are not held in hope: if VWAP is not reached within 45 minutes, exit. Momentum trades move stop to entry at 1R.`,
-      winExample: `**A private-bank F&O stock, 400 shares, range day (ADX 16).** RSI drops to 26 as price hits ₹1,688, then closes back at 31 with price ₹1,691. Buy at ₹1,691.30. Swing low ₹1,687.80; stop ₹1,687.70 (₹3.60, ₹1,440). VWAP ₹1,696.70 is 1.5R. Reached at 11:30. Gross ₹2,200, net about ₹1,950.`,
+      winExample: `**A private-bank F&O stock, 400 shares, range day (ADX 16).** RSI drops to 26 as price hits ₹1,688, then closes back at 31 with price ₹1,691. Buy at ₹1,691.30. Swing low ₹1,687.80; stop ₹1,687.70 (₹3.60, ₹1,440). VWAP ₹1,696.70 is 1.5R. Reached at 11:30. Gross ₹5.40 × 400 = ₹2,160, net about ₹1,870 (verify with [[widget:charges-india]]).`,
       loseExample: `**Bank Nifty futures, 1 lot (30).** ADX 18, RSI recovers from 28 to 31 at 56,620. Buy at 56,628, stop 56,560 (68 points, ₹2,040). An hour later RBI's governor comments on liquidity; the index trends lower. RSI goes to 22 and price hits the stop at 56,555 after slippage: −73 points, ₹2,190 plus costs. The ADX filter was calm until the news; a range regime can become a trend in one candle.`,
-      failure: `- Reversion in a trending market (the most common RSI loss).
+      failure: `- Reversion in a trending market (the classic RSI loss).
 - Momentum entries late in an exhausted move.
 - Divergence-hunting without a trigger, which turns into catching falling knives.`,
       mistakes: `- Selling simply because RSI is above 70.
 - Mixing the two variants in the same session.
 - Treating divergence as a signal on its own.
 - Moving the levels (25/75, 20/80) after each loss.`,
-      backtest: `Quant Lab: reversion test uses **RSI crosses back from extreme** (n 14, lo 30, hi 70) for long and short. For momentum, use **RSI above/below 50** with **ADX above threshold** min 25 and **Fast EMA crosses slow EMA** as a trigger. Run both on the same seeds. Then try the reversion rule only on trending seeds to see how it fails. 200+ trades per variant.`,
+      backtest: `Quant Lab: reversion test uses **RSI crosses back from extreme** (n 14, lo 30, hi 70) for long and short. For momentum, use **RSI above/below 50** with **ADX above threshold** min 25 and **Fast EMA crosses slow EMA** as a trigger. The preloaded config is the reversion rule without its ADX < 20 filter (the catalogue can only require a strong trend, not a weak one) and with a fixed 1.5R target instead of VWAP. Run both on the same seeds. Then try the reversion rule only on trending seeds to see how it fails. 200+ trades per variant.`,
       chart: `[[chart:MIDCAP:9:rsi,adx]]`,
       btConfig: { side: 1, entry: [{ id: 'rsi_extreme', params: { n: 14, lo: 30, hi: 70 } }], stop: { type: 'atr', mult: 1.2 }, target: { rr: 1.5 } },
     },
@@ -300,7 +300,7 @@
 - Stop, target or 15:10.`,
       management: `Move stop to entry at 1R. Do not take a new MACD signal within 3 candles of a stopped-out one in the same direction. Keep a note of whether each signal came with the MACD line above or below zero; crosses that happen below zero in an uptrend filter are earlier but less confirmed, and you want to know from your own data whether that distinction matters.`,
       winExample: `**Nifty futures, 1 lot (65).** Price above 50 EMA all morning. At 11:15 the histogram turns positive with price at 25,964 and RSI 56. Buy at 25,967. ATR 20; stop 25,937 (30 points, ₹1,950). Target 2R = 26,027. Reached at 13:05. +60 points, ₹3,900 gross, about ₹2,900 net.`,
-      loseExample: `**SBI, 1,000 shares.** Above 50 EMA, histogram turns positive at ₹822.40. Buy at ₹822.55, stop ₹820.85 (₹1.70, ₹1,700). Price rises to ₹823.60, then the histogram flips back negative two candles later. Exit at ₹821.90 on the next open: −₹650 plus charges about ₹250. MACD often gives such early reversals on flat, low-volume afternoons.`,
+      loseExample: `**SBI, 1,000 shares.** Above 50 EMA, histogram turns positive at ₹822.40. Buy at ₹822.55, stop ₹820.85 (₹1.70, ₹1,700). Price rises to ₹823.60, then the histogram flips back negative two candles later. Exit at ₹821.90 on the next open: −₹650 plus charges of about ₹340. MACD often gives such early reversals on flat, low-volume afternoons.`,
       failure: `- Sideways sessions where the histogram oscillates around zero.
 - Sharp reversals: MACD signals arrive after much of the move.
 - Very fast settings on 1-minute data.
@@ -348,7 +348,7 @@
 - Fading every upper-band touch.
 - Running fade and squeeze rules together without a regime rule.
 - Using the bands on illiquid stocks with gappy prices.`,
-      backtest: `Quant Lab: **Close back inside Bollinger Band** (n 20, k 2) for fades, long and short. For squeeze breakouts there is no bandwidth signal in the catalogue, so test **Volume spike** combined with an **Opening-range breakout** or note it as untestable here and journal 50+ manual trades instead. Compare the fade on several seeds with different regimes. 200+ fade trades.`,
+      backtest: `Quant Lab: **Close back inside Bollinger Band** (n 20, k 2) for fades, long and short. For squeeze breakouts there is no bandwidth signal in the catalogue, so test **Volume spike** combined with an **Opening-range breakout** or note it as untestable here and journal 50+ manual trades instead. The preloaded config is the fade without its ADX < 20 and RSI < 35 conditions, with a fixed 1.5R target instead of the middle band. Compare the fade on several seeds with different regimes. 200+ fade trades.`,
       chart: `[[chart:RELIANCE:13:bb,rsi]]`,
       btConfig: { side: 1, entry: [{ id: 'bb_reentry', params: { n: 20, k: 2 } }], stop: { type: 'atr', mult: 1.2 }, target: { rr: 1.5 } },
     },
@@ -372,12 +372,12 @@
       sizing: `0.5–0.75% risk; wide stops mean small quantity. Never add size to make up for a small position.`,
       rr: `Open-ended; average winners must be several times average losers for the system to have any chance.`,
       exits: `- Trailing stop.
-- 15:15 IST close-out.`,
+- 15:15 IST close-out for NSE instruments; for MCX contracts, a fixed close-out time before the MCX session end that you have written down in advance.`,
       management: `Pyramiding is allowed only after the first unit is at 1R and the stop for the whole position has been moved to protect the original risk. Maximum two units.
 
 Expect long flat or losing stretches. Before going live, decide the maximum drawdown in R (for example 15R) that you will tolerate before pausing to review, and base that number on Monte Carlo results rather than on how you feel after a bad week. Review the system monthly, not daily: a trend system judged on one week is judged on noise.`,
-      winExample: `**Crude oil futures (MCX), 1 lot (100 barrels).** ADX 30, EMAs aligned. Breakout above the 20-bar high ₹5,642 at 14:10 IST. Buy at ₹5,645, ATR ₹9; stop ₹5,627 (₹18 × 100 = ₹1,800 risk). US inventory data drives a trend; Supertrend trails to ₹5,701 and is hit at 21:30. +₹56 × 100 = ₹5,600 gross, about 3.1R before costs.`,
-      loseExample: `**Nifty futures, 1 lot (65).** ADX 27, Donchian break at 25,902. Buy at 25,906, ATR 22, stop 25,862 (44 points, ₹2,860). Price rises 9 points then reverses into a range. Stopped at 25,861 after slippage: −45 points, ₹2,925 plus costs. Next day: same pattern. Four such losses in a week is normal for trend following and the test is whether you can take the fifth signal.`,
+      winExample: `**Crude oil futures (MCX), 1 lot (100 barrels).** ADX 30, EMAs aligned. Breakout above the 20-bar high ₹5,642 at 14:10 IST. Buy at ₹5,645, ATR ₹9; stop ₹5,627 (₹18 × 100 = ₹1,800 risk). US inventory data drives a trend; Supertrend trails to ₹5,701 and is hit at 21:30. +₹56 × 100 = ₹5,600 gross, about 3.1R before costs. MCX commodity futures carry CTT and MCX fees rather than NSE STT and charges, so the app's India charges calculator does not cover them; check your broker's contract note.`,
+      loseExample: `**Nifty futures, 1 lot (65).** ADX 27, Donchian break at 25,902. Buy at 25,906, ATR 22, stop 25,862 (44 points, ₹2,860). Price rises 9 points then reverses into a range. Stopped at 25,861 after slippage: −45 points, ₹2,925 plus costs. Next day: same pattern. Four such losses in a week is entirely possible for a trend-following rule, and the test is whether you can take the fifth signal.`,
       failure: `- Prolonged range regimes; losses accumulate slowly.
 - Choppy expiry sessions.
 - Trends that end on gaps overnight (irrelevant intraday but relevant if you carry).`,
@@ -412,7 +412,7 @@ Expect long flat or losing stretches. Before going live, decide the maximum draw
       exits: `- Close below VWAP: exit everything.
 - Stop, target, trailing stop, or 15:10.`,
       management: `Book half at 1R and move stop to entry. Never average a failing momentum trade. Check the stock's circuit band and F&O ban status each morning before it reaches your scanner, not after you are in the trade.`,
-      winExample: `**Tata Steel, 3,000 shares.** Up 2.6% at 09:55 on 2.5× volume after metal prices jump. Flag forms ₹168.20–₹169.10 above VWAP ₹167.40. Breakout close ₹169.35 on 2× volume. Buy at ₹169.40, stop ₹168.10 (₹1.30, ₹3,900). 1R ₹170.70: book 1,500. Trail exits the rest at ₹172.30. Gross ₹1,950 + ₹4,350 = ₹6,300, net about ₹5,700.`,
+      winExample: `**Tata Steel, 3,000 shares.** Up 2.6% at 09:55 on 2.5× volume after metal prices jump. Flag forms ₹168.20–₹169.10 above VWAP ₹167.40. Breakout close ₹169.35 on 2× volume. Buy at ₹169.40, stop ₹168.10 (₹1.30, ₹3,900). 1R ₹170.70: book 1,500. Trail exits the rest at ₹172.30. Gross ₹1,950 + ₹4,350 = ₹6,300 (1.6R on the full position), net about ₹6,070 (verify with [[widget:charges-india]]).`,
       loseExample: `**A high-beta new-age F&O stock, 1,500 shares near ₹282.** Up 3% with heavy volume; flag breakout at ₹282.40. Buy at ₹282.50, stop ₹280.60 (₹1.90, ₹2,850). Within ten minutes a block deal crosses and sellers appear; price drops through ₹280.60 in one candle. Fill ₹280.20: −₹3,450 plus charges. Slippage turned a 1R plan into a 1.2R loss.`,
       failure: `- Late entries after a stock has moved 5%+ and is extended from VWAP.
 - Afternoon fade after a morning spike.
@@ -422,7 +422,7 @@ Expect long flat or losing stretches. Before going live, decide the maximum draw
       mistakes: `- Chasing the biggest gainer at the top of the day.
 - Ignoring circuit limits and ASM/GSM flags.
 - Using the same size as on index futures.`,
-      backtest: `Quant Lab: **Volume spike** (k 1.8) + **RSI above/below 50** + **Close on the trade side of VWAP**. Note that selection across many stocks cannot be simulated on one synthetic series; this tests only the timing rule. For selection, keep a scan journal for 60+ sessions. 200+ trades for timing.`,
+      backtest: `Quant Lab: **Volume spike** (k 1.8) + **RSI above/below 50** + **Close on the trade side of VWAP**. The catalogue's RSI filter is > 50, looser than the written RSI > 60, and there is no flag detector. Note that selection across many stocks cannot be simulated on one synthetic series; this tests only the timing rule. For selection, keep a scan journal for 60+ sessions. 200+ trades for timing.`,
       chart: `[[chart:MIDCAP:28:vwap,vol,rsi]]`,
       btConfig: { side: 1, entry: [{ id: 'volume_spike', params: { k: 1.8 } }, { id: 'rsi_trend', params: { n: 14 } }, { id: 'vwap_side', params: {} }], stop: { type: 'atr', mult: 1.5 }, target: { rr: 2 } },
     },
@@ -450,7 +450,7 @@ Expect long flat or losing stretches. Before going live, decide the maximum draw
       management: `No holding through news releases. Stop after three consecutive losses for a 30-minute break.
 
 Track net P&L per trade after all charges, not gross points. A useful daily metric is "costs as a percentage of gross profit"; if it exceeds 50% you are working mainly for the broker and exchange. Review fill quality: compare your entry price with the candle's close that triggered it and log the slippage in ticks. If average slippage plus costs exceeds a third of your average winner, the strategy is not viable at your size and speed, whatever the charts say.`,
-      winExample: `**Nifty futures, 1 lot (65).** At 10:12 a 1-minute close above the prior high, above VWAP. Buy at 25,812, stop 25,800 (12 points, ₹780). Target 25,830 (18 points). Hit four minutes later: ₹1,170 gross. After about ₹1,000 costs, net ≈ ₹170. A "winning" scalp barely covers costs.`,
+      winExample: `**Nifty futures, 1 lot (65).** At 10:12 a 1-minute close above the prior high, above VWAP. Buy at 25,812, stop 25,800 (12 points, ₹780). Target 25,830 (18 points). Hit four minutes later: ₹1,170 gross. After about ₹1,000 costs, net ≈ ₹170. A "winning" scalp barely covers costs. Note that this trade fails the strategy's own target rule: the 18-point target does not exceed costs (about 15 points) plus the 12-point stop, so under the written rules it should have been skipped.`,
       loseExample: `**Bank Nifty futures, 1 lot (30).** Scalp long at 57,105, stop 57,075 (30 points, ₹900). A fast candle drops 45 points and the stop fills at 57,066: −39 points, ₹1,170 plus ₹1,000 costs = ₹2,170 loss, about 2.4 times the planned risk once costs are included.`,
       failure: `- Any period when costs exceed the average move captured.
 - Fast markets where stops slip.
@@ -521,13 +521,13 @@ Track net P&L per trade after all charges, not gross points. A useful daily metr
 - No large upper wick (less than 40% of the candle).
 - The next candle does not trade back below the consolidation mid-point.`,
       stop: `Below the consolidation low, or the mid-point for tighter risk; cap at 1.5 × ATR.`,
-      target: `Measured move: consolidation height added to the breakout level, or 2R, whichever comes first.`,
+      target: `2R. Note the measured move (consolidation height added to the breakout level) as a reference; if it lies short of 1R, the breakout has little room by that yardstick, which is worth logging.`,
       sizing: `0.5–1% risk. Check average traded value: your order should be under 1% of the stock's one-minute traded value so you do not move it.`,
       rr: `1:2 planned.`,
       exits: `- Close back inside the consolidation for two candles.
 - Stop, target, 15:10.`,
       management: `Book half at 1R, move stop to entry, trail under the 9 EMA on the 5-minute chart. If the breakout candle's volume is the highest of the day, note it: climactic volume sometimes marks exhaustion rather than the start of a move, and only your log can tell you which is more common in the stocks you trade.`,
-      winExample: `**Bharti Airtel, 300 shares.** Consolidation ₹1,948–₹1,955 for 8 candles above VWAP, ATR ₹6.80. At 11:20 a candle closes at ₹1,957.60 on 2.3× volume. Buy at ₹1,957.80, stop at mid ₹1,951.50 (₹6.30, ₹1,890). Measured target ₹1,962 is less than 1R, so use 2R ₹1,970.40. Reached at 13:15. Gross ₹3,780, net about ₹3,450.`,
+      winExample: `**Bharti Airtel, 300 shares.** Consolidation ₹1,948–₹1,955 (₹7 range) for 8 candles above VWAP, ATR ₹7.40, so the range is under 1 × ATR. At 11:20 a candle closes at ₹1,957.60 on 2.3× volume. Buy at ₹1,957.80, stop at mid ₹1,951.50 (₹6.30, ₹1,890). The measured move ₹1,962 is less than 1R away, so it is logged as a reference only; target 2R ₹1,970.40. Reached at 13:15. Gross ₹3,780, net about ₹3,520.`,
       loseExample: `**Nifty-50 stock, 1,200 shares near ₹612.** Consolidation ₹609.50–₹611.80; breakout close ₹612.30 on 2× volume. Buy ₹612.40, stop ₹610.60 (₹1.80, ₹2,160). The spike was one large seller being absorbed; once it finished, buyers disappeared. Two candles later price is back at ₹610.40; stop fills at ₹610.50: −₹2,280 plus charges. High volume confirmed activity, not direction.`,
       failure: `- Volume spikes from block deals, index rebalancing or option-hedging flows.
 - Breakouts into the previous-day high or a round number that acts as resistance.
@@ -565,7 +565,7 @@ Track net P&L per trade after all charges, not gross points. A useful daily metr
       exits: `- Stop, target, 15:10.
 - For gap-and-go, exit if price closes back below VWAP for 2 candles.`,
       management: `Move stop to entry at 1R. Only one direction per stock per day: if the gap-and-go long is stopped, do not then short the fade.`,
-      winExample: `**Infosys, 400 shares.** Previous close ₹1,590, previous-day high ₹1,598. Strong results; opens at ₹1,642 (3.3% gap). Opening range ₹1,636–₹1,651 with heavy volume. At 09:45 close ₹1,653.40 above VWAP ₹1,645. Buy at ₹1,653.60, stop ₹1,641.20 (ATR cap, ₹12.40, ₹4,960). Target 2R ₹1,678.40, reached by 12:40. Gross ₹9,920, net about ₹9,350.`,
+      winExample: `**Infosys, 400 shares.** Previous close ₹1,590, previous-day high ₹1,598. Strong results; opens at ₹1,642 (3.3% gap). Opening range ₹1,636–₹1,651 with heavy volume. At 09:45 close ₹1,653.40 above VWAP ₹1,645. Buy at ₹1,653.60, stop ₹1,641.20 (ATR cap, ₹12.40, ₹4,960). Target 2R ₹1,678.40, reached by 12:40. Gross ₹9,920, net about ₹9,630 (verify with [[widget:charges-india]]).`,
       loseExample: `**Nifty futures, 1 lot (65).** Gap-up 0.7% to 26,010 on strong US cues. Opening range 25,995–26,040. Close above at 26,046 with price above VWAP. Buy at 26,050, stop 26,005 (45 points, ₹2,925). FII selling appears from 10:15; price fills the gap towards the previous close 25,830. Stopped at 26,002: −48 points, ₹3,120 plus costs. A global-cue gap without domestic follow-through is a common gap-and-go loss.`,
       failure: `- Huge gaps (over 5%) where the move is mostly done.
 - Gaps into resistance (previous swing highs).
@@ -593,14 +593,14 @@ Track net P&L per trade after all charges, not gross points. A useful daily metr
 - **Reversal long:** a 5-minute close above the opening-range high and above VWAP, with the previous-day low reclaimed. Buy next open.`,
       confirmation: `- Short: sector also down; volume on the break ≥ 1.5 × average.
 - Reversal long: index recovering; the gap was not driven by company-specific negative news (results, regulatory action).`,
-      stop: `Short: opening-range high or 1.5 × ATR. Long: opening-range low or 1.5 × ATR.`,
+      stop: `Short: opening-range high or 1.5 × ATR above entry, whichever is closer. Long: opening-range low or 1.5 × ATR below entry, whichever is closer.`,
       target: `2R. For the reversal long, the previous close (gap fill) if it lies before 2R.`,
       sizing: `0.5% risk. Short squeezes can move fast; check that one lot or the share quantity at the stop keeps you within risk even with 2 ticks of slippage.`,
       rr: `1:2.`,
       exits: `- Stop, target, 15:10.
 - Short: exit if price reclaims VWAP for two closes.`,
       management: `At 1R move stop to entry. Avoid trading company-specific gap-downs from fraud or regulatory news; those can hit circuit limits or behave erratically.`,
-      winExample: `**Bank Nifty futures, 1 lot (30).** Weak global cues; gap-down 0.9% to 56,350, below the previous-day low 56,520. Opening range 56,290–56,420. At 09:50 a close at 56,270 below VWAP. Short at 56,265. ATR 80; stop 56,385 (opening-range high, 120 points, ₹3,600). Target 2R = 56,025. Reached at 11:30. Gross ₹7,200, net about ₹6,200.`,
+      winExample: `**Bank Nifty futures, 1 lot (30).** Weak global cues; gap-down 0.9% to 56,350, below the previous-day low 56,520. Opening range 56,290–56,420. At 09:50 a close at 56,270 below VWAP. Short at 56,265. ATR 80; 1.5 × ATR gives 56,385, closer than the opening-range high 56,420, so stop 56,385 (120 points, ₹3,600). Target 2R = 56,025. Reached at 11:30. Gross ₹7,200, net about ₹6,200.`,
       loseExample: `**A large NBFC stock, 120 shares.** Gap-down 2.1% to ₹8,820. Close below the opening-range low at ₹8,795. Short at ₹8,793, stop at opening-range high ₹8,850 (₹57, ₹6,840 risk on 120 shares; too large, so size cut to 50 shares, ₹2,850). A management commentary reassures; shorts cover, price jumps to ₹8,880. Stop fills at ₹8,853: −₹3,000 plus charges. Gap-down shorts are exposed to sharp squeezes.`,
       failure: `- Gap-downs on macro fears that reverse when the global picture calms.
 - Shorting into strong support or the previous swing low.
@@ -640,7 +640,7 @@ Track net P&L per trade after all charges, not gross points. A useful daily metr
       management: `Stop to entry at 1R. If price returns to PDH and holds (a retest), you may add one unit with the stop for both below the retest low, only if total risk stays within limits.
 
 Log the time of day for each breakout. Morning breaks (before 11:30) and afternoon breaks often behave differently; if your sample shows a clear difference, consider restricting the window, but only after confirming it out of sample with walk-forward folds. Keep one rule change per test cycle so you know what caused any improvement.`,
-      winExample: `**Nifty futures, 1 lot (65).** PDH 25,948. At 11:25 a candle closes at 25,961 (previous close 25,940) with 1.7× volume, above VWAP. Buy at 25,963. Breakout candle low 25,938; ATR 21; stop at 1.2 × ATR = 25,938 (25 points, ₹1,625). Target 2R = 26,013. Reached at 13:40. Gross ₹3,250, net about ₹2,250.`,
+      winExample: `**Nifty futures, 1 lot (65).** PDH 25,948. At 11:25 a candle closes at 25,961 (previous close 25,940) with 1.7× volume, above VWAP. Buy at 25,963. Breakout candle low 25,938 and 1.2 × ATR (21) both give about 25,938, but that is only 10 points below PDH; the rule requires the stop at least 0.1% (about 26 points) below PDH, so stop 25,922 (41 points, ₹2,665). Target 2R = 26,045. Reached at 13:40. Gross ₹5,330, net about ₹4,330.`,
       loseExample: `**Reliance, 400 shares.** PDH ₹1,492. Close above at ₹1,493.40 with volume, above VWAP. Buy at ₹1,493.60, stop ₹1,490.40 (₹3.20, ₹1,280). Price reaches ₹1,495.10 then sellers return; two closes below PDH at ₹1,491.20 and ₹1,490.60. Exit at ₹1,490.50: −₹1,240 plus charges. A failed breakout like this is itself the setup in the "Failed breakout" strategy.`,
       failure: `- Breakouts on low-range, low-volume days.
 - Breaks late in the session.
@@ -680,12 +680,12 @@ Log the time of day for each breakout. Morning breaks (before 11:30) and afterno
 
 Keep the long (PDH) and short (PDL) versions as separate strategies in the Journal. If you combine them, a strong long side can hide a losing short side, or the reverse. Decide after testing whether to trade one, both or neither. Asymmetry is normal in equity markets, which have historically had an upward drift over long periods while falling faster in short bursts.`,
       winExample: `**Bank Nifty futures, 1 lot (30).** PDL 56,710. At 10:55 a close at 56,690 below VWAP with 1.8× volume. Short at 56,686. ATR 75; stop 1.2 × ATR = 56,776 (90 points, ₹2,700). Target 2R = 56,506. Reached at 12:50. Gross ₹5,400, net about ₹4,400.`,
-      loseExample: `**Nifty futures, 1 lot (65).** PDL 25,612. Close below at 25,604 with volume. Short at 25,602, stop 25,628 (26 points, ₹1,690). Within 15 minutes a strong DII buying session lifts the index; price closes back above PDL twice. Exit at 25,622: −20 points, ₹1,300 plus costs. Index levels near PDL are often defended by large buyers, and the strategy accepts these losses as its cost of doing business.`,
+      loseExample: `**Nifty futures, 1 lot (65).** PDL 25,612. Close below at 25,604 with volume. Short at 25,602. The stop must be at least 0.1% (about 26 points) above PDL, so stop 25,638 (36 points, ₹2,340). Within 15 minutes a strong DII buying session lifts the index; price closes back above PDL twice. Exit at 25,622: −20 points, ₹1,300 plus costs. Buyers can appear near PDL for many reasons, and the strategy accepts these losses as its cost of doing business.`,
       failure: `- Breakdowns into strong support.
 - Days with positive breadth despite a weak index.
 - Late-session breaks.
 
-**Short-covering risk:** when many traders short below PDL at the same time, a small piece of positive news can force them all to cover, and price can move several ATRs against the short within minutes. This is why the short version uses a slightly wider slippage allowance and why holding through scheduled announcements is excluded. On Nifty, buying by domestic institutions near round levels and previous lows is common; group losing trades by whether they occurred near a round number (multiples of 100 for Nifty, 500 for Bank Nifty).`,
+**Short-covering risk:** when many traders short below PDL at the same time, a small piece of positive news can force them all to cover, and price can move several ATRs against the short within minutes. This is why the short version uses a slightly wider slippage allowance and why holding through scheduled announcements is excluded. A common narrative says domestic institutions buy near round levels and previous lows; a chart cannot show who bought, so test it instead: group losing trades by whether they occurred near a round number (multiples of 100 for Nifty, 500 for Bank Nifty).`,
       mistakes: `- Shorting the first tick below PDL.
 - Ignoring that the long-side rule's backtest says nothing about the short side.
 - Shorting cash stocks without knowing the broker's auto-square-off time.
@@ -697,7 +697,7 @@ Keep the long (PDH) and short (PDL) versions as separate strategies in the Journ
     },
     {
       id: 'sr-reversal', n: 19, name: 'Support and resistance reversal', family: 'reversion', evidence: 'subjective',
-      markets: `Range-bound index futures and large caps; US index ETFs. Works poorly on news-driven momentum stocks.`,
+      markets: `Range-bound index futures and large caps; US index ETFs. Less suited to news-driven momentum stocks, where levels break more readily.`,
       timeframes: `Levels from 15-minute and daily charts; entries on 5-minute.`,
       indicators: `Horizontal levels (prior swing highs/lows touched at least twice, PDH/PDL, round numbers), RSI(14), volume, ATR(14).`,
       concept: `Support is a price zone where buying has previously stopped declines; resistance is where selling has stopped rallies. The reversal strategy buys at tested support and sells at tested resistance, expecting the level to hold again, with a stop just beyond it.`,
@@ -719,7 +719,7 @@ Keep the long (PDH) and short (PDL) versions as separate strategies in the Journ
 - Target, stop, 15:10.`,
       management: `After two failed tests of the same level in a day, stop trading it: the level is being worn down.`,
       winExample: `**Nifty futures, 1 lot (65).** Support zone 25,600–25,626 from two swing lows yesterday. ADX 17. Price drops from 25,690 and a candle low of 25,608 closes at 25,631 with RSI 36. Buy at 25,633. Rule check: 0.1% beyond the zone low is about 25,574; 1 × ATR (22) from entry is 25,611, which is inside the zone, so use the further level, 25,574 (59 points, ₹3,835). Target the range top 25,760 (2.2R). Reached at 13:30. Gross +127 points, ₹8,255, net about ₹7,250.`,
-      loseExample: `**A private-bank F&O stock, 500 shares.** Resistance zone ₹1,720–₹1,722 tested twice. Price rallies to ₹1,721.50 and closes back at ₹1,719.20, RSI 62. Short at ₹1,719. Stop ₹1,724 (₹5, ₹2,500). A large block buy lifts the stock; price closes at ₹1,725.40. Stop fills at ₹1,724.30: −₹2,650 plus charges. The third test of resistance broke, which happens often.`,
+      loseExample: `**A private-bank F&O stock, 500 shares.** Resistance zone ₹1,720–₹1,722 tested twice. Price rallies to ₹1,721.50 and closes back at ₹1,719.20, RSI 62. Short at ₹1,719. Stop ₹1,724 (₹5, ₹2,500). A large block buy lifts the stock; price closes at ₹1,725.40. Stop fills at ₹1,724.30: −₹2,650 plus charges. The third test of resistance broke; the management rule exists because repeated tests are where this setup is most exposed. Measure it in your own log.`,
       failure: `- Trend days, when levels break one after another.
 - Third or fourth test of the same level.
 - News.`,
@@ -737,7 +737,7 @@ Keep the long (PDH) and short (PDL) versions as separate strategies in the Journ
       timeframes: `5-minute chart; levels from 15-minute/daily.`,
       indicators: `Breakout level (PDH, opening-range high, swing high), VWAP, volume, ATR(14).`,
       concept: `Instead of buying the breakout candle, wait for price to come back to the broken level and hold it. The retest gives a closer stop and filters out some false breakouts, at the cost of missing breakouts that never come back.`,
-      logic: `After a break, early buyers take profits and price drifts back. If the level now attracts buyers (former resistance acting as support), the breakout is more likely genuine. If it does not, you have avoided the false break or lost a small, defined amount.
+      logic: `After a break, early buyers take profits and price drifts back. If the level now attracts buyers (former resistance acting as support), the practitioner reading is that the breakout is more likely genuine (a hypothesis, not a measured fact). If it does not, you have avoided the false break or lost a small, defined amount.
 
 > [!evidence] Subjective framework; retest frequency and outcome depend on how "retest" is defined. Define it numerically.`,
       setup: `1. A 5-minute close above a marked level (PDH or opening-range high) with volume ≥ 1.5 × average.
@@ -754,7 +754,7 @@ Keep the long (PDH) and short (PDL) versions as separate strategies in the Journ
 - Stop, target, 15:10.`,
       management: `Stop to entry at 1R; trail under higher lows. If the retest takes more than 12 candles, cancel the setup; slow retests often turn into ranges. Write the cancellation in the journal so missed trades are counted too.`,
       winExample: `**Bank Nifty futures, 1 lot (30).** Opening-range high 57,180. Break at 09:50 to 57,260 on volume. Retest at 10:25: low 57,172, close 57,205 above the prior high. Buy at 57,210. Stop 57,180 − 0.15% ≈ 57,094 but cap at 1.2 × ATR (75) = 90 points → 57,120 (₹2,700). Target 2.5R = 57,435. Reached at 12:10. Gross ₹6,750, net about ₹5,750.`,
-      loseExample: `**Nifty futures, 1 lot (65).** PDH 25,900. Break to 25,935, retest 25,904 with a close at 25,918. Buy at 25,920, stop 25,861 (59 points, ₹3,835). Price drifts, then sellers push through the level; a candle closes at 25,858. Stop fills at 25,859: −61 points, ₹3,965 plus costs. The retest that holds for one candle and then fails is common.`,
+      loseExample: `**Nifty futures, 1 lot (65).** PDH 25,900. Break to 25,935, retest 25,904 with a close at 25,918. Buy at 25,920, stop 0.15% below the level at 25,861 (59 points, ₹3,835; inside the 1.2 × ATR cap only because ATR is 50 on this volatile morning). Price drifts, then sellers push through the level; a candle closes at 25,858. Stop fills at 25,859: −61 points, ₹3,965 plus costs. The retest that holds for one candle and then fails is common.`,
       failure: `- Strong breakouts that never retest (missed, not lost).
 - Retests that become full reversals.
 - Choppy days with multiple shallow "retests".
@@ -791,12 +791,12 @@ Keep the long (PDH) and short (PDL) versions as separate strategies in the Journ
       exits: `- Close back beyond the level again.
 - Stop, target, 15:10.`,
       management: `Move stop to entry at 1R. If price re-breaks the level, do not re-enter short; the level is now in play the other way. Keep a separate tag for failures of PDH, opening-range and swing-high levels; they may behave differently.`,
-      winExample: `**Nifty futures, 1 lot (65).** PDH 25,980. A close at 25,992, high 25,998, on modest volume. Two candles later a close at 25,968. Short at 25,966. Stop at 25,998 + 0.10 + slippage ≈ 26,000 (34 points, ₹2,210). VWAP 25,930, then day low 25,880 (2.5R). Reached at 13:20. Gross ₹5,590, net about ₹4,590.`,
-      loseExample: `**ICICI Bank, 700 shares.** PDH ₹1,356. Break to ₹1,358.20, close back below at ₹1,355.40. Short at ₹1,355.30, stop ₹1,358.40 (₹3.10, ₹2,170). The dip was just a pause; buyers return and price closes at ₹1,359. Stop fills at ₹1,358.50: −₹2,240 plus charges. The "failed" breakout was a breakout with a retest.`,
+      winExample: `**Nifty futures, 1 lot (65).** PDH 25,980. A close at 25,992, high 25,998, on modest volume. Two candles later a close at 25,968. Short at 25,966. Stop one tick above the high plus 2 ticks of slippage allowance = 25,998.15 (32.15 points, ₹2,090). VWAP 25,930, then day low 25,880 (2.7R). Reached at 13:20. Gross ₹5,590, net about ₹4,590.`,
+      loseExample: `**ICICI Bank, 700 shares.** PDH ₹1,356. Break to ₹1,358.20, close back below at ₹1,355.40. Short at ₹1,355.30, stop one tick plus 2 ticks above the high at ₹1,358.35 (₹3.05, ₹2,135). The dip was just a pause; buyers return and price closes at ₹1,359. Stop fills at ₹1,358.50: −₹2,240 plus charges. The "failed" breakout was a breakout with a retest.`,
       failure: `- Strong trend days, when the "failure" is a brief pullback before continuation.
 - Levels that are not widely watched.
 
-**Why it is hard in real time:** a breakout that dips back below the level for one candle and then continues is the most common way this trade loses. The rule requires a close back inside within three candles, but a breakout with a quick retest satisfies that rule too. The only protection is the stop above the failed high, which must be small enough that several such losses are survivable. Track how many losses were caused by a retest-and-continue pattern; if it is most of them, the rule needs a stronger failure condition (for example, a close below VWAP).`,
+**Why it is hard in real time:** a breakout that dips back below the level for one candle and then continues is the characteristic way this trade loses. The rule requires a close back inside within three candles, but a breakout with a quick retest satisfies that rule too. The only protection is the stop above the failed high, which must be small enough that several such losses are survivable. Track how many losses were caused by a retest-and-continue pattern; if it is most of them, the rule needs a stronger failure condition (for example, a close below VWAP).`,
       mistakes: `- Shorting every candle that wicks above PDH.
 - Placing the stop inside the wick.
 - Trading both the breakout and the failure on the same level and losing on both.
@@ -828,7 +828,7 @@ Keep the long (PDH) and short (PDL) versions as separate strategies in the Journ
       exits: `- Time stop: 30 minutes.
 - Stop, target, 15:10.`,
       management: `No averaging down. Mean reversion's typical blow-up is adding to a loser that turned into a trend. Limit the strategy to two trades per day and stop for the day after one full −1R loss; a stop-out often signals the regime has changed.`,
-      winExample: `**Nifty futures, 1 lot (65).** Range day, ADX 15. Price drops to 25,702, 2.1 standard deviations below VWAP 25,760, and closes back inside the lower band at 25,712; RSI was 31. Buy at 25,714, stop 25,688 (26 points, ₹1,690). Target 20 SMA 25,744 (1.15R). Hit at 11:40. Gross ₹1,950, net about ₹950. Small wins are typical; costs take a large share.`,
+      winExample: `**Nifty futures, 1 lot (65).** Range day, ADX 15. Price drops to 25,702, 2.1 standard deviations below VWAP 25,760, and closes back inside the lower band at 25,712; RSI was 31. Buy at 25,714, stop 25,688 (26 points, ₹1,690). Target 20 SMA 25,744 (1.15R). Hit at 11:40. Gross ₹1,950, net about ₹950. Small wins are the design of this strategy; costs take a large share.`,
       loseExample: `**Bank Nifty futures, 1 lot (30).** ADX 18, price 2 standard deviations below VWAP at 56,480; re-entry close 56,505. Buy at 56,510, stop 56,420 (90 points, ₹2,700). A bank-specific negative headline turns the day into a trend; price falls to 56,250. Stop fills at 56,410 after slippage: −100 points, ₹3,000 plus costs. Without the stop, the loss would have been ₹7,800.`,
       failure: `- Trend days (the defining failure).
 - Event days.
@@ -838,7 +838,7 @@ Keep the long (PDH) and short (PDL) versions as separate strategies in the Journ
       mistakes: `- Averaging down.
 - Removing the stop because "it always comes back".
 - Taking reversion trades early in the day before the range is known.`,
-      backtest: `Quant Lab: requiring both **Close back inside Bollinger Band** and **RSI crosses back from extreme** on the same bar gives very few trades, so use **Close back inside Bollinger Band** (n 20, k 2) alone first, then compare on trending seeds vs range seeds. Look at the left tail of the R distribution, not only the average. Monte Carlo drawdowns matter more for reversion than for trend systems. 300+ trades. See [[link:l4-mean-rev-momentum]].`,
+      backtest: `Quant Lab: requiring both **Close back inside Bollinger Band** and **RSI crosses back from extreme** on the same bar gives very few trades, so use **Close back inside Bollinger Band** (n 20, k 2) alone first (the preloaded config, which omits the ADX < 20 filter and uses a fixed 1R target instead of VWAP or the 20 SMA), then compare on trending seeds vs range seeds. Look at the left tail of the R distribution, not only the average. Monte Carlo drawdowns matter more for reversion than for trend systems. 300+ trades. See [[link:l4-mean-rev-momentum]].`,
       chart: `[[chart:SPY:15:vwap,bb,rsi]]`,
       btConfig: { side: 1, entry: [{ id: 'bb_reentry', params: { n: 20, k: 2 } }], stop: { type: 'atr', mult: 1.2 }, target: { rr: 1 } },
     },
@@ -859,14 +859,14 @@ Keep the long (PDH) and short (PDL) versions as separate strategies in the Journ
       confirmation: `- RSI(14) below 40 at the low (above 60 at the high).
 - VWAP near the middle of the range.`,
       stop: `0.1% outside the range edge.`,
-      target: `The opposite 15% zone, or VWAP if the R:R to VWAP is already ≥ 1.5.`,
+      target: `The opposite 15% zone, or VWAP if the R:R to VWAP is already ≥ 1.5. Skip the trade if the opposite zone is less than 1.2R away (the worked example below applies this test).`,
       sizing: `0.5% risk.`,
-      rr: `1:1.5 to 1:3 depending on range width.`,
+      rr: `1:1.2 to 1:3 depending on range width.`,
       exits: `- Range edge breaks with a 5-minute close: exit.
 - Stop, target, 15:10.`,
       management: `Maximum two trades per range edge. After 14:00, ranges often resolve; cut size or stop trading the range. Redraw the range only if both edges are retested; do not widen it after a break just to stay in a trade.`,
       winExample: `**Nifty futures, 1 lot (65).** Range 25,820–25,905 by 10:45, tested twice each side, ADX 14. At 11:50 a candle trades 25,826 and closes 25,848, RSI 38. Buy at 25,850. Stop 25,794 (56 points, ₹3,640). The top zone begins at 25,892, only 42 points away, which is under 1R; VWAP 25,862 is even closer. Skip. Next setup at the top: short at 25,890 with stop 25,931 (41 points, ₹2,665), target bottom zone 25,833 (1.4R). Hit at 13:20. Gross ₹3,705, net about ₹2,700. The first skip shows the R:R test working.`,
-      loseExample: `**Bank Nifty futures, 1 lot (30).** Range 56,900–57,120. Short at the top at 57,105, stop 57,177 (72 points, ₹2,160). At 14:10 a breakout begins; price closes at 57,190. Stop fills at 57,180: −75 points, ₹2,250 plus costs. Afternoon range breaks are frequent.`,
+      loseExample: `**Bank Nifty futures, 1 lot (30).** Range 56,900–57,120. Short at the top at 57,105, stop 57,177 (72 points, ₹2,160). At 14:10 a breakout begins; price closes at 57,190. Stop fills at 57,180: −75 points, ₹2,250 plus costs. Afternoon range breaks are a known risk for this setup; group your losses by entry time to measure it.`,
       failure: `- Afternoon breakouts.
 - Event-driven sessions.
 - Ranges defined too early with only one test of each side.
@@ -877,7 +877,7 @@ Keep the long (PDH) and short (PDL) versions as separate strategies in the Journ
 - Holding after a close outside.
 - Using a range defined on 1-minute bars with a 5-minute stop.
 - Ignoring costs: narrow ranges leave little room after ₹1,000 of charges on index futures.`,
-      backtest: `Quant Lab proxy: **Close back inside Bollinger Band** (n 20, k 2), long and short, which approximates fading edges. The catalogue cannot filter for low ADX, so check the trade list by regime (synthetic data labels regime). Compare results on range-regime seeds with trend-regime seeds. 200+ trades.`,
+      backtest: `Quant Lab proxy: **Close back inside Bollinger Band** (n 20, k 2), long and short, which approximates fading edges. The preloaded config is the short side only; run the long side separately. The catalogue cannot filter for low ADX, so use the Regime matrix tab in the Quant Lab to compare range-regime and trend-regime synthetic data. 200+ trades.`,
       chart: `[[chart:NIFTY:95:vwap,vp]]`,
       btConfig: { side: -1, entry: [{ id: 'bb_reentry', params: { n: 20, k: 2 } }], stop: { type: 'atr', mult: 1 }, target: { rr: 1.5 } },
     },
@@ -977,8 +977,8 @@ All three must hold for longs; mirror for shorts. If the layers disagree, there 
       exits: `- A second close beyond the swept level.
 - Stop, target, 15:10.`,
       management: `Move stop to entry at 1R. Only one sweep trade per level per day.`,
-      winExample: `**Nifty futures, 1 lot (65).** Equal highs at 26,045 and 26,047 from the morning. At 13:15 price spikes to 26,071 on a volume jump and the candle closes at 26,038. Short at 26,036, stop 26,073 (37 points, ₹2,405). VWAP 25,990, day low 25,955 (2.2R). Reached at 14:40. Gross ₹5,265, net about ₹4,265.`,
-      loseExample: `**Bank Nifty futures, 1 lot (30).** PDL 56,400. Sweep to 56,355, close back above at 56,418. Buy at 56,422, stop 56,350 (72 points, ₹2,160). Instead of reversing, price chops for 30 minutes and then breaks down hard on weak bank results commentary. Stop fills at 56,345: −77 points, ₹2,310 plus costs. A "sweep" that becomes a breakdown is indistinguishable at entry.`,
+      winExample: `**Nifty futures, 1 lot (65).** Equal highs at 26,045 and 26,047 from the morning. At 13:15 price spikes to 26,071 on a volume jump and the candle closes at 26,038. Short at 26,036, stop two ticks above the sweep high at 26,071.10 (35.10 points, ₹2,282). VWAP 25,990, day low 25,955 (2.3R). Reached at 14:40. Gross ₹5,265, net about ₹4,265.`,
+      loseExample: `**Bank Nifty futures, 1 lot (30).** PDL 56,400. Sweep to 56,355, close back above at 56,418. Buy at 56,422, stop two ticks below the sweep low at 56,354.90 (67.10 points, ₹2,013). Instead of reversing, price chops for 30 minutes and then breaks down hard on weak bank results commentary. Stop fills at 56,345 after slippage: −77 points, ₹2,310 plus costs (1.15R). A "sweep" that becomes a breakdown is indistinguishable at entry.`,
       failure: `- Trend days, where levels break and keep going.
 - Levels that are not genuinely obvious; then there is no reason for stops to cluster there.
 - Thin markets, where sweeps are just random spikes.`,
@@ -1006,13 +1006,13 @@ All three must hold for longs; mirror for shorts. If the layers disagree, there 
       confirmation: `- Pullback retraces at least 30% of the last leg (a real pullback).
 - Volume declines on the pullback.`,
       stop: `Below the most recent 15-minute higher low, maximum 2 × ATR(14) of the 5-minute chart.`,
-      target: `Measured move: the length of the previous leg added to the pullback low; or 2R.`,
+      target: `2R, or the measured move (the length of the previous leg added to the pullback low) if that is further away.`,
       sizing: `0.5–1% risk.`,
       rr: `1:2.`,
       exits: `- A 15-minute close below the last HL ("change of character"): exit.
 - Stop, target, 15:10.`,
       management: `After a new HH forms, move the stop below the new HL. If a new HL forms below the previous one (a lower low on a closing basis), exit even if the stop has not been hit: the structure that justified the trade no longer exists.`,
-      winExample: `**Reliance, 300 shares.** 15-minute structure HL ₹1,462, HH ₹1,471, HL ₹1,466, then a close above ₹1,471 at ₹1,473. Pullback on 5-minute to ₹1,468.50, trigger close ₹1,470.20 above VWAP. Buy at ₹1,470.40, stop below HL at ₹1,465.80 (₹4.60, ₹1,380). Measured move: previous leg ₹9 + ₹1,468.50 = ₹1,477.50 (1.5R) – use 2R ₹1,479.60. Price hits ₹1,479.70 at 14:00. Gross ₹2,760, net about ₹2,450.`,
+      winExample: `**Reliance, 300 shares.** 15-minute structure HL ₹1,462, HH ₹1,471, HL ₹1,466, then a close above ₹1,471 at ₹1,473. Pullback on 5-minute to ₹1,468.50, trigger close ₹1,470.20 above VWAP. Buy at ₹1,470.40, stop below HL at ₹1,465.80 (₹4.60, ₹1,380). Measured move: previous leg ₹9 + ₹1,468.50 = ₹1,477.50 (1.5R) – use 2R ₹1,479.60. Price hits ₹1,479.70 at 14:00. Gross ₹2,760, net about ₹2,550.`,
       loseExample: `**Nifty futures, 1 lot (65).** Uptrend structure, break of structure at 25,950. Pullback holds above HL 25,905; trigger at 25,930. Buy at 25,932, stop 25,900 (32 points, ₹2,080). The next swing makes a lower high at 25,945 and price closes below 25,905, a change of character. Stop fills at 25,898: −34 points, ₹2,210 plus costs.`,
       failure: `- Ranges, where structure shifts repeatedly.
 - Fractal definitions that change from trade to trade.
@@ -1051,8 +1051,8 @@ All three must hold for longs; mirror for shorts. If the layers disagree, there 
 - Target or time stop.
 - Exit before 15:15; never hold an ITM option into expiry without understanding physical settlement rules for stock options and STT on exercise.`,
       management: `Do not roll or average a losing option. Move the underlying stop to entry at 1R; exit if the premium has not responded to an underlying move (IV crush or decay).`,
-      winExample: `**Nifty 26,000 CE (weekly), 1 lot (65).** Nifty futures break the opening range at 25,982 above VWAP, ADX 24. Buy the 26,000 CE at ₹138 (delta 0.48). Nifty moves to 26,060 in 40 minutes; the call trades ₹178. Exit at ₹177. Gross (177 − 138) × 65 = ₹2,535. Charges: STT 0.15% of sell premium (about ₹17), transaction charges on premium, brokerage and GST; net roughly ₹2,450 (verify with [[widget:charges-india]]).`,
-      loseExample: `**Bank Nifty 57,000 PE (monthly), 1 lot (30).** Bank Nifty breaks down below the opening range at 57,040. Buy the put at ₹420. The underlying falls only 40 points, then stalls for an hour while IV drops from 14% to 12.5%. The put decays to ₹368. Time stop exits at ₹366: −₹54 × 30 = ₹1,620 plus charges. The direction was right; the option still lost.`,
+      winExample: `**Nifty 26,000 CE (weekly), 1 lot (65).** Nifty futures break the opening range at 25,982 above VWAP, ADX 24. Buy the 26,000 CE at ₹138 (delta 0.48). Underlying stop at the opening-range midpoint 25,943 (39 points), so underlying 2R is 26,060. Nifty reaches 26,060 in 40 minutes; the call trades ₹178. Exit at ₹177. Gross (177 − 138) × 65 = ₹2,535. Charges: STT 0.15% of sell premium (about ₹17), transaction charges on premium, brokerage and GST; net roughly ₹2,450 (verify with [[widget:charges-india]]).`,
+      loseExample: `**Bank Nifty 57,000 PE (monthly), 1 lot (30).** Bank Nifty breaks down below the opening range at 57,040. Buy the put at ₹420. The underlying falls only 40 points, then stalls for 45 minutes while IV drops from 14% to 12.5%. The put decays to ₹368. Time stop exits at ₹366: −₹54 × 30 = ₹1,620 plus charges. The direction was right; the option still lost.`,
       failure: `- Slow moves and sideways markets (theta).
 - Buying after a volatility spike (vega and IV crush).
 - Wide spreads in far OTM strikes.
@@ -1071,7 +1071,7 @@ All three must hold for longs; mirror for shorts. If the layers disagree, there 
       timeframes: `15-minute for trend, 5-minute for entries.`,
       indicators: `ADX(14), Supertrend(10, 3), 20/50 EMA, VWAP, ATR(14), open interest change (context only).`,
       concept: `Futures give linear exposure with leverage: one Nifty lot at 25,800 is about ₹16.8 lakh of notional value. A futures trend strategy is a trend-following rule applied with careful attention to that leverage, margin and contract-specific costs.`,
-      logic: `Futures make trend trades cheap to execute (low STT relative to notional, tight spreads), but a 1% adverse move on one Nifty lot is roughly ₹16,800. The strategy is mainly about sizing: the edge question is the same as for any trend rule, while survival depends on keeping lot count consistent with your risk limits.
+      logic: `Futures make trend trades cheap to execute relative to notional (about ₹1,000 of charges on a ₹16.8 lakh Nifty round trip, roughly 6 bps, as of Nov 2026, verify with [[widget:charges-india]]), but a 1% adverse move on one Nifty lot is roughly ₹16,800. The strategy is mainly about sizing: the edge question is the same as for any trend rule, while survival depends on keeping lot count consistent with your risk limits.
 
 > [!evidence] Trend-following in futures has a long research record on daily and longer horizons with mixed, period-dependent results. Intraday evidence is weaker.`,
       setup: `1. 15-minute ADX(14) ≥ 25 and 20 EMA above 50 EMA (long).
@@ -1082,14 +1082,14 @@ All three must hold for longs; mirror for shorts. If the layers disagree, there 
 - No scheduled event within 30 minutes.`,
       stop: `2 × ATR(14) of the 5-minute chart; then trail with the Supertrend line.`,
       target: `None fixed; trailing exit. Alternative: 3R fixed for testing comparisons.`,
-      sizing: `Risk 0.5–1% of capital. For ₹5 lakh capital at 1%: ₹5,000 risk. Nifty ATR 22 → stop 44 points × 65 = ₹2,860 per lot → 1 lot. If the stop needs more than your risk, do not trade. Margin required is set by the exchange (SPAN plus exposure); check your broker.`,
+      sizing: `Risk 0.5–1% of capital. For ₹6 lakh capital at 1%: ₹6,000 risk. Nifty ATR 22 → stop 44 points × 65 = ₹2,860 per lot → 2 lots by risk, but the 3 × capital exposure cap (₹18 lakh) allows only 1 lot (₹16.8 lakh notional), so trade 1 lot. If one lot's stop needs more than your risk, do not trade. With ₹5 lakh, even one lot exceeds the 3× cap. Margin required is set by the exchange (SPAN plus exposure); check your broker.`,
       rr: `Open-ended with a trailing stop; the backtest should be judged on average R and drawdown.`,
       exits: `- Supertrend flip against you.
 - 15:15 close-out (no overnight carry in this intraday version).
 - Daily loss limit of 2R.`,
       management: `Add a second lot only at +1R with the combined stop at breakeven or better. Never add to a loser. Be aware of contract expiry and roll dates: the near-month contract becomes thin and expensive to trade in the last days.`,
       winExample: `**Nifty futures, 1 lot (65).** ADX 28, EMAs aligned, price above VWAP. Supertrend flips up; buy at 25,846. ATR 21, stop 25,804 (42 points, ₹2,730). Trend runs; trail exits at 25,958 at 14:35. +112 points = ₹7,280 gross. Charges on a futures round trip: STT 0.05% on the sell value (about ₹840), transaction charges at ₹183/crore, stamp duty 0.002% on buy, brokerage and GST; net roughly ₹6,250 (verify with [[widget:charges-india]]).`,
-      loseExample: `**Bank Nifty futures, 2 lots (60).** Flip up at 57,210; buy 2 lots at 57,215 to "make it worth it". Stop 2 × ATR = 150 points, ₹9,000 risk, which is 1.8% of a ₹5 lakh account – already outside the rule. An unexpected regulatory headline drops the index 220 points in 10 minutes; the stop fills at 57,050 with slippage: −165 points × 60 = −₹9,900 plus costs. The rule broken was sizing, not entry.`,
+      loseExample: `**Bank Nifty futures, 2 lots (60).** Flip up at 57,210; buy 2 lots at 57,215 to "make it worth it". Stop 2 × ATR = 150 points, ₹9,000 risk, which is 1.5% of a ₹6 lakh account, and about ₹34.3 lakh of notional (5.7× capital) – outside both the risk rule and the exposure cap. An unexpected regulatory headline drops the index 220 points in 10 minutes; the stop fills at 57,050 with slippage: −165 points × 60 = −₹9,900 plus costs. The rule broken was sizing, not entry.`,
       failure: `- Chop.
 - Event-driven spikes that blow through stops.
 - Expiry-week illiquidity in the near contract.`,
@@ -1124,7 +1124,7 @@ All three must hold for longs; mirror for shorts. If the layers disagree, there 
 - Close below VWAP.
 - Stop, target, 15:10.`,
       management: `Book half at 1R and move stop to entry. Re-rank at 12:30; if the sector has lost its lead, tighten the stop to the last 5-minute swing low.`,
-      winExample: `**Nifty Metal leading (+1.9% vs Nifty +0.4%). Hindalco, 1,400 shares.** Hindalco +2.8% at 10:15 on 2× volume, high of day ₹712.50, VWAP ₹707.80. At 10:40 a close at ₹713.20. Buy at ₹713.30. ATR ₹2.40 → stop ₹709.70 (₹3.60, ₹5,040). 1R at ₹716.90, book 700 shares; rest trailed under VWAP until 14:55, exit ₹721.40. Gross ₹2,520 + ₹5,670 = ₹8,190, net about ₹7,500.`,
+      winExample: `**Nifty Metal leading (+1.9% vs Nifty +0.4%). Hindalco, 1,400 shares.** Hindalco +2.8% at 10:15 on 2× volume, high of day ₹712.50, VWAP ₹707.80. At 10:40 a close at ₹713.20. Buy at ₹713.30. ATR ₹2.40 → stop ₹709.70 (₹3.60, ₹5,040). 1R at ₹716.90, book 700 shares; rest trailed under VWAP until 14:55, exit ₹721.40. Gross ₹2,520 + ₹5,670 = ₹8,190 (1.6R on the full position), net about ₹7,790 (verify with [[widget:charges-india]]).`,
       loseExample: `**Nifty IT leading (+1.2% vs Nifty +0.2%). Infosys, 300 shares.** High of day ₹1,620, breakout close ₹1,621.40. Buy ₹1,621.60, stop ₹1,614.80 (₹6.80, ₹2,040). At 11:30 a large peer issues weak guidance commentary; the whole IT index reverses. Stop fills at ₹1,614.20: −₹2,220 plus charges. Sector strength can vanish on one piece of sector-wide news.`,
       failure: `- Sector rotations that reverse by lunchtime.
 - Leaders that are overextended (5%+) by 10:15.

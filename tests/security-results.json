@@ -1,0 +1,122 @@
+[
+ {
+  "id": "SEC-01-served",
+  "name": "Stored XSS: script/event-handler payloads in journal, notes, dataset names, checklists and bookmarks never execute (served)",
+  "ok": true,
+  "detail": "__pwned=0"
+ },
+ {
+  "id": "SEC-02-served",
+  "name": "User text is rendered as text, not HTML (no injected <b> element) (served)",
+  "ok": true,
+  "detail": "False"
+ },
+ {
+  "id": "SEC-03-served",
+  "name": "Content-Security-Policy blocks inline event handlers and injected <script> (served)",
+  "ok": true,
+  "detail": "[0, 0]"
+ },
+ {
+  "id": "SEC-04-served",
+  "name": "Served PWA cannot send data to other origins (connect-src self): cross-origin fetch blocked",
+  "ok": true,
+  "detail": "blocked"
+ },
+ {
+  "id": "SEC-05-served",
+  "name": "Prototype pollution via backup restore / spec merge is neutralised (served)",
+  "ok": true,
+  "detail": "[None, None, None, True]"
+ },
+ {
+  "id": "SEC-06-served",
+  "name": "Backups carry a SHA-256 checksum; a tampered backup is detected; malformed rows and newer schemas are rejected (served)",
+  "ok": true,
+  "detail": "[True, 'ok', 'mismatch', 'Backup row 1 is malformed (missing id/coll).', 'Backup schema 99 is newer than this app (1).']"
+ },
+ {
+  "id": "SEC-07-served",
+  "name": "A rejected backup does not wipe existing data (validation happens before any write) (served)",
+  "ok": true,
+  "detail": "['KEEP']"
+ },
+ {
+  "id": "SEC-08-served",
+  "name": "Every external link opens with rel=noopener (served)",
+  "ok": true,
+  "detail": "True"
+ },
+ {
+  "id": "SEC-09-served",
+  "name": "CSV export neutralises spreadsheet formula injection (cells starting = + - @ are prefixed) (served)",
+  "ok": true,
+  "detail": "oss,charges,net,rr,R,entryTime,exitTime,dur,conditions,quality,emotion,mistakes,lessons,screenshot,synthetic\n2026-11-04,,,\"'=HYPERLINK(\"\"http://evil\"\")\",'+1+1,,long,1,2,,,1,,,1,,1,,,,,,,,,,'@SUM(A1),,"
+ },
+ {
+  "id": "SEC-10-served",
+  "name": "No CSP violations while rendering stored hostile text during normal use (served)",
+  "ok": true,
+  "detail": "[]"
+ },
+ {
+  "id": "SEC-01-standalone",
+  "name": "Stored XSS: script/event-handler payloads in journal, notes, dataset names, checklists and bookmarks never execute (standalone)",
+  "ok": true,
+  "detail": "__pwned=0"
+ },
+ {
+  "id": "SEC-02-standalone",
+  "name": "User text is rendered as text, not HTML (no injected <b> element) (standalone)",
+  "ok": true,
+  "detail": "False"
+ },
+ {
+  "id": "SEC-03-standalone",
+  "name": "Content-Security-Policy blocks inline event handlers and injected <script> (standalone)",
+  "ok": true,
+  "detail": "[0, 0]"
+ },
+ {
+  "id": "SEC-04-standalone",
+  "name": "Standalone build cannot make network requests (connect-src none): fetch to an external URL is blocked",
+  "ok": true,
+  "detail": "blocked"
+ },
+ {
+  "id": "SEC-05-standalone",
+  "name": "Prototype pollution via backup restore / spec merge is neutralised (standalone)",
+  "ok": true,
+  "detail": "[None, None, None, True]"
+ },
+ {
+  "id": "SEC-06-standalone",
+  "name": "Backups carry a SHA-256 checksum; a tampered backup is detected; malformed rows and newer schemas are rejected (standalone)",
+  "ok": true,
+  "detail": "[True, 'ok', 'mismatch', 'Backup row 1 is malformed (missing id/coll).', 'Backup schema 99 is newer than this app (1).']"
+ },
+ {
+  "id": "SEC-07-standalone",
+  "name": "A rejected backup does not wipe existing data (validation happens before any write) (standalone)",
+  "ok": true,
+  "detail": "['KEEP']"
+ },
+ {
+  "id": "SEC-08-standalone",
+  "name": "Every external link opens with rel=noopener (standalone)",
+  "ok": true,
+  "detail": "True"
+ },
+ {
+  "id": "SEC-09-standalone",
+  "name": "CSV export neutralises spreadsheet formula injection (cells starting = + - @ are prefixed) (standalone)",
+  "ok": true,
+  "detail": "oss,charges,net,rr,R,entryTime,exitTime,dur,conditions,quality,emotion,mistakes,lessons,screenshot,synthetic\n2026-11-04,,,\"'=HYPERLINK(\"\"http://evil\"\")\",'+1+1,,long,1,2,,,1,,,1,,1,,,,,,,,,,'@SUM(A1),,"
+ },
+ {
+  "id": "SEC-10-standalone",
+  "name": "No CSP violations while rendering stored hostile text during normal use (standalone)",
+  "ok": true,
+  "detail": "[]"
+ }
+]

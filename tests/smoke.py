@@ -11,7 +11,7 @@ async def run(url):
         pg = await b.new_page(viewport={'width': 390, 'height': 844}); cur = {'r': ''}
         pg.on('console', lambda m: m.type == 'error' and errs.setdefault(cur['r'], []).append(m.text))
         pg.on('pageerror', lambda e: errs.setdefault(cur['r'], []).append('PAGEERROR ' + str(e)))
-        t0 = time.time(); await pg.goto(url); await pg.wait_for_function("document.querySelector('#view') && document.querySelector('#view').children.length > 0", timeout=20000); perf = round((time.time() - t0) * 1000)
+        t0 = time.time(); await pg.goto(url); await pg.wait_for_selector('#view > *', timeout=20000); perf = round((time.time() - t0) * 1000)
         for r in ROUTES:
             cur['r'] = r; await pg.evaluate(f"location.hash = '#/{r}'"); await pg.wait_for_timeout(450)
             txt = await pg.evaluate("document.querySelector('#view').innerText.slice(0,300)")

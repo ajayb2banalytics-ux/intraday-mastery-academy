@@ -1,6 +1,6 @@
 # Intraday Mastery Academy — Architecture
 
-Version 0.1 · 4 Nov 2026
+Version 2.0.0 · 4 Nov 2026
 
 ## 1. Principles
 
@@ -19,7 +19,8 @@ Version 0.1 · 4 Nov 2026
 ┌───────────────────────── UI (js/modules/*.js) ─────────────────────────┐
 │ Dashboard · Academy · Technical · Chart Lab · Markets · Strategies ·   │
 │ Derivatives · Risk · Simulator · Journal · Quant Lab · Calculators ·   │
-│ Psychology · Library · Assessments · Settings                          │
+│ Psychology · Library · Assessments · Settings · Historical Data ·      │
+│ Concepts Lab · Workflow · Search                                       │
 ├──────────────── App core (js/core) ────────────────────────────────────┤
 │ app.js (hash router, nav, shell) · ui.js (DOM helpers, forms, tables)  │
 │ db.js (IndexedDB key-value + collections, export/import)               │
@@ -31,11 +32,13 @@ Version 0.1 · 4 Nov 2026
 │ psychology.js · library.js                                             │
 ├──────────────── Engines (js/engines) — pure, no DOM ───────────────────┤
 │ indicators.js · risk.js · costs.js · options.js · marketgen.js ·       │
-│ backtest.js (+ Monte Carlo, ruin, analytics) · clock.js · execution.js │
+│ backtest.js (+ Monte Carlo, ruin, OOS, random-entry) · clock.js ·      │
+│ execution.js · specs.js · specs-sources.js · dataimport.js ·           │
+│ structure.js                                                           │
 └────────────────────────────────────────────────────────────────────────┘
 ```
 
-Scripts are classic (non-module) scripts attached to one global namespace `IA`, so the app runs from `file://` on a phone as well as from a web server. Load order: engines → content → core → modules → `app.start()`.
+Scripts are classic (non-module) scripts attached to one global namespace `IA`, so the app runs from `file://` on a phone as well as from a web server. Load order: engines → content → core → modules → `js/boot.js` (calls `IA.start()`). The list lives once in `js/files.js`; `tools/build.py` writes it into `index.html`, and `sw.js` reads it for the pre-cache.
 
 ## 3. Data model (IndexedDB `ia-db`, store `kv` + store `rows`)
 
@@ -49,8 +52,10 @@ Scripts are classic (non-module) scripts attached to one global namespace `IA`, 
 | `checklists` | `{date:{pre[],during[],post[]}}` + editable templates |
 | `specs` | user overrides of market specs |
 | `settings` | `{currency, tz, theme, dailyGoal}` |
+| `datasets` (rows) | imported historical OHLCV: `{name, file, exchange, symbol, tfMin, from, to, quality, report, candles[]}` |
+| `conceptStats` | Concepts Lab attempts/accuracy per topic |
 
-Export = all keys + all rows → one JSON file with schema version. Import validates the version and asks before overwriting.
+Export = all keys + all rows → one JSON file with schema version and a SHA-256 checksum. Import verifies the checksum (warns on mismatch), validates the schema and every row **before** writing anything, and strips prototype-pollution keys.
 
 ## 4. Engines
 
@@ -63,11 +68,20 @@ Export = all keys + all rows → one JSON file with schema version. Import valid
 * **backtest.js** also holds Monte Carlo trade resampling, risk-of-ruin simulation, walk-forward segmentation and grouped analytics used by the journal.
 * **clock.js** — IANA time-zone conversion (`zonedToUtc`), session status, overlaps.
 * **execution.js** — simulated order execution for replay and paper trading: next-bar fills, half-spread, slippage, gap-through stops, liquidity-capped partial fills, OCO brackets, end-of-day square-off, India/US/bps charges.
-* **specs.js** — dated market specifications (charges, lots, sessions, FX), overridable in Settings.
+* **specs.js** — dated market specifications (charges, lots, sessions with auctions, index-futures tick by level, FINRA TAF schedule, exchange holidays), overridable in Settings. **specs-sources.js** holds the provenance (source URL, effective date, verified / corrected / unverified) for 102 items, shown in Markets → Specifications.
+* **dataimport.js** — CSV parsing and validation for NSE/BSE/US/broker/TradingView/Yahoo layouts; time-zone conversion to exchange-local time; OHLC, volume, duplicate, order, gap, session and jump checks; timeframe inference; upward resampling. Produces a validation report; never fills or invents candles.
+* **structure.js** — causal detectors used by the Concepts Lab: fractal swing points (confirmed *w* bars later), BOS/CHoCH, liquidity sweeps, order blocks, fair-value gaps, S/R clusters, supply/demand zones, TPO profile, relative strength, relative volume, opening range. Definitions are the app's stated rules for subjective concepts.
+* **backtest.js** additions — liquidity-capped partial fills, signal overrides, `optimiseOOS` (grid on the first 60 % of sessions, one untouched out-of-sample run) and `randomEntryTest` (same exits, random entries, p-value).
 
 ## 5. Offline & PWA
 
 `sw.js` uses cache-first for app assets with a versioned cache name; a new version replaces the old cache on activate. `manifest.webmanifest` declares standalone display, dark theme colour and SVG icons. On `file://` the service worker is skipped (browsers do not allow it) and the app still works because nothing is fetched.
+
+## 5b. Security
+
+* Served PWA: meta CSP `default-src 'self'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'` — no inline script.
+* Standalone file: one inline script allowed only by its SHA-256 hash; `connect-src 'none'` so the file cannot make network requests.
+* All user text inserted as text; markdown renderer escapes first. CSV export neutralises formula injection. See SECURITY-REPORT.md.
 
 ## 6. Time zones
 
@@ -77,7 +91,7 @@ The market clock uses `Intl.DateTimeFormat` with IANA zones (`Asia/Kolkata`, `Am
 
 * New lesson: add an object to a `lessons-*.js` file — the academy, search and progress pick it up automatically.
 * New question: push to `IA.content.questions` (any content file) with its `module` id. `node tests/validate-content.js` checks schema and coverage.
-* Optional live data: `IA.adapters` interface (`getCandles(symbol, tf)`) — none required; a CSV import adapter is included so real data you download yourself can be charted and backtested.
+* Real data: the **Historical Data** section imports CSV files you download yourself; datasets are labelled HISTORICAL and can be charted, resampled, replayed, used in the Concepts Lab and backtested. The app has no live or delayed feed.
 
 ## 8. Unlock & mastery rules
 

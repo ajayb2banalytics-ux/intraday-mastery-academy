@@ -6,13 +6,13 @@
   {
     id: 'fear', name: 'Fear',
     what: `Fear is the anticipation of loss or pain. In trading it shows up as reluctance to enter a valid setup, cutting winners at the first wobble, or freezing when a position moves against you. Some fear is useful: it keeps you from oversized bets. The problem is fear that is not tied to your actual, pre-defined risk.`,
-    why: `Losses hurt more than equal gains feel good, and intraday trading compresses many uncertain outcomes into a few hours. After a string of losses, the brain starts to treat every setup as a threat. Fear is also amplified when position size is too large for your account or your comfort level.`,
+    why: `Losses tend to feel larger than equal gains (the loss-aversion finding from Kahneman and Tversky's prospect theory), and intraday trading compresses many uncertain outcomes into a few hours. After a string of losses, many traders start to treat every setup as a threat. Fear is also amplified when position size is too large for your account or your comfort level.`,
     signs: `- You skip setups that meet your rules, then watch them work.
 - You move targets closer as soon as a trade is in profit.
 - Your heart rate rises and you stare at P&L rather than the chart.
 - You check the screen constantly but take no action.`,
-    cost: `Fear truncates the right tail of your distribution. If you cut winners at half a unit of risk but let losers reach one full unit, your expectancy can be negative even with a decent win rate. Missed trades also distort your journal: your recorded results stop matching the system you think you are testing.`,
-    countermeasures: `- Reduce size until a full stop-out feels boring. Fear often disappears at the right size.
+    cost: `Fear truncates the right tail of your distribution. If you cut winners at half a unit of risk but let losers reach one full unit, your expectancy can be negative even with a decent win rate. Worked example: at a 60% win rate, {{0.60 × 0.5R − 0.40 × 1R = −0.10R}} per trade; with half-R winners and one-R losers you need a win rate above 66.7% just to break even, before costs. Missed trades also distort your journal: your recorded results stop matching the system you think you are testing.`,
+    countermeasures: `- Reduce size until a full stop-out feels boring. For many traders, fear eases noticeably at a smaller size; test this on yourself.
 - Decide entry, stop and target before the session and write them down.
 - Use bracket orders so the exit decisions are made in advance.
 - Hide the rupee P&L column and watch the chart in R multiples instead.
@@ -22,12 +22,12 @@
   {
     id: 'greed', name: 'Greed',
     what: `Greed is the desire for more than your plan offers: larger size, wider targets, extra trades, or holding beyond the exit because the move "could go further". It is not ambition; it is abandoning the plan in pursuit of a bigger outcome.`,
-    why: `Winning activates reward pathways and invites you to seek the feeling again. Intraday charts constantly show moves you could have caught with hindsight. Social media amplifies this with screenshots of exceptional days, which are a highly selected sample.`,
+    why: `Winning feels good, and that feeling invites you to seek it again; this is a plain description of reinforcement, not a neuroscience claim about your brain. Intraday charts constantly show moves you could have caught with hindsight. Social media amplifies this with screenshots of exceptional days, which are a highly selected sample.`,
     signs: `- You raise size after a winning streak without any change in your rules.
 - You remove or widen your target in mid-trade.
 - You hold an intraday position into the close or overnight to "let it run".
 - You calculate what you would make if a trade went to an extreme level.`,
-    cost: `Greed increases variance and often turns winners into scratches or losers. Bigger size after wins means your largest positions coincide with the moment your recent sample looks best, which is often near a mean reversion of results. For leveraged products such as futures and options, it can produce a single loss that undoes weeks of work.`,
+    cost: `Greed increases variance and often turns winners into scratches or losers. Bigger size after wins means your largest positions coincide with the moment your recent sample looks best, and a hot streak in a small sample is usually followed by more ordinary results (regression to the mean), so the extra size tends to meet average performance. For leveraged products such as futures and options, it can produce a single loss that undoes weeks of work.`,
     countermeasures: `- Fix size rules in writing, such as a maximum risk per trade and per day.
 - Allow size increases only after a pre-defined review, for example after 50 trades meeting your criteria.
 - Use partial exits: take part off at your target and trail the rest under clear rules.
@@ -42,7 +42,7 @@
 - Your entries cluster near the high of a rally or the low of a decline.
 - You trade instruments that were not on your watchlist this morning.
 - You feel urgency rather than calm when placing the order.`,
-    cost: `Chasing gives the worst risk-reward: a wide stop to the base of the move, and little room to the next resistance. FOMO trades often fail because they are entered when early participants are taking profits. Even when they work, they reinforce a habit that will eventually be expensive.`,
+    cost: `Chasing gives the worst risk-reward: a wide stop to the base of the move, and little room to the next resistance. A chased entry also tends to sit where a normal pullback is enough to stop you out. Even when they work, they reinforce a habit that will eventually be expensive.`,
     countermeasures: `- Write a rule: no entry more than a fixed distance from your trigger, for example 0.5 ATR.
 - Accept that missing moves is part of the job; there are always more setups.
 - Keep a "missed trades" list rather than chasing; review it later for patterns.
@@ -58,7 +58,7 @@
 - You trade the same stock in the opposite direction after being stopped out.
 - Your size increases after losses.
 - You think about the rupee amount lost rather than the next setup.`,
-    cost: `Revenge trades are taken in the worst mental state with the weakest criteria and often the largest size. A single revenge sequence can turn a normal one-R loss into a five-R day. Repeated over months, it is one of the most common ways that small, manageable drawdowns become account-threatening ones.`,
+    cost: `Revenge trades are taken in the worst mental state with the weakest criteria and often the largest size. A single revenge sequence can turn a normal one-R loss into a five-R day. Repeated over months, it is a direct route from small, manageable drawdowns to account-threatening ones. Your own journal is the evidence that matters: tag these trades and measure them.`,
     countermeasures: `- Enforce a mandatory pause after any stop-out: for example five minutes away from the screen.
 - Set a maximum daily loss (in R or ₹) after which you stop trading for the day.
 - Never increase size after a loss within the same session.
@@ -69,7 +69,9 @@
   {
     id: 'overtrading', name: 'Overtrading',
     what: `Overtrading is taking more trades than your system generates, or trading when conditions do not suit your approach. It includes boredom trades, marginal setups, and constant scalping in a quiet market.`,
-    why: `Activity feels like productivity. Sitting through hours with no setup is uncomfortable, and every candle looks like a potential trade. For intraday traders in India, the lunch hour and the hours before the US open are typical periods of low participation where overtrading is tempting.`,
+    why: `Activity feels like productivity. Sitting through hours with no setup is uncomfortable, and every candle looks like a potential trade. For intraday traders in India, the middle of the session usually sees lower volume than the open and the close (the common U-shaped intraday volume pattern), and quiet markets make marginal trades tempting. Check this on the volume of your own instruments rather than assuming it.
+
+> [!evidence] Research on individual investors links heavy trading with worse net results. Barber and Odean (Journal of Finance, 2000, "Trading Is Hazardous to Your Wealth") found that the US households who traded most earned markedly lower net returns than those who traded least, largely because of costs. In India, SEBI's July 2024 study of individual intraday traders in the equity cash segment reported that about 7 in 10 made a net loss in FY2022-23, with a higher loss share among those making more than 500 trades a year. These are group findings, not a forecast for you.`,
     signs: `- Your trade count varies widely day to day without changes in conditions.
 - Many trades are scratches or small losses.
 - Charges are a large share of your gross P&L.
@@ -84,13 +86,17 @@
   },
   {
     id: 'loss-aversion', name: 'Loss aversion',
-    what: `Loss aversion is the tendency to feel losses more intensely than equivalent gains. In prospect theory, developed by Daniel Kahneman and Amos Tversky, the pain of losing is described as stronger than the pleasure of winning the same amount. In trading it leads to holding losers and cutting winners.`,
-    why: `Closing a losing trade makes the loss real and final. Holding keeps hope alive. At the same time, closing a winner locks in a pleasant feeling, so traders rush to take it. This is often called the disposition effect.`,
+    what: `Loss aversion is the tendency to feel losses more intensely than equivalent gains. In prospect theory, developed by Daniel Kahneman and Amos Tversky (Econometrica, 1979), outcomes are judged as gains or losses relative to a reference point, and losses weigh more than gains of the same size. Their later estimate (Tversky and Kahneman, 1992) put the typical loss-aversion ratio at roughly two, but this is an average from experiments and varies a great deal between people and situations.
+
+Strictly, loss aversion and the disposition effect are different things. Loss aversion is about how outcomes feel; the disposition effect is the observed behaviour of selling winners too soon and holding losers too long.`,
+    why: `Prospect theory also says people tend to take risk to avoid a sure loss and avoid risk to protect a sure gain. Applied to an open trade with your entry price as the reference point, closing a loser turns a paper loss into a realised one, so holding and hoping feels better; closing a winner banks a gain, so traders rush to take it. Hersh Shefrin and Meir Statman (Journal of Finance, 1985) named this pattern the disposition effect, explaining it with prospect theory, mental accounting and regret.
+
+> [!evidence] The disposition effect is one of the better-documented findings in behavioural finance. Terrance Odean (Journal of Finance, 1998) found that US discount-brokerage investors realised gains at a noticeably higher rate than losses, and that the winners they sold went on to do better than the losers they kept. Later studies have found similar patterns in many countries. Whether prospect theory is the full explanation is still debated; the behaviour itself is well established.`,
     signs: `- You move or remove stops to avoid taking a loss.
 - You average down on losers without a plan.
 - Your average loser is larger than your average winner, despite a planned ratio above one.
 - You feel relief, not satisfaction, when closing a winner.`,
-    cost: `Loss aversion inverts the payoff you designed. A plan with two-R targets and one-R stops becomes, in practice, half-R winners and two-R losers. Holding intraday losers can also turn into an unplanned overnight position with gap risk.`,
+    cost: `Loss aversion inverts the payoff you designed. A plan with two-R targets and one-R stops becomes, in practice, half-R winners and two-R losers. At a 40% win rate the plan's expectancy is {{0.40 × 2R − 0.60 × 1R = +0.20R}}; the same win rate with the distorted payoff gives {{0.40 × 0.5R − 0.60 × 2R = −1.00R}}, and you would need to win 80% of trades just to break even. Holding intraday losers can also turn into an unplanned overnight position with gap risk.`,
     countermeasures: `- Place a hard stop order with every entry and never widen it.
 - Think in R multiples, not rupees; a one-R loss is a normal cost of business.
 - Pre-commit to exits with bracket orders.
@@ -101,7 +107,9 @@
   {
     id: 'confirmation-bias', name: 'Confirmation bias',
     what: `Confirmation bias is seeking, noticing and remembering information that supports what you already believe, while discounting what contradicts it. Once you are long, every bullish signal looks important and every bearish one looks like noise.`,
-    why: `Holding a position creates a stake in being right. Indicators, news and opinions are abundant, so it is always possible to find something that agrees with you. Charts are ambiguous enough that the same bars can be read either way.`,
+    why: `Holding a position creates a stake in being right. Indicators, news and opinions are abundant, so it is always possible to find something that agrees with you. Charts are ambiguous enough that the same bars can be read either way.
+
+> [!evidence] Confirmation bias is among the most widely replicated findings in the psychology of judgement; Raymond Nickerson's review (Review of General Psychology, 1998) surveys the evidence. Its specific cost to traders is an inference, not a measured result: test it against your own journal.`,
     signs: `- You add indicators until one agrees with your position.
 - You look for social media posts that support your trade.
 - You explain away price action that hits your invalidation level.
@@ -117,7 +125,7 @@
   {
     id: 'anchoring', name: 'Anchoring',
     what: `Anchoring is giving too much weight to a reference number, such as your entry price, yesterday's close, an analyst target, or the high a stock reached last month. Decisions become relative to the anchor rather than to current information.`,
-    why: `The brain uses reference points to simplify decisions. Your entry price is the most salient number on your screen, even though the market neither knows nor cares about it.`,
+    why: `People use reference points to simplify judgements under uncertainty. Tversky and Kahneman (Science, 1974) showed that estimates are pulled towards an initial number even when that number is obviously irrelevant, and that adjustment away from it is usually too small. Your entry price is the most salient number on your screen, even though other market participants neither know nor care about it. In prospect theory the entry price also acts as the reference point that defines a gain or a loss, which links anchoring to the disposition effect.`,
     signs: `- You wait to "get back to breakeven" before exiting a bad trade.
 - You refuse to buy a stock because it was cheaper earlier in the day.
 - You set targets based on round numbers or your desired profit rather than structure.
@@ -132,7 +140,9 @@
   {
     id: 'recency-bias', name: 'Recency bias',
     what: `Recency bias is giving too much weight to the most recent events. A few losses make a sound system feel broken; a few wins make a weak one feel brilliant.`,
-    why: `Recent outcomes are vivid and emotionally charged. Small samples are dominated by randomness, but the brain looks for patterns anyway.`,
+    why: `Recent outcomes are vivid and easy to recall, and people tend to judge likelihood by how easily examples come to mind (the availability heuristic, Tversky and Kahneman, 1974). Small samples are dominated by randomness, yet people expect even short sequences to look representative of the long run, which Tversky and Kahneman called belief in the law of small numbers (1971).
+
+How noisy is a small sample? For a true 50% win rate, a rough 95% range for the win rate you will observe is about 28%–72% over 20 trades, 36%–64% over 50 trades and 40%–60% over 100 trades. With a 50% win rate, the chance of at least one run of six or more consecutive losses somewhere in 100 independent trades is about 55%; at a 40% win rate, a run of seven or more has about a 69% chance. A streak that long is normal, not proof the method has stopped working.`,
     signs: `- You change systems after three or four losses.
 - You increase size after a few wins.
 - You assume today's market will behave like yesterday's.
@@ -180,7 +190,7 @@
   {
     id: 'emotional-decisions', name: 'Emotional decision-making',
     what: `Emotional decision-making is letting a mood, rather than your rules, decide what you do. Anger, excitement, anxiety, boredom and euphoria all distort how risk and reward look. Every trader feels emotions; the problem is letting them select trades or exits.`,
-    why: `Markets deliver rapid, uncertain feedback with money at stake, which is a strong emotional stimulus. Stress from outside trading, poor sleep and hunger lower your capacity to regulate it.`,
+    why: `Markets deliver rapid, uncertain feedback with money at stake, which is a strong emotional stimulus. Stress from outside trading, poor sleep and hunger can make it harder to regulate; notice whether they affect you by logging them alongside your trades.`,
     signs: `- Your decisions differ depending on whether the day started well or badly.
 - You trade more when stressed or bored.
 - You make exceptions to your rules "just this once".
@@ -196,7 +206,9 @@
   {
     id: 'confidence', name: 'Confidence',
     what: `Healthy confidence is trust in your process based on evidence: a tested set of rules, a journal and a track record. Overconfidence is trust that exceeds that evidence, often after a winning streak. Underconfidence is doubt despite good evidence.`,
-    why: `A few wins feel like skill; a few losses feel like failure. Without enough data, confidence tracks recent results, not ability. Leverage and fast markets make overconfidence especially costly.`,
+    why: `A few wins feel like skill; a few losses feel like failure. Without enough data, confidence tracks recent results, not ability. People also tend to credit successes to skill and failures to bad luck (self-attribution bias), which inflates confidence after a good run. Leverage and fast markets make overconfidence especially costly.
+
+> [!evidence] Brad Barber and Terrance Odean linked overconfidence to excessive trading among individual investors: heavy traders earned lower net returns than light traders (Journal of Finance, 2000), and men, whom psychological research finds more overconfident on average in finance, traded more than women and lost more net return as a result (Quarterly Journal of Economics, 2001, "Boys Will Be Boys"). Treat these as evidence about groups of investors, not about you; your journal is the test that applies to you.`,
     signs: `- Overconfidence: increasing size quickly, skipping preparation, dismissing risk.
 - Underconfidence: skipping valid trades, reducing size after normal losses.
 - Feeling certain about what the market will do next.
@@ -291,7 +303,7 @@ Annie Duke's idea of resulting, from *Thinking in Bets*, describes this error: j
     signs: `- Your worst trades happen late in the session.
 - You make impulsive decisions after long periods of watching.
 - You struggle to follow your checklist later in the day.`,
-    cost: `Fatigue reduces the quality of exits, increases rule breaks and makes revenge trading more likely. For Indian intraday traders, sessions run from 09:15 to 15:30 IST, and many also watch the US open in the evening. Combining both without breaks means many hours of screen time, which is when sloppy decisions creep in.
+    cost: `Fatigue reduces the quality of exits, increases rule breaks and makes revenge trading more likely. For Indian intraday traders, the NSE normal market opens at 09:15 IST; the equity cash session ends at 15:30 IST, and from 3 August 2026 equity derivatives trade until 15:40 IST (as of Nov 2026 — verify current timings on NSE). Many also watch the US open in the evening. Combining both without breaks means many hours of screen time, which is when sloppy decisions creep in.
 
 > [!evidence] Research on ego depletion and decision fatigue is mixed, with some well-known findings failing to replicate. The practical advice here does not depend on the mechanism: your own journal will show whether late-session trades are worse for you.`,
     countermeasures: `- Make key decisions before the session in your plan.
@@ -311,14 +323,14 @@ Annie Duke's idea of resulting, from *Thinking in Bets*, describes this error: j
     { id: 'la2', text: 'I take profits quickly but hold losing trades hoping they recover.', trait: 'loss aversion', reverse: false },
     { id: 'la3', text: 'I can exit at my stop without much emotional difficulty.', trait: 'loss aversion', reverse: true },
     { id: 'la4', text: 'I average down on losing intraday trades without a pre-defined plan.', trait: 'loss aversion', reverse: false },
-    { id: 'dis1', text: 'I follow my written trading rules, even on difficult days.', trait: 'discipline', reverse: true },
-    { id: 'dis2', text: 'I stop trading when I reach my daily loss limit.', trait: 'discipline', reverse: true },
-    { id: 'dis3', text: 'I skip my pre-market preparation.', trait: 'discipline', reverse: false },
-    { id: 'dis4', text: 'I record every trade in my journal, including the embarrassing ones.', trait: 'discipline', reverse: true },
-    { id: 'pat1', text: 'I feel restless when no setup appears for an hour.', trait: 'patience', reverse: false },
-    { id: 'pat2', text: 'I am comfortable ending a session with no trades.', trait: 'patience', reverse: true },
-    { id: 'pat3', text: 'I exit trades early because they are taking too long.', trait: 'patience', reverse: false },
-    { id: 'pat4', text: 'I wait for price to come to my level rather than chasing it.', trait: 'patience', reverse: true },
+    { id: 'dis1', text: 'I follow my written trading rules, even on difficult days.', trait: 'discipline gaps', reverse: true },
+    { id: 'dis2', text: 'I stop trading when I reach my daily loss limit.', trait: 'discipline gaps', reverse: true },
+    { id: 'dis3', text: 'I skip my pre-market preparation.', trait: 'discipline gaps', reverse: false },
+    { id: 'dis4', text: 'I record every trade in my journal, including the embarrassing ones.', trait: 'discipline gaps', reverse: true },
+    { id: 'pat1', text: 'I feel restless when no setup appears for an hour.', trait: 'impatience', reverse: false },
+    { id: 'pat2', text: 'I am comfortable ending a session with no trades.', trait: 'impatience', reverse: true },
+    { id: 'pat3', text: 'I exit trades early because they are taking too long.', trait: 'impatience', reverse: false },
+    { id: 'pat4', text: 'I wait for price to come to my level rather than chasing it.', trait: 'impatience', reverse: true },
     { id: 'oc1', text: 'After a few winning trades, I increase my position size.', trait: 'overconfidence', reverse: false },
     { id: 'oc2', text: 'I feel certain about where the market will go next.', trait: 'overconfidence', reverse: false },
     { id: 'oc3', text: 'I base my view of my skill on journal statistics rather than memory.', trait: 'overconfidence', reverse: true },
@@ -328,7 +340,7 @@ Annie Duke's idea of resulting, from *Thinking in Bets*, describes this error: j
     { id: 'tilt3', text: 'I take a deliberate break after a losing trade.', trait: 'tilt', reverse: true },
     { id: 'tilt4', text: 'I increase my size to win back losses on the same day.', trait: 'tilt', reverse: false }
   ];
-  selfAssessment.note = 'Self-reflection tool, not a clinical or diagnostic instrument. Rate each statement 1 (never) to 5 (always) based on your last month of trading. Reverse items are scored 6 minus your answer. Use the result to choose what to work on, and retake it monthly.';
+  selfAssessment.note = 'Self-reflection tool only. It is not a clinical, diagnostic or validated psychometric instrument, has no norms, and says nothing about your mental health or whether you will succeed as a trader. Answer from Strongly disagree (1) to Strongly agree (5) for how you actually behaved over your last month of trading, not how you would like to. Some statements are worded positively and scored in reverse (6 minus your answer), so on every trait a higher score marks an area to build rules around. Compare results only with your own earlier results, check them against your journal, and retake monthly. If trading is causing you serious distress, stop and talk to someone you trust or a qualified professional.';
 
   const checklists = {
     pre: [
