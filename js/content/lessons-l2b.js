@@ -994,7 +994,9 @@ Gold example (illustrative prices, ignoring exact duty structure): $2,700/oz × 
 
 [[widget:futures-exposure]]` },
       { h: 'India', md: `> [!india] Practical notes (as of Nov 2026 — verify with MCX and your broker):
-- Intraday commodity trades attract CTT (commodity transaction tax) on non-agricultural futures sells, plus exchange charges, SEBI fees, GST and stamp duty. Rates differ from equity F&O — check your broker's charge sheet.
+- Intraday commodity trades attract CTT (Commodities Transaction Tax) instead of STT. As of Nov 2026 (secondary sources — verify on mcxindia.com): CTT 0.01% of the sell value on non-agricultural futures and 0.05% of premium on option sells; MCX transaction fee about ₹2.10 per lakh on futures and ₹41.80 per lakh of premium on options; SEBI fee ₹10 per crore; stamp duty 0.002% (futures) or 0.003% (options) on the buy side; GST 18% on brokerage and exchange fees. Agricultural futures are exempt from CTT. Choose the MCX segments in the charges calculator below. Example: 1 lot of crude (100 barrels) bought at ₹5,500 and sold at ₹5,520 earns ₹2,000 gross and pays about ₹142 in charges with ₹20 per-order brokerage — far less than the ≈₹950–1,000 on a Nifty futures lot, because the contract is smaller (about ₹5.5 lakh notional against about ₹16.8 lakh) and the CTT rate is a fifth of the futures STT rate.
+
+[[widget:charges-india]]
 - Many brokers auto-square or block positions in contracts entering the delivery period. Find out the exact date for each contract.
 - Evening liquidity in MCX crude and natural gas is driven by the US session; your intraday window may be 18:30–23:30 IST rather than the daytime.` },
       { h: 'Common misconceptions', md: `- **"Gold always rises in a crisis."** It often does, but liquidations can push gold down in a sharp panic as traders raise cash.

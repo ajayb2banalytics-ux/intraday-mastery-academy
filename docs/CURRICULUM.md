@@ -154,7 +154,7 @@ Master derivatives, institutional frameworks (with evidence labels), fundamental
 
 ### L3-M8 · Other asset classes (Global markets; 12 assessment questions)
 
-1. **Commodities: MCX, gold, silver, crude, natural gas** — `l3-commodities` · established · ~1254 words · Beginner view, Intermediate view, Advanced view, The maths, India, Common misconceptions, When it fails, Exercise
+1. **Commodities: MCX, gold, silver, crude, natural gas** — `l3-commodities` · established · ~1378 words · Beginner view, Intermediate view, Advanced view, The maths, India, Common misconceptions, When it fails, Exercise
 2. **Currency derivatives and forex** — `l3-fx` · established · ~1096 words · Beginner view, Intermediate view, Advanced view, The maths, India, Common misconceptions, When it fails, Exercise
 3. **Crypto, perpetual futures, funding and liquidation** — `l3-crypto` · established · ~1443 words · Beginner view, Intermediate view, Advanced view, The maths, India, Common misconceptions, When it fails, Exercise
 4. **Bond futures and interest-rate derivatives** — `l3-rates` · established · ~1179 words · Beginner view, Intermediate view, Advanced view, The maths, India, US & global, Common misconceptions, When it fails, Exercise

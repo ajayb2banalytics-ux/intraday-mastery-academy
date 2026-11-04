@@ -33,7 +33,7 @@
     [/^technical(?:\/(\w+))?$/, 'technical'], [/^indicator\/(.+)$/, 'indicator'], [/^pattern\/(.+)$/, 'pattern'], [/^chartlab$/, 'chartlab'], [/^data$/, 'data'], [/^concepts(?:\/([\w-]+))?$/, 'concepts'],
     [/^markets(?:\/(\w+))?$/, 'markets'], [/^strategies$/, 'strategies'], [/^strategy\/(.+)$/, 'strategy'], [/^derivatives(?:\/(\w+))?$/, 'derivatives'],
     [/^risk$/, 'risk'], [/^simulator(?:\/(\w+))?$/, 'simulator'], [/^journal(?:\/(\w+))?$/, 'journal'], [/^quant(?:\/(\w+))?$/, 'quant'], [/^calculators(?:\/([\w-]+))?$/, 'calculators'],
-    [/^psychology(?:\/([\w-]+))?$/, 'psychology'], [/^workflow$/, 'workflow'], [/^library(?:\/(\w+))?$/, 'library'], [/^assessments$/, 'assessments'], [/^assess\/(.+)$/, 'assess'],
+    [/^psychology(?:\/([\w-]+))?$/, 'psychology'], [/^workflow$/, 'workflow'], [/^library(?:\/(\w+))?$/, 'library'], [/^assessments$/, 'assessments'], [/^review$/, 'review'], [/^assess\/(.+)$/, 'assess'],
     [/^settings$/, 'settings'], [/^search\/(.*)$/, 'search'],
   ];
   let current = null;
@@ -44,7 +44,7 @@
     let name = 'notfound', arg = null; for (const [re, n] of ROUTES) { const m = path.match(re); if (m) { name = n; arg = m[1]; break; } }
     const el = $('#view'); if (current && current.cleanup) try { current.cleanup(); } catch (e) {}
     el.innerHTML = ''; root.scrollTo(0, 0);
-    const navKey = { notfound: '', module: 'academy', lesson: 'academy', indicator: 'technical', pattern: 'technical', strategy: 'strategies', assess: 'assessments', search: '' }[name] ?? name;
+    const navKey = { notfound: '', module: 'academy', lesson: 'academy', indicator: 'technical', pattern: 'technical', strategy: 'strategies', assess: 'assessments', review: 'assessments', search: '' }[name] ?? name;
     $$('[data-nav]').forEach((a) => a.classList.toggle('active', a.dataset.nav === navKey));
     const v = IA.views[name] || IA.views.notfound;
     const nav = NAV.find((x) => x[0] === navKey); setTitle(nav ? nav[1] : 'Intraday Mastery');

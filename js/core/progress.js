@@ -53,6 +53,9 @@
   }
   function streak() { let s = 0; const d = new Date(); for (;;) { const k = d.toISOString().slice(0, 10); if (P.activity[k]) { s++; d.setUTCDate(d.getUTCDate() - 1); } else break; } return s; }
   async function setReadiness(r) { P.readiness = r; await save(); }
+  // Spaced repetition: every answered bank / lesson-check question updates the review schedule (see engines/srs.js).
+  async function answer(id, ok) { if (!P || !id || !IA.srs || !IA.srs.resolve(id)) return; P.srs = IA.srs.record(P.srs || IA.srs.empty(), id, ok); await save(); }
+  const srsState = () => P?.srs || (IA.srs ? IA.srs.empty() : { items: {} });
   async function addDecision(d) { P.decisions.push(d); P.decisions = P.decisions.slice(-500); act('decisions'); await save(); }
-  IA.progress = { load, save, lessonCheck, recordQuiz, isDone, moduleState, levelState, unlocked, currentLevel, trackState, overall, gaps, nextLessons, streak, setReadiness, addDecision, PASS, get state() { return P; }, today };
+  IA.progress = { answer, srsState, load, save, lessonCheck, recordQuiz, isDone, moduleState, levelState, unlocked, currentLevel, trackState, overall, gaps, nextLessons, streak, setReadiness, addDecision, PASS, get state() { return P; }, today };
 })(typeof window !== 'undefined' ? window : globalThis);

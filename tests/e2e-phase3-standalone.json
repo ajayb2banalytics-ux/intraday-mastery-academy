@@ -1,0 +1,116 @@
+[
+ {
+  "id": "P3-01",
+  "name": "Options paper: chain shows 13 strikes (ATM \u00b1 6) with bid/ask, delta, IV and B/S buttons; model and synthetic-volatility caveats shown",
+  "ok": true,
+  "detail": "[13, 'Chart replay\\nDecision simulator\\nPaper trading\\nOptions paper\\n\\nPractise index options with a virtual account on a synthetic Nifty or Bank Nifty path. Weekly expiry every 5 sessions, cash-settled at intr']"
+ },
+ {
+  "id": "P3-02",
+  "name": "Options paper: an ATM call bought from the chain fills 1 lot (65) on the NEXT bar at that bar's open ask",
+  "ok": true,
+  "detail": "['W1-25500-CE', {'qty': 65, 'avg': 379.9, 'fillT': 1767691800000, 'idx': 79}, 379.9, 'Now: bid 377.50 / ask 379.90 \u00b7 IV 27.7% \u00b7 \u0394 0.53. Premium \u2248 \u20b924,693.50 (max loss']"
+ },
+ {
+  "id": "P3-03",
+  "name": "Options paper: positions, Greeks (delta/theta/vega), funds and payoff chart shown for the open position",
+  "ok": true,
+  "detail": "t"
+ },
+ {
+  "id": "P3-04",
+  "name": "Options paper: selling an ATM put shows an approximate margin above 0",
+  "ok": true,
+  "detail": "Approx. margin used\u20b91,65,015.53"
+ },
+ {
+  "id": "P3-05",
+  "name": "Options paper: account and positions survive a reload",
+  "ok": true,
+  "detail": "Chart replay\nDecision simulator\nPaper trading\nOptions paper\n\nPractise index options with a virtual account on a syntheti"
+ },
+ {
+  "id": "P3-06",
+  "name": "Options paper: \"Exit all\" closes both legs on the next bar and records two trades with charges",
+  "ok": true,
+  "detail": "[[\"W1-25500-CE\",112],[\"W1-25550-PE\",99]]"
+ },
+ {
+  "id": "P3-07",
+  "name": "Options paper: \"To next expiry\" settles the open option at intrinsic value (expiry trade recorded)",
+  "ok": true,
+  "detail": "['market', 'market', 'expiry: expired worthless']"
+ },
+ {
+  "id": "P3-08",
+  "name": "Options paper: closed trades can be sent to the journal",
+  "ok": true,
+  "detail": "3"
+ },
+ {
+  "id": "P3-09",
+  "name": "Payoff builder: a long call calendar is valued at the FRONT expiry with a finite max loss (\u2248 net debit) and two breakevens; per-leg days/IV shown",
+  "ok": true,
+  "detail": "n"
+ },
+ {
+  "id": "P3-10",
+  "name": "Payoff builder: single-expiry strategies still use the exact expiry analysis",
+  "ok": true,
+  "detail": "NET PREMIUM\n\u20b96,782.10\nMAX GAIN\n\u20b96,782.10\nMAX LOSS\n\u2212\u20b96,217.90\nBREAKEVEN(S)\n25495.7 / 26104.3\nNET DEBIT/CREDIT\nCredit\nShow the working\n\u25a0 at expiry\n\u25a0 today\n\u2506 grey = breakeven"
+ },
+ {
+  "id": "P3-11",
+  "name": "Dashboard shows the Spaced review card",
+  "ok": true,
+  "detail": "OVERALL MASTERY\n0%\nLEVEL 1\nFoundation\nLESSONS COMPLETED\n0/102\nMODULES MASTERED\n0/25\nSpaced review\n\nQuestions you get wro"
+ },
+ {
+  "id": "P3-12",
+  "name": "Wrong answers in a module assessment enter the review queue (box 1, due in 1 day)",
+  "ok": true,
+  "detail": "[6]"
+ },
+ {
+  "id": "P3-13",
+  "name": "Review page lists the due questions as a quiz",
+  "ok": true,
+  "detail": "[6, 6]"
+ },
+ {
+  "id": "P3-14",
+  "name": "Answering due questions correctly moves them to box 2 (next due in 3 days)",
+  "ok": true,
+  "detail": "[6, 6]"
+ },
+ {
+  "id": "P3-15",
+  "name": "Journal coach shows insights with sample sizes: small sample, over-trading against the plan, costs, finding/hint labels",
+  "ok": true,
+  "detail": "Trades\nAdd trade\nPerformance analytics\nCoach\n\nRule-based coaching from your own journal and saved risk plan. Every point shows its sample size. \"Finding\" means the pattern is clear in your data (at least 5 trades and Welch t \u2265 2, or a plain rule breach); \"hint\" means watch it \u2014 small samples often m"
+ },
+ {
+  "id": "P3-16",
+  "name": "Charges calculator offers MCX futures/options; crude 1 lot 5,500\u21925,520 shows CTT and total \u2248 \u20b9142.01",
+  "ok": true,
+  "detail": "[['Equity intraday (MIS)', 'Equity delivery (CNC)', 'Equity/index futures', 'Equity/index options (on premium)', 'MCX commodity futures (non-agri)', 'MCX commodity options (on premium)'], 'Every calculator shows its working. Inputs are yours; outputs are maths, not advice.\\n\\nDisplay currency\\nUSD\\nINR\\nEUR\\nGBP\\nJPY\\nSGD\\nHKD\\nAUD\\nCAD\\nPosition sizingRisk per tradeStop-lossTarget priceRisk / rew"
+ },
+ {
+  "id": "P3-17",
+  "name": "Specs page shows MCX contracts and counts items backed only by secondary sources",
+  "ok": true,
+  "detail": "Global clock\nMarket comparison\nIndia\nUnited States\nEurope & Asia\nOther assets\nSpecs & dates\n\nEvery number below is dated"
+ },
+ {
+  "id": "P3-18",
+  "name": "India market page lists the MCX session (09:00\u201323:55)",
+  "ok": true,
+  "detail": "Sessions in your time zone\nEXCHANGE\tLOCAL HOURS\tIN ASIA/CALCUTTA\tNOW\nNSE / BSE\t09:15\u201315:30 Kolkata\t09:15\u201315:30\tClosed\nMCX (commodities)\t09:00\u201323:55 Kolkata\t09:00\u201323:55\tOpen\nIndian markets \u2014 lessons\npr"
+ },
+ {
+  "id": "P3-19",
+  "name": "No uncaught page errors during the run",
+  "ok": true,
+  "detail": "[]"
+ }
+]

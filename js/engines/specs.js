@@ -16,6 +16,9 @@
         eqDelivery: { label: 'Equity delivery (CNC)', sttBuy: 0.001, sttSell: 0.001, txn: 307 / 1e7, stampBuy: 0.00015, brokerage: { type: 'flat', flat: 0 } },
         futures: { label: 'Equity/index futures', sttBuy: 0, sttSell: 0.0005, txn: 183 / 1e7, stampBuy: 0.00002, brokerage: { type: 'minOf', flat: 20, pct: 0.0003 } },
         options: { label: 'Equity/index options (on premium)', sttBuy: 0, sttSell: 0.0015, txn: 3553 / 1e7, stampBuy: 0.00003, brokerage: { type: 'flat', flat: 20 } },
+        // MCX non-agricultural commodities. CTT (Commodities Transaction Tax) replaces STT. Rates corroborated by secondary sources only (official MCX/CBDT pages not reachable when checked, Nov 2026).
+        commFut: { label: 'MCX commodity futures (non-agri)', taxName: 'CTT', sttBuy: 0, sttSell: 0.0001, txn: 0.000021, stampBuy: 0.00002, brokerage: { type: 'minOf', flat: 20, pct: 0.0003 } },
+        commOpt: { label: 'MCX commodity options (on premium)', taxName: 'CTT', sttBuy: 0, sttSell: 0.0005, txn: 0.000418, stampBuy: 0.00003, brokerage: { type: 'flat', flat: 20 } },
       },
       contracts: [
         { sym: 'NIFTY', name: 'Nifty 50 index', lot: 65, tick: 'Options 0.05; futures 0.05/0.10/0.20 by index level', expiry: 'Weekly Tuesday (4 weekly) + monthly last Tuesday; quarterly & half-yearly options', asOf: '2026-01 (lot) · 2025-09-01 (expiry)' },
@@ -23,6 +26,14 @@
         { sym: 'FINNIFTY', name: 'Nifty Financial Services', lot: 60, tick: 'Options 0.05; futures 0.05/0.10/0.20 by index level', expiry: 'Monthly (last Tuesday)', asOf: '2026-01 · 2025-09-01' },
         { sym: 'MIDCPNIFTY', name: 'Nifty Midcap Select', lot: 120, tick: 'Options 0.05; futures 0.05/0.10/0.20 by index level', expiry: 'Monthly (last Tuesday)', asOf: '2026-01 · 2025-09-01' },
         { sym: 'SENSEX', name: 'BSE Sensex (BSE)', lot: 20, tick: '0.05 (UNVERIFIED — no official BSE source found)', expiry: 'Weekly Thursday + monthly last Thursday (secondary sources)', asOf: '2026-01' },
+        { sym: 'CRUDEOIL', name: 'MCX Crude Oil (₹/barrel; lot multiplier 100 bbl)', lot: 100, tick: '₹1 = ₹100 per lot (secondary sources)', expiry: 'See MCX contract specifications (expiry cycle not verified here)', asOf: 'checked 2026-11 · secondary' },
+        { sym: 'CRUDEOILM', name: 'MCX Crude Oil Mini (₹/barrel; 10 bbl)', lot: 10, tick: '₹1 = ₹10 per lot (secondary)', expiry: 'See MCX contract specifications (expiry cycle not verified here)', asOf: 'checked 2026-11 · secondary' },
+        { sym: 'NATURALGAS', name: 'MCX Natural Gas (₹/mmBtu; 1,250 mmBtu)', lot: 1250, tick: '₹0.10 = ₹125 per lot (secondary)', expiry: 'See MCX contract specifications (expiry cycle not verified here)', asOf: 'checked 2026-11 · secondary' },
+        { sym: 'NATGASMINI', name: 'MCX Natural Gas Mini (₹/mmBtu; 250 mmBtu)', lot: 250, tick: '₹0.10 = ₹25 per lot (secondary)', expiry: 'See MCX contract specifications (expiry cycle not verified here)', asOf: 'checked 2026-11 · secondary' },
+        { sym: 'GOLD', name: 'MCX Gold (₹/10 g; 1 kg → multiplier 100)', lot: 100, tick: '₹1 = ₹100 per lot (secondary)', expiry: 'See MCX contract specifications (expiry cycle not verified here)', asOf: 'checked 2026-11 · secondary' },
+        { sym: 'GOLDM', name: 'MCX Gold Mini (₹/10 g; 100 g → multiplier 10)', lot: 10, tick: '₹1 = ₹10 per lot (secondary)', expiry: 'See MCX contract specifications (expiry cycle not verified here)', asOf: 'checked 2026-11 · secondary' },
+        { sym: 'SILVER', name: 'MCX Silver (₹/kg; 30 kg)', lot: 30, tick: '₹1 = ₹30 per lot (secondary)', expiry: 'See MCX contract specifications (expiry cycle not verified here)', asOf: 'checked 2026-11 · secondary' },
+        { sym: 'SILVERM', name: 'MCX Silver Mini (₹/kg; 5 kg)', lot: 5, tick: '₹1 = ₹5 per lot (secondary)', expiry: 'See MCX contract specifications (expiry cycle not verified here)', asOf: 'checked 2026-11 · secondary' },
       ],
       // NSE index futures tick by index level, effective 15 Apr 2025 (reviewed monthly by NSE): ≤15,000 → 0.05; ≤30,000 → 0.10; above → 0.20.
       indexFutTick: [[15000, 0.05], [30000, 0.10], [Infinity, 0.20]],
@@ -46,6 +57,7 @@
     // Session times in exchange-local time; converted with IANA zones (DST-safe)
     sessions: [
       { id: 'NSE', country: 'India', name: 'NSE / BSE', tz: 'Asia/Kolkata', pre: ['09:00', '09:15'], main: [['09:15', '15:30']], post: ['15:50', '16:00'], auction: ['15:15', '15:35'], note: 'Pre-open 09:00–09:15 (order entry to 09:10, matching 09:10–09:12, from 7 Sep 2026). Normal market 09:15–15:30; stocks with F&O contracts trade continuously to 15:15, then the Closing Auction Session 15:15–15:35 (from 3 Aug 2026). Post-close 15:50–16:00. Equity F&O closes 15:40. Block-deal windows 08:45–09:00 and 14:05–14:20. Sources: NSE market timings; SEBI circular on the Closing Auction Session (Jan 2026).' },
+      { id: 'MCX', country: 'India', name: 'MCX (commodities)', tz: 'Asia/Kolkata', pre: null, main: [['09:00', '23:55']], post: null, note: 'Non-agri commodities 09:00–23:55 IST from 2 Nov 2026 (US winter time; 09:00–23:30 while the US is on daylight saving). Cotton/kapas 09:00–21:00; other agri 09:00–17:00. Source: MCX circular 550/2026 as reported by brokers (secondary; official page not reachable when checked). MCX holiday sessions (often evening-only on exchange holidays) are not modelled.' },
       { id: 'NYSE', country: 'United States', name: 'NYSE / NASDAQ', tz: 'America/New_York', pre: ['04:00', '09:30'], main: [['09:30', '16:00']], post: ['16:00', '20:00'], note: 'Extended-hours windows vary by broker.' },
       { id: 'LSE', country: 'United Kingdom', name: 'London Stock Exchange', tz: 'Europe/London', pre: ['07:50', '08:00'], main: [['08:00', '16:30']], post: ['16:30', '16:35'], note: 'Opening and closing auctions.' },
       { id: 'XETRA', country: 'Germany', name: 'Deutsche Börse Xetra', tz: 'Europe/Berlin', pre: ['08:50', '09:00'], main: [['09:00', '17:30']], post: ['17:30', '17:35'], note: 'DAX futures trade nearly 22h on Eurex.' },

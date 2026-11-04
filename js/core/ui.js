@@ -106,7 +106,7 @@
   const errBlock = (msg) => h('div', { class: 'err result' }, msg);
 
   // ---------- Quiz component ----------
-  function quiz(questions, { onDone, shuffle = false, showWhy = true } = {}) {
+  function quiz(questions, { onDone, shuffle = false, showWhy = true, srs = true } = {}) {
     const qs = shuffle ? questions.slice().sort(() => Math.random() - 0.5) : questions;
     const wrap = h('div'); let answered = 0, correct = 0; const answers = [];
     qs.forEach((q, qi) => {
@@ -115,6 +115,7 @@
       q.o.forEach((o, oi) => opts.append(h('button', { class: 'opt', type: 'button', onclick: () => {
         if (box.dataset.done) return; box.dataset.done = '1'; answered++;
         const ok = oi === q.a; if (ok) correct++; answers.push({ id: q.id, ok });
+        if (srs && q.id && IA.progress && IA.progress.answer) IA.progress.answer(q.id, ok);
         $$('.opt', opts).forEach((b, bi) => { if (bi === q.a) b.classList.add('right'); else if (bi === oi) b.classList.add('wrong'); });
         if (showWhy) { why.innerHTML = `<b class="${ok ? 'up' : 'down'}">${ok ? 'Correct.' : 'Not quite.'}</b> ${inline(q.why || '')}`; why.classList.remove('hidden'); }
         if (answered === qs.length && onDone) onDone({ correct, total: qs.length, score: correct / qs.length, answers });

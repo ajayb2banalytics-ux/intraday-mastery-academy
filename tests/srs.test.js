@@ -1,0 +1,20 @@
+/* Spaced-repetition engine tests. Run: node tests/srs.test.js */
+const path = require('path');
+require(path.join(__dirname, '..', 'js', 'engines', 'srs.js'));
+require(path.join(__dirname, '..', 'js', 'content', 'curriculum.js'));
+require('fs').readdirSync(path.join(__dirname, '..', 'js', 'content')).filter((f) => /^lessons-.*\.js$/.test(f)).forEach((f) => require(path.join(__dirname, '..', 'js', 'content', f)));
+const IA = globalThis.IA, S = IA.srs, D = S.DAY; const results = []; let pass = 0, fail = 0;
+function t(id, name, fn) { try { const r = fn(); if (r === true) { pass++; results.push({ id, name, ok: true }); } else { fail++; results.push({ id, name, ok: false, detail: JSON.stringify(r).slice(0, 300) }); } } catch (e) { fail++; results.push({ id, name, ok: false, detail: 'threw ' + e.message }); } }
+const T0 = Date.UTC(2026, 10, 4, 10);
+t('SRS-01', 'A correct answer to a never-missed question schedules nothing', () => Object.keys(S.record(S.empty(), 'L1-M1-q01', true, T0).items).length === 0 || 'queued');
+t('SRS-02', 'A wrong answer queues the question in box 0, due in 1 day', () => { const s = S.record(S.empty(), 'q', false, T0); return (s.items.q.box === 0 && s.items.q.due === T0 + D && S.due(s, T0).length === 0 && S.due(s, T0 + D).length === 1) || s; });
+t('SRS-03', 'Correct reviews climb the boxes with intervals 3, 7, 16, 35 days, then graduate', () => { let s = S.record(S.empty(), 'q', false, T0), now = T0; const gaps = []; for (let k = 0; k < 5; k++) { now = s.items.q.due || now; const before = now; s = S.record(s, 'q', true, now); gaps.push(s.items.q.graduated ? 'grad' : (s.items.q.due - before) / D); } return JSON.stringify(gaps) === JSON.stringify([3, 7, 16, 35, 'grad']) || gaps; });
+t('SRS-04', 'A wrong answer at any box sends it back to box 0 and counts a lapse', () => { let s = S.record(S.empty(), 'q', false, T0); s = S.record(s, 'q', true, T0 + D); s = S.record(s, 'q', true, T0 + 4 * D); s = S.record(s, 'q', false, T0 + 11 * D); return (s.items.q.box === 0 && s.items.q.lapses === 2 && s.items.q.due === T0 + 12 * D) || s.items.q; });
+t('SRS-05', 'A graduated question re-enters the queue if missed again later', () => { let s = S.record(S.empty(), 'q', false, T0); for (let k = 0; k < 5; k++) s = S.record(s, 'q', true, T0 + k * 40 * D); const g = s.items.q.graduated; s = S.record(s, 'q', false, T0 + 400 * D); return (g && !s.items.q.graduated && s.items.q.box === 0) || s.items.q; });
+t('SRS-06', 'due() returns only due, non-graduated items, oldest first; stats() counts boxes', () => { let s = S.empty(); s = S.record(s, 'a', false, T0); s = S.record(s, 'b', false, T0 - 5 * D); s = S.record(s, 'c', false, T0 + 10 * D); const d = S.due(s, T0 + 2 * D), st = S.stats(s, T0 + 2 * D); return (JSON.stringify(d) === '["b","a"]' && st.due === 2 && st.queued === 3 && st.byBox[0] === 3 && st.nextDue === T0 + 11 * D) || [d, st]; });
+t('SRS-07', 'resolve() finds module-bank questions by id', () => { const q = IA.content.questions[0]; const r = S.resolve(q.id); return (r && r.q === q.q && r.a === q.a) || r; });
+t('SRS-08', 'resolve() finds lesson-check questions by <lessonId>-c<index>', () => { const l = IA.content.lessons.find((x) => x.check?.length > 1); const r = S.resolve(l.id + '-c1'); return (r && r.q === l.check[1].q && r.lessonId === l.id) || r; });
+t('SRS-09', 'resolve() returns null for ad-hoc drill ids (never queued)', () => S.resolve('drill') === null && S.resolve('nonexistent-c9') === null);
+t('SRS-10', 'Every question in every bank and lesson check is resolvable (so any miss can be reviewed)', () => { const miss = IA.content.questions.filter((q) => !S.resolve(q.id)).map((q) => q.id); IA.content.lessons.forEach((l) => (l.check || []).forEach((_, i) => { if (!S.resolve(`${l.id}-c${i}`)) miss.push(`${l.id}-c${i}`); })); return miss.length === 0 || miss.slice(0, 5); });
+module.exports = { results, pass, fail };
+if (require.main === module) { results.forEach((r) => console.log(`${r.ok ? 'PASS' : 'FAIL'} ${r.id} ${r.name}${r.ok ? '' : ' → ' + r.detail}`)); console.log(`\n${pass} passed, ${fail} failed`); process.exit(fail ? 1 : 0); }

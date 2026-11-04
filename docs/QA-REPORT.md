@@ -6,19 +6,29 @@ Generated 2026-11-04 in this build environment (Node v22.23.4, headless Google C
 
 | Suite | Passed | Notes |
 |---|---|---|
-| Engine known-answer tests (unit/calculation) | 121/121 |  |
+| Engine known-answer tests (unit/calculation) | 124/124 |  |
 | Importer tests (data integrity) | 26/26 |  |
 | Structure-detector tests (incl. causality) | 20/20 |  |
 | Backtest audit tests | 33/33 |  |
+| Options paper engine + multi-expiry payoff tests | 27/27 |  |
+| Spaced-repetition engine tests | 10/10 |  |
+| Journal-coaching engine tests | 15/15 |  |
 | Independent cross-validation vs Python/ta/SciPy | 59/59 | 1 informational convention difference |
 | Content validation | 0 errors | 102/102 lessons, 373 questions, 38 indicators, 30 strategies, 22 patterns |
-| Route smoke test (all routes, served + standalone) | pass | 51 routes; - served PWA: dashboard first render 789 ms (cold load, headless Chrome, local disk).; - file:// standalone: dashboard first render 255 ms (cold load, headless Chrome, local disk). |
+| Route smoke test (all routes, served + standalone) | pass | 55 routes; - served PWA: dashboard first render 551 ms (cold load, headless Chrome, local disk).; - file:// standalone: dashboard first render 266 ms (cold load, headless Chrome, local disk). |
 | End-to-end regression suite — served PWA | 31/31 |  |
 | End-to-end regression suite — standalone file | 31/31 | offline-SW test n/a on file:// |
 | End-to-end Phase 2 — served PWA | 22/22 |  |
 | End-to-end Phase 2 — standalone file | 22/22 |  |
+| End-to-end v2.1 features — served PWA | 19/19 |  |
+| End-to-end v2.1 features — standalone file | 19/19 |  |
 | Security & data integrity (both builds) | 20/20 |  |
 | Mobile/laptop/accessibility | see report | overflow-free on 6 profiles; axe violations 0; installable True; restart persistence True |
+
+## v2.1 additions (4 Nov 2026)
+- Options paper trading (Simulator → Options paper), multi-expiry payoff builder (calendars/diagonals), spaced-repetition review, journal coaching, MCX commodity charges/contracts/session.
+- Defects caught by the new tests and fixed: a lesson's MCX charge example said ≈₹141 when the engine (and a corrected hand calculation) give ₹142.01; an expired option contract could stay selected in the order ticket; the charges result row said "STT" for commodity segments (now "CTT").
+
 
 ## Defects found and fixed in Phase 2 (all re-tested)
 - IndexedDB `exportAll` declared a variable twice after the checksum change → app failed to start in the standalone build. Caught by the build check; fixed.
@@ -160,3 +170,108 @@ Generated 2026-11-04 in this build environment (Node v22.23.4, headless Google C
 | P2-20 | Settings shows storage status and the phone ↔ laptop transfer guide | PASS |
 | P2-21 | Downloaded backup contains a SHA-256 checksum and the saved dataset | PASS |
 | P2-22 | No uncaught page errors during the Phase 2 run | PASS |
+
+### v2.1 features (served)
+
+| ID | Test | Result |
+|---|---|---|
+| P3-01 | Options paper: chain shows 13 strikes (ATM ± 6) with bid/ask, delta, IV and B/S buttons; model and synthetic-volatility caveats shown | PASS |
+| P3-02 | Options paper: an ATM call bought from the chain fills 1 lot (65) on the NEXT bar at that bar's open ask | PASS |
+| P3-03 | Options paper: positions, Greeks (delta/theta/vega), funds and payoff chart shown for the open position | PASS |
+| P3-04 | Options paper: selling an ATM put shows an approximate margin above 0 | PASS |
+| P3-05 | Options paper: account and positions survive a reload | PASS |
+| P3-06 | Options paper: "Exit all" closes both legs on the next bar and records two trades with charges | PASS |
+| P3-07 | Options paper: "To next expiry" settles the open option at intrinsic value (expiry trade recorded) | PASS |
+| P3-08 | Options paper: closed trades can be sent to the journal | PASS |
+| P3-09 | Payoff builder: a long call calendar is valued at the FRONT expiry with a finite max loss (≈ net debit) and two breakevens; per-leg days/IV shown | PASS |
+| P3-10 | Payoff builder: single-expiry strategies still use the exact expiry analysis | PASS |
+| P3-11 | Dashboard shows the Spaced review card | PASS |
+| P3-12 | Wrong answers in a module assessment enter the review queue (box 1, due in 1 day) | PASS |
+| P3-13 | Review page lists the due questions as a quiz | PASS |
+| P3-14 | Answering due questions correctly moves them to box 2 (next due in 3 days) | PASS |
+| P3-15 | Journal coach shows insights with sample sizes: small sample, over-trading against the plan, costs, finding/hint labels | PASS |
+| P3-16 | Charges calculator offers MCX futures/options; crude 1 lot 5,500→5,520 shows CTT and total ≈ ₹142.01 | PASS |
+| P3-17 | Specs page shows MCX contracts and counts items backed only by secondary sources | PASS |
+| P3-18 | India market page lists the MCX session (09:00–23:55) | PASS |
+| P3-19 | No uncaught page errors during the run | PASS |
+
+### v2.1 features (standalone)
+
+| ID | Test | Result |
+|---|---|---|
+| P3-01 | Options paper: chain shows 13 strikes (ATM ± 6) with bid/ask, delta, IV and B/S buttons; model and synthetic-volatility caveats shown | PASS |
+| P3-02 | Options paper: an ATM call bought from the chain fills 1 lot (65) on the NEXT bar at that bar's open ask | PASS |
+| P3-03 | Options paper: positions, Greeks (delta/theta/vega), funds and payoff chart shown for the open position | PASS |
+| P3-04 | Options paper: selling an ATM put shows an approximate margin above 0 | PASS |
+| P3-05 | Options paper: account and positions survive a reload | PASS |
+| P3-06 | Options paper: "Exit all" closes both legs on the next bar and records two trades with charges | PASS |
+| P3-07 | Options paper: "To next expiry" settles the open option at intrinsic value (expiry trade recorded) | PASS |
+| P3-08 | Options paper: closed trades can be sent to the journal | PASS |
+| P3-09 | Payoff builder: a long call calendar is valued at the FRONT expiry with a finite max loss (≈ net debit) and two breakevens; per-leg days/IV shown | PASS |
+| P3-10 | Payoff builder: single-expiry strategies still use the exact expiry analysis | PASS |
+| P3-11 | Dashboard shows the Spaced review card | PASS |
+| P3-12 | Wrong answers in a module assessment enter the review queue (box 1, due in 1 day) | PASS |
+| P3-13 | Review page lists the due questions as a quiz | PASS |
+| P3-14 | Answering due questions correctly moves them to box 2 (next due in 3 days) | PASS |
+| P3-15 | Journal coach shows insights with sample sizes: small sample, over-trading against the plan, costs, finding/hint labels | PASS |
+| P3-16 | Charges calculator offers MCX futures/options; crude 1 lot 5,500→5,520 shows CTT and total ≈ ₹142.01 | PASS |
+| P3-17 | Specs page shows MCX contracts and counts items backed only by secondary sources | PASS |
+| P3-18 | India market page lists the MCX session (09:00–23:55) | PASS |
+| P3-19 | No uncaught page errors during the run | PASS |
+
+### Options paper, multi-expiry, spaced-repetition and coaching engine tests
+
+| ID | Test | Result |
+|---|---|---|
+| OPT-P01 | Weekly expiries fall on the last bar of sessions 5 and 10 | PASS |
+| OPT-P02 | Time to expiry in trading time: 75 bars = one trading day = 1/252 year | PASS |
+| OPT-P03 | Quote mid equals Black–Scholes at the smile IV (independent call to IA.opt.bs) | PASS |
+| OPT-P04 | Put–call parity holds on mids: C − P = S − K·e^(−rT) (same strike, same IV) | PASS |
+| OPT-P05 | Bid < mid < ask, both on the 0.05 tick, spread ≥ 2 ticks | PASS |
+| OPT-P06 | Smile: OTM puts carry higher IV than OTM calls equidistant from spot | PASS |
+| OPT-P07 | Base IV uses only past bars (changing bar i itself does not change baseIV(i)) | PASS |
+| OPT-P08 | Market buy fills at the NEXT bar's open ASK (placed after bar 99 → fills on bar 100) | PASS |
+| OPT-P09 | Round trip: realised gross = (exit bid − entry ask) × 65; charges = NSE options charges on those premiums | PASS |
+| OPT-P10 | Expiry: long ITM call settles at intrinsic with STT on exercise (0.15%) + brokerage; OTM put expires worthless with no exercise charge | PASS |
+| OPT-P11 | Expiry cancels working orders on that expiry | PASS |
+| OPT-P12 | Limit buy below the market does not fill on a flat bar; fills when the option trades down to it (at the limit or better) | PASS |
+| OPT-P13 | Bracket stop-loss on a long option exits when the premium falls to the stop; gapped stop fills at the worse open | PASS |
+| OPT-P14 | Funds check: a buy whose premium exceeds equity is rejected with a reason | PASS |
+| OPT-P15 | Margin: a naked short needs ≈ 9% of notional; the same short hedged into a credit spread needs only its maximum loss | PASS |
+| OPT-P16 | Portfolio Greeks: long call + short call at the same strike nets to zero delta/gamma/theta/vega | PASS |
+| OPT-P17 | Calendar positions: different expiries are tracked and settled separately | PASS |
+| OPT-P18 | No look-ahead: changing every bar after bar 400 leaves all fills up to bar 400 identical | PASS |
+| OPT-P19 | exitAll places closing market orders for every open position | PASS |
+| OPT-P20 | Invalid orders are refused (fractional lots, limit without price) | PASS |
+| OPT-M01 | Single expiry: horizonPnl at the expiry day equals the exact expiry payoff | PASS |
+| OPT-M02 | Today with premiums = Black–Scholes prices → P&L exactly 0 at spot | PASS |
+| OPT-M03 | Calendar at front expiry = BS(back call, 7 days left) − front intrinsic − net debit (independent hand calculation) | PASS |
+| OPT-M04 | Calendar: peak at the strike, loss limited to roughly the net debit far from the strike | PASS |
+| OPT-M05 | Numerical analysis agrees with the exact analysis for a single-expiry iron condor (within ₹1) | PASS |
+| OPT-M06 | IV shift: a long calendar loses when IV falls (positive vega) — value at front expiry lower with IV −3 pts | PASS |
+| OPT-M07 | Scenario grid honours per-leg expiries (calendar today at spot and unchanged IV ≈ 0) | PASS |
+| SRS-01 | A correct answer to a never-missed question schedules nothing | PASS |
+| SRS-02 | A wrong answer queues the question in box 0, due in 1 day | PASS |
+| SRS-03 | Correct reviews climb the boxes with intervals 3, 7, 16, 35 days, then graduate | PASS |
+| SRS-04 | A wrong answer at any box sends it back to box 0 and counts a lapse | PASS |
+| SRS-05 | A graduated question re-enters the queue if missed again later | PASS |
+| SRS-06 | due() returns only due, non-graduated items, oldest first; stats() counts boxes | PASS |
+| SRS-07 | resolve() finds module-bank questions by id | PASS |
+| SRS-08 | resolve() finds lesson-check questions by <lessonId>-c<index> | PASS |
+| SRS-09 | resolve() returns null for ad-hoc drill ids (never queued) | PASS |
+| SRS-10 | Every question in every bank and lesson check is resolvable (so any miss can be reviewed) | PASS |
+| COA-01 | Empty journal → a single "No trades yet" note | PASS |
+| COA-02 | Small sample (< 20 trades) is flagged | PASS |
+| COA-03 | Clearly losing strategy (VWAP fade, 12 trades at about −1R) is flagged as a FINDING; the profitable one is not | PASS |
+| COA-04 | A weak group with only 3 trades is a HINT, not a finding | PASS |
+| COA-05 | Over-trading: a day with 6 trades against a 4-trade limit is reported with the extra trades' net | PASS |
+| COA-06 | Trades taken after the daily loss limit (₹7,500) are counted | PASS |
+| COA-07 | Position risk above plan (₹2,500 limit; a ₹6,000-risk trade) is flagged | PASS |
+| COA-08 | Losses worse than −1.2R are reported with the worst R | PASS |
+| COA-09 | Revenge pattern: re-entry within 15 min of a loss with a larger size is detected | PASS |
+| COA-10 | Disposition effect: losers held much longer than winners is flagged | PASS |
+| COA-11 | Costs turning gross profit into a net loss is flagged | PASS |
+| COA-12 | Costly mistakes are ranked by their net cost | PASS |
+| COA-13 | Losing streak longer than the plan's stop rule is flagged | PASS |
+| COA-14 | A random journal with zero mean is NOT called a positive or negative edge as a finding | PASS |
+| COA-15 | Welch t matches a hand calculation | PASS |

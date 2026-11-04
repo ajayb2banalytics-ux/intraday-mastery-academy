@@ -1,6 +1,6 @@
 # Intraday Mastery Academy — Architecture
 
-Version 2.0.0 · 4 Nov 2026
+Version 2.1.0 · 4 Nov 2026
 
 ## 1. Principles
 
@@ -54,6 +54,8 @@ Scripts are classic (non-module) scripts attached to one global namespace `IA`, 
 | `settings` | `{currency, tz, theme, dailyGoal}` |
 | `datasets` (rows) | imported historical OHLCV: `{name, file, exchange, symbol, tfMin, from, to, quality, report, candles[]}` |
 | `conceptStats` | Concepts Lab attempts/accuracy per topic |
+| `optpaper` | options paper account: `{under, seed, idx, book:{cash, pos{key:{qty,avg}}, orders, trades, fills}}` |
+| `progress.srs` | spaced-repetition items `{id:{box, due, lapses, reviews, graduated}}` |
 
 Export = all keys + all rows → one JSON file with schema version and a SHA-256 checksum. Import verifies the checksum (warns on mismatch), validates the schema and every row **before** writing anything, and strips prototype-pollution keys.
 
@@ -69,6 +71,10 @@ Export = all keys + all rows → one JSON file with schema version and a SHA-256
 * **clock.js** — IANA time-zone conversion (`zonedToUtc`), session status, overlaps.
 * **execution.js** — simulated order execution for replay and paper trading: next-bar fills, half-spread, slippage, gap-through stops, liquidity-capped partial fills, OCO brackets, end-of-day square-off, India/US/bps charges.
 * **specs.js** — dated market specifications (charges, lots, sessions with auctions, index-futures tick by level, FINRA TAF schedule, exchange holidays), overridable in Settings. **specs-sources.js** holds the provenance (source URL, effective date, verified / corrected / unverified) for 102 items, shown in Markets → Specifications.
+* **options.js** additions — `horizonPnl` / `horizonAnalyse` value multi-leg positions with different expiries at any horizon (calendars, diagonals); `templatesMulti`.
+* **optpaper.js** — options paper-trading engine: weekly expiries on the synthetic path, causal base IV from realised volatility + smile, BS quotes with bid/ask, next-bar fills (market/limit/stop/bracket on premium), NSE option charges, approximate margin capped at defined max loss for hedged expiry groups, Greeks, expiry settlement with STT on exercise.
+* **srs.js** — Leitner spaced repetition (1/3/7/16/35 days); state stored in `progress.srs`, so it is included in backups.
+* **coach.js** — journal insights (group comparisons with Welch t and sample sizes, plan breaches, revenge/disposition patterns, cost drag).
 * **dataimport.js** — CSV parsing and validation for NSE/BSE/US/broker/TradingView/Yahoo layouts; time-zone conversion to exchange-local time; OHLC, volume, duplicate, order, gap, session and jump checks; timeframe inference; upward resampling. Produces a validation report; never fills or invents candles.
 * **structure.js** — causal detectors used by the Concepts Lab: fractal swing points (confirmed *w* bars later), BOS/CHoCH, liquidity sweeps, order blocks, fair-value gaps, S/R clusters, supply/demand zones, TPO profile, relative strength, relative volume, opening range. Definitions are the app's stated rules for subjective concepts.
 * **backtest.js** additions — liquidity-capped partial fills, signal overrides, `optimiseOOS` (grid on the first 60 % of sessions, one untouched out-of-sample run) and `randomEntryTest` (same exits, random entries, p-value).

@@ -45,7 +45,7 @@
   "id": "P2-08",
   "name": "Historical replay order fills at the NEXT bar's open \u00b1 spread/slippage",
   "ok": true,
-  "detail": "['Event log\\nFilled #1: 65 @ 25736.8\\nOrder: BUY 65 market SL 25608 \u2014 waiting for next bar\\nHistorical replay of TEST NIFTY 5m from 2026-09-03 (previous session show', 25736.67]"
+  "detail": "['Event log\\nFilled #1: 65 @ 25736.7\\nOrder: BUY 65 market SL 25608 \u2014 waiting for next bar\\nHistorical replay of TEST NIFTY 5m from 2026-09-03 (previous session show', 25736.67]"
  },
  {
   "id": "P2-09",
@@ -75,7 +75,7 @@
   "id": "P2-13",
   "name": "All 15 Concepts-Lab exercises generate a chart, accept an answer, grade it and record the result",
   "ok": true,
-  "detail": "{'mtf': {'n': 1, 'ok': 0}, 'vwap': {'n': 1, 'ok': 0}, 'vp': {'n': 1, 'ok': 1}, 'tpo': {'n': 1, 'ok': 0}, 'sr': {'n': 1, 'ok': 0}, 'sd': {'n': 1, 'ok': 0}, 'structure': {'n': 1, 'ok': 1}, 'bos': {'n': 1, 'ok': 0}, 'sweep': {'n': 1, 'ok': 0}, 'ob': {'n': 1, 'ok': 0}, 'fvg': {'n': 1, 'ok': 0}, 'volume': {'n': 1, 'ok': 0}, 'divergence': {'n': 1, 'ok': 0}, 'rs': {'n': 1, 'ok': 0}, 'orb': {'n': 1, 'ok':"
+  "detail": "{'mtf': {'n': 1, 'ok': 0}, 'vwap': {'n': 1, 'ok': 0}, 'vp': {'n': 1, 'ok': 0}, 'tpo': {'n': 1, 'ok': 0}, 'sr': {'n': 1, 'ok': 1}, 'sd': {'n': 1, 'ok': 0}, 'structure': {'n': 1, 'ok': 0}, 'bos': {'n': 1, 'ok': 1}, 'sweep': {'n': 1, 'ok': 0}, 'ob': {'n': 1, 'ok': 0}, 'fvg': {'n': 1, 'ok': 0}, 'volume': {'n': 1, 'ok': 1}, 'divergence': {'n': 1, 'ok': 1}, 'rs': {'n': 1, 'ok': 0}, 'orb': {'n': 1, 'ok':"
  },
  {
   "id": "P2-14",
@@ -99,7 +99,7 @@
   "id": "P2-17",
   "name": "Specs page shows provenance (verified / corrected / unverified counts, sources) and verified holiday lists",
   "ok": true,
-  "detail": "Provenance \u2014 checked 2026-11-04\n\n102 specification items: 75 verified against official or clearly identified sources, 11 corrected, 16 unverified (shown in amber \u2014 do not rely on them without checking"
+  "detail": "Provenance \u2014 checked 2026-11-04\n\n110 specification items: 75 verified against official or clearly identified sources, 11 corrected, 8 corroborated by secondary sources only (official page not reachabl"
  },
  {
   "id": "P2-18",

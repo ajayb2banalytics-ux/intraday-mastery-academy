@@ -8,7 +8,8 @@ Generated 2026-11-04. Three independent layers of evidence:
 
 | Suite | Result |
 |---|---|
-| Engine known-answer tests | 121/121 |
+| Engine known-answer tests | 124/124 |
+| Options paper / multi-expiry engine tests (put–call parity, BS agreement, settlement, margin, no look-ahead) | 27/27 |
 | Independent cross-validation (excl. informational) | 59/59 |
 
 ## Defects found and fixed by this validation
@@ -212,3 +213,6 @@ Generated 2026-11-04. Three independent layers of evidence:
 | SPC-03 | FINRA TAF: $0 for trades in Oct–Dec 2026, standard rate from 1 Jan 2027 | PASS |
 | SPC-04 | NSE sessions: post-close 15:50–16:00, closing auction 15:15–15:35; SGX has no lunch break | PASS |
 | SPC-05 | Every holiday list is keyed to an existing session id | PASS |
+| MCX-01 | MCX crude futures, 1 lot (100 bbl) 5,500 → 5,520: charges match a hand calculation (CTT 0.01% sell, txn ₹2.10/lakh, SEBI ₹10/crore, stamp 0.002% buy, GST 18%) | PASS |
+| MCX-02 | MCX options (on premium) buy 120 sell 150 × 100 units: CTT 0.05% on sell premium, txn ₹41.80/lakh | PASS |
+| MCX-03 | MCX session 09:00–23:55 IST is open at 22:00 IST on a weekday and has provenance marked secondary | PASS |

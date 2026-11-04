@@ -5,8 +5,9 @@
   const PRESETS = () => Object.keys(IA.exec.INSTR);
 
   IA.views.simulator = (el, tab = 'replay') => {
-    const tabs = [['replay', 'Chart replay'], ['decision', 'Decision simulator'], ['paper', 'Paper trading']];
+    const tabs = [['replay', 'Chart replay'], ['decision', 'Decision simulator'], ['paper', 'Paper trading'], ['options', 'Options paper']];
     el.append(h('div', { class: 'tabs' }, tabs.map(([k, l]) => h('button', { class: k === tab ? 'on' : '', onclick: () => (location.hash = '#/simulator/' + k) }, l))));
+    if (tab === 'options') return IA.optPaperView(el);
     return ({ replay, decision, paper }[tab] || replay)(el);
   };
 

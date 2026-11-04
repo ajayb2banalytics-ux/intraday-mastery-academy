@@ -22,5 +22,10 @@ Each browser keeps its own data. To move progress: **Settings & Data → Downloa
 ## Your own market data
 **Historical Data** (in the menu) imports CSV files from NSE/BSE downloads, bhavcopies, broker exports, TradingView or Yahoo-style files. Every import gets a validation report. Imported data is labelled HISTORICAL; generated data is SYNTHETIC. There is no live or delayed data in this app.
 
+## New in v2.1
+- **Options paper trading:** Trading Simulator → Options paper. Tap B or S in the chain, set lots, place the order, then advance time. Positions settle automatically at the weekly expiry.
+- **Spaced review:** questions you miss come back on the Review page (link on the Dashboard and Assessments).
+- **Journal coach:** Trading Journal → Coach, after you have logged trades.
+
 ## Laptop shortcuts (Chart replay)
 → or N: next bar · Shift+→: six bars · Space: play/pause · B: buy · S: sell · X: close position.

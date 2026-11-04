@@ -4,7 +4,7 @@
 
 ## Scope
 - 102 lessons (all sections), 373 assessment questions (incl. lesson checks and the 29-question readiness exam), 38 indicator entries, 30 strategies, 22 patterns, 19 psychology topics + self-assessment, research library (21 books, 18 resources, 225 glossary terms).
-- 102 market specification items verified against official sources (see below).
+- 102 market specification items verified against official sources (see below), plus 8 MCX items added in v2.1 that are corroborated by secondary sources only.
 
 ## Findings by file (as tabulated in each report; every finding was fixed in place unless the report says otherwise)
 
@@ -33,7 +33,7 @@ Some report rows group several related fixes, so the per-file narrative counts c
 - **Quiz answer positions** were rebalanced where one letter dominated.
 
 ## Market specifications verification
-102 items checked: 75 verified, 11 corrected, 16 unverified. Every changing specification shows its source and effective date in **Markets → Specifications**. Items not verified are labelled UNVERIFIED in the app and are never presented as current. Details: [audit/specs-verification.md](audit/specs-verification.md).
+102 items checked: 75 verified, 11 corrected, 16 unverified. Every changing specification shows its source and effective date in **Markets → Specifications**. Items not verified are labelled UNVERIFIED in the app and are never presented as current. Details: [audit/specs-verification.md](audit/specs-verification.md). **v2.1:** 8 MCX items (CTT, MCX transaction fees, stamp duty, contract multipliers, trading hours) were added with status *secondary* — corroborated by broker and statute-mirror sources because mcxindia.com and the tax department's site were not reachable from this environment. The app labels them as such.
 
 ## Coverage of the subjects required by the brief
 

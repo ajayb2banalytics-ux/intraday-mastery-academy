@@ -75,7 +75,7 @@
   "id": "E2E-11",
   "name": "Journal analytics show the trade (\u20b91,140 net) grouped by strategy, time of day, week and month",
   "ok": true,
-  "detail": "Trades\nAdd trade\nPerformance analytics\nReal trades only\nAll trades\nSimulated only\nAnalytics separate real from simulated trades by default.\nTRADES\n1\nWIN RATE\n100.0%\nNET P&L\n\u20b91,140.00\nPROFIT FACTOR\n\u221e\nE"
+  "detail": "Trades\nAdd trade\nPerformance analytics\nCoach\nReal trades only\nAll trades\nSimulated only\nAnalytics separate real from simulated trades by default.\nTRADES\n1\nWIN RATE\n100.0%\nNET P&L\n\u20b91,140.00\nPROFIT FACT"
  },
  {
   "id": "E2E-12",
@@ -99,13 +99,13 @@
   "id": "E2E-15",
   "name": "Decision simulator grades the decision, reveals the outcome separately, and records it",
   "ok": true,
-  "detail": "Chart replay\nDecision simulator\nPaper trading\n\nEach scenario shows a session up to a decision point. Choose what a disciplined trader would do. You ar"
+  "detail": "Chart replay\nDecision simulator\nPaper trading\nOptions paper\n\nEach scenario shows a session up to a decision point. Choose what a disciplined trader wo"
  },
  {
   "id": "E2E-16",
   "name": "Paper trading: 1 lot fills next bar, survives reload, is squared off at session close with charges deducted",
   "ok": true,
-  "detail": "{'idx': 79, 'q': 65, 'f': 1} {'idx': 79, 'q': 65} {'q': 0, 't': 1, 'cash': 485184.99512044515, 'start': 500000, 'ch': 976.5048795550001}"
+  "detail": "{'idx': 79, 'q': 65, 'f': 1} {'idx': 79, 'q': 65} {'q': 0, 't': 1, 'cash': 497775.4464969871, 'start': 500000, 'ch': 983.0535030130002}"
  },
  {
   "id": "E2E-17",
@@ -135,7 +135,7 @@
   "id": "E2E-21",
   "name": "Chart-reading drills: data-graded question and tap-the-pattern drill both score and record",
   "ok": true,
-  "detail": "{\"reading\": {\"n\": 1, \"ok\": 0}, \"pattern:bullish-engulfing\": {\"n\": 1, \"ok\": 0}}"
+  "detail": "{\"reading\": {\"n\": 1, \"ok\": 1}, \"pattern:bullish-engulfing\": {\"n\": 1, \"ok\": 0}}"
  },
  {
   "id": "E2E-22",

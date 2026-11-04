@@ -1,6 +1,6 @@
 /* Known-answer tests for every calculation engine. Run: node tests/engines.test.js */
 const path = require('path');
-const files = ['specs', 'indicators', 'risk', 'options', 'marketgen', 'backtest', 'clock', 'execution'];
+const files = ['specs', 'specs-sources', 'indicators', 'risk', 'options', 'marketgen', 'backtest', 'clock', 'execution'];
 files.forEach((f) => require(path.join(__dirname, '..', 'js', 'engines', f + '.js')));
 const IA = globalThis.IA;
 const results = []; let pass = 0, fail = 0;
@@ -162,6 +162,9 @@ t('SPC-03', 'FINRA TAF: $0 for trades in Oct–Dec 2026, standard rate from 1 Ja
 t('SPC-04', 'NSE sessions: post-close 15:50–16:00, closing auction 15:15–15:35; SGX has no lunch break', () => { const n = IA.specsDefault.sessions.find((x) => x.id === 'NSE'), g = IA.specsDefault.sessions.find((x) => x.id === 'SGX'); return n.post.join() === '15:50,16:00' && n.auction.join() === '15:15,15:35' && g.main.length === 1; });
 t('SPC-05', 'Every holiday list is keyed to an existing session id', () => Object.keys(IA.specsDefault.holidays).every((k) => IA.specsDefault.sessions.some((s) => s.id === k) || k === 'NASDAQ') || Object.keys(IA.specsDefault.holidays));
 
+t('MCX-01', 'MCX crude futures, 1 lot (100 bbl) 5,500 → 5,520: charges match a hand calculation (CTT 0.01% sell, txn ₹2.10/lakh, SEBI ₹10/crore, stamp 0.002% buy, GST 18%)', () => { const r = IA.risk.indiaCharges({ segment: 'commFut', buyValue: 550000, sellValue: 552000 }); const want = 40 + 55.2 + 23.142 + 1.102 + 11 + 0.18 * (40 + 23.142 + 1.102); return (Math.abs(r.total - want) < 1e-9 && /CTT/.test(r.steps.join(' '))) || [r.total, want]; });
+t('MCX-02', 'MCX options (on premium) buy 120 sell 150 × 100 units: CTT 0.05% on sell premium, txn ₹41.80/lakh', () => { const r = IA.risk.indiaCharges({ segment: 'commOpt', buyValue: 12000, sellValue: 15000 }); const want = 40 + 7.5 + 27000 * 0.000418 + 27000 * 1e-6 + 12000 * 0.00003 + 0.18 * (40 + 27000 * 0.000418 + 27000 * 1e-6); return Math.abs(r.total - want) < 1e-9 || [r.total, want]; });
+t('MCX-03', 'MCX session 09:00–23:55 IST is open at 22:00 IST on a weekday and has provenance marked secondary', () => { const s = IA.specsDefault.sessions.find((x) => x.id === 'MCX'); const st = IA.clock.sessionStatus(s, new Date('2026-11-04T16:30:00Z')); return (st.state === 'open' && IA.specsSources.items.some((x) => x.path === 'sessions.MCX.main' && x.status === 'secondary')) || st; });
 module.exports = { results, pass, fail };
 if (require.main === module) {
   results.forEach((r) => console.log(`${r.ok ? 'PASS' : 'FAIL'} ${r.id} ${r.name}${r.ok ? '' : ' → ' + r.detail}`));

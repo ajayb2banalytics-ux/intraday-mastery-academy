@@ -138,7 +138,7 @@
     const gst = S.gstRate * (brokerage + txn + sebi);
     const total = brokerage + stt + txn + sebi + stamp + gst;
     return { segment: g.label, turnover, brokerage, stt, txn, sebi, stamp, gst, total, gross: sellValue - buyValue, net: sellValue - buyValue - total, asOf: S.asOf,
-      steps: [`Turnover = ${r2(turnover)}`, `Brokerage = ${r2(brokerage)}`, `STT = buy×${g.sttBuy * 100}% + sell×${g.sttSell * 100}% = ${r2(stt)}`, `Exchange txn = turnover × ${r2(g.txn * 100, 5)}% = ${r2(txn)}`, `SEBI fee = turnover × ₹10/crore = ${r2(sebi)}`, `Stamp duty = buy × ${g.stampBuy * 100}% = ${r2(stamp)}`, `GST = 18% × (brokerage + txn + SEBI) = ${r2(gst)}`, `Total charges = ${r2(total)}`] };
+      steps: [`Turnover = ${r2(turnover)}`, `Brokerage = ${r2(brokerage)}`, `${g.taxName || 'STT'} = buy×${g.sttBuy * 100}% + sell×${g.sttSell * 100}% = ${r2(stt)}`, `Exchange txn = turnover × ${r2(g.txn * 100, 5)}% = ${r2(txn)}`, `SEBI fee = turnover × ₹10/crore = ${r2(sebi)}`, `Stamp duty = buy × ${g.stampBuy * 100}% = ${r2(stamp)}`, `GST = 18% × (brokerage + txn + SEBI) = ${r2(gst)}`, `Total charges = ${r2(total)}`] };
   }
   function usCharges({ shares, buyPrice, sellPrice, contracts = 0, specs, date }) {
     const S = specs || (IA.specs || IA.specsDefault).us;
@@ -162,7 +162,7 @@
   // Option position scenario grid: P&L for spot moves × IV shifts, now (after `daysPassed`) — Black–Scholes repricing.
   function optionsScenario(legs, { S, ivPct, days, r = 6.5, spotSteps = [-5, -3, -2, -1, 0, 1, 2, 3, 5], ivSteps = [-5, 0, 5, 10], daysPassed = 0 } = {}) {
     const T = Math.max(1e-6, (days - daysPassed) / 365);
-    const val = (Sx, iv) => legs.reduce((a, l) => a + (l.type === 'stock' || l.type === 'future' ? l.side * (Sx - l.K) * l.qty : l.side * (IA.opt.bs({ S: Sx, K: l.K, T, r: r / 100, sigma: Math.max(0.01, iv) / 100, type: l.type }).price - l.premium) * l.qty), 0);
+    const val = (Sx, iv) => legs.reduce((a, l) => a + (l.type === 'stock' || l.type === 'future' ? l.side * (Sx - l.K) * l.qty : l.side * (IA.opt.bs({ S: Sx, K: l.K, T: l.days != null ? Math.max(1e-6, (l.days - daysPassed) / 365) : T, r: r / 100, sigma: Math.max(0.01, iv) / 100, type: l.type }).price - l.premium) * l.qty), 0);
     const grid = ivSteps.map((dv) => ({ dv, row: spotSteps.map((ds) => ({ ds, pnl: val(S * (1 + ds / 100), ivPct + dv) })) }));
     let worst = Infinity, best = -Infinity; grid.forEach((g) => g.row.forEach((c) => { worst = Math.min(worst, c.pnl); best = Math.max(best, c.pnl); }));
     return { grid, worst, best };
