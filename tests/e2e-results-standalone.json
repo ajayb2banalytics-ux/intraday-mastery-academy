@@ -1,0 +1,188 @@
+[
+ {
+  "id": "E2E-01",
+  "name": "All 99 lessons render every tab with no raw markup, NaN/undefined or failed embeds",
+  "ok": true,
+  "detail": "[]"
+ },
+ {
+  "id": "E2E-02-indicator",
+  "name": "All 38 indicator pages render cleanly",
+  "ok": true,
+  "detail": "[]"
+ },
+ {
+  "id": "E2E-02-strategy",
+  "name": "All 30 strategy pages render cleanly",
+  "ok": true,
+  "detail": "[]"
+ },
+ {
+  "id": "E2E-02-pattern",
+  "name": "All 22 pattern pages render cleanly",
+  "ok": true,
+  "detail": "[]"
+ },
+ {
+  "id": "E2E-03",
+  "name": "Lesson is NOT completed with a wrong answer, IS completed when all correct, and survives reload",
+  "ok": true,
+  "detail": "wrong\u2192False, right+reload\u2192True"
+ },
+ {
+  "id": "E2E-04",
+  "name": "Bookmark and note persist across reload and appear in the library",
+  "ok": true,
+  "detail": "Books\nOfficial resources\nGlossary\nReading by subject\nMy bookmarks & notes\nBookmarked lessons\n\u2605 The order book, bid\u2013ask spread and liquidity\nMy notes (1)\nThe order book, bid\u2013ask spread and liquidity\nSp"
+ },
+ {
+  "id": "E2E-05",
+  "name": "Level 2 unlocks after Level 1 mastery; Level 3 stays locked; 10-question assessment scores 100% and is recorded",
+  "ok": true,
+  "detail": "unl2=True locked3=True qs=10 best=1"
+ },
+ {
+  "id": "E2E-06",
+  "name": "Locked level assessment shows lock message instead of questions",
+  "ok": true,
+  "detail": "Locked\n\nLevel 3 assessments unlock when Level 2 module assessments average 80% (none below 60%).\n\n\u2190 Assessments"
+ },
+ {
+  "id": "E2E-07",
+  "name": "All 22 calculators render a result with default inputs (no NaN/undefined)",
+  "ok": true,
+  "detail": "[]"
+ },
+ {
+  "id": "E2E-08",
+  "name": "Position-size calculator UI: 1% of \u20b91,00,000, entry 500, stop 495 \u2192 200 shares",
+  "ok": true,
+  "detail": "QUANTITY\n200\nSIDE\nlong\nPLANNED RISK\n\u20b91,000.00\nACTUAL RISK\n\u20b91,000.00\nNOTIONAL\n\u20b91,00,000.00\nCAPITAL USED\n\u20b91,00,000.00\nShow the working"
+ },
+ {
+  "id": "E2E-09",
+  "name": "Calculator rejects stop = entry with a clear message",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "E2E-10",
+  "name": "Journal trade saved with derived net P&L (100 \u00d7 12 \u2212 60 = 1,140), R = 1.9 and 35-min duration",
+  "ok": true,
+  "detail": "{'net': 1140, 'R': 1.9, 'dur': 35, 'rr': 3}"
+ },
+ {
+  "id": "E2E-11",
+  "name": "Journal analytics show the trade (\u20b91,140 net) grouped by strategy, time of day, week and month",
+  "ok": true,
+  "detail": "Trades\nAdd trade\nPerformance analytics\nReal trades only\nAll trades\nSimulated only\nAnalytics separate real from simulated trades by default.\nTRADES\n1\nWIN RATE\n100.0%\nNET P&L\n\u20b91,140.00\nPROFIT FACTOR\n\u221e\nE"
+ },
+ {
+  "id": "E2E-12",
+  "name": "Journal CSV export contains header and the trade row",
+  "ok": true,
+  "detail": "date,market,exchange,instrument,strategy,timeframe,side,entry,exit,stop,target,qty,capital,risk,gross,charges,net,rr,R,entryTime,exitTime,dur,conditions,quality"
+ },
+ {
+  "id": "E2E-13",
+  "name": "Full backup restores journal and lesson progress after a wipe; foreign files are rejected",
+  "ok": true,
+  "detail": "0->1, prog=True, bad=This file is not an Intraday Mastery backup."
+ },
+ {
+  "id": "E2E-14",
+  "name": "Replay: bracket order fills at the next bar, then exits by stop/target/session close; review appears at session end",
+  "ok": true,
+  "detail": "filled=True closed=1"
+ },
+ {
+  "id": "E2E-15",
+  "name": "Decision simulator grades the decision, reveals the outcome separately, and records it",
+  "ok": true,
+  "detail": "Chart replay\nDecision simulator\nPaper trading\n\nEach scenario shows a session up to a decision point. Choose what a disciplined trader would do. You ar"
+ },
+ {
+  "id": "E2E-16",
+  "name": "Paper trading: 1 lot fills next bar, survives reload, is squared off at session close with charges deducted",
+  "ok": true,
+  "detail": "{'idx': 79, 'q': 65, 'f': 1} {'idx': 79, 'q': 65} {'q': 0, 't': 1, 'cash': 543914.5922239211, 'start': 500000, 'ch': 1013.4077760790002}"
+ },
+ {
+  "id": "E2E-17",
+  "name": "Backtester runs, labels results SYNTHETIC, shows KPIs, equity curve and trade list",
+  "ok": true,
+  "detail": "Trades on chart (last 5 sessions)\nSYNTHETIC\n2026-03-27 15:25\nO 25140.6\nH 25216.8\nL 25129.1\nC 25216.8\nV 47,054\nVWAP 25345"
+ },
+ {
+  "id": "E2E-18",
+  "name": "Walk-forward produces 4 segments",
+  "ok": true,
+  "detail": "4"
+ },
+ {
+  "id": "E2E-19",
+  "name": "All 25 backtestable strategy configs run and produce trades on 120 synthetic sessions",
+  "ok": true,
+  "detail": "[]"
+ },
+ {
+  "id": "E2E-20",
+  "name": "Strategy comparison lab ranks the selected strategies on identical data",
+  "ok": true,
+  "detail": "4"
+ },
+ {
+  "id": "E2E-21",
+  "name": "Chart-reading drills: data-graded question and tap-the-pattern drill both score and record",
+  "ok": true,
+  "detail": "{\"reading\": {\"n\": 1, \"ok\": 0}, \"pattern:bullish-engulfing\": {\"n\": 1, \"ok\": 0}}"
+ },
+ {
+  "id": "E2E-22",
+  "name": "Chart annotation (horizontal line) is saved per chart",
+  "ok": true,
+  "detail": "1"
+ },
+ {
+  "id": "E2E-23",
+  "name": "Clock time-zone choice persists",
+  "ok": true,
+  "detail": "America/New_York"
+ },
+ {
+  "id": "E2E-24",
+  "name": "Invalid specification JSON is rejected without saving",
+  "ok": true,
+  "detail": "Invalid JSON: Expected property name or '}' in JSON at position 1 (line 1 column 2)"
+ },
+ {
+  "id": "E2E-25",
+  "name": "Theme switch applies immediately",
+  "ok": true,
+  "detail": "light"
+ },
+ {
+  "id": "E2E-26",
+  "name": "Search finds lessons, indicators and strategies",
+  "ok": true,
+  "detail": "50"
+ },
+ {
+  "id": "E2E-27",
+  "name": "No horizontal page overflow at 360 px on 23 key routes (tables scroll inside their own box)",
+  "ok": true,
+  "detail": "[]"
+ },
+ {
+  "id": "E2E-28",
+  "name": "Service worker offline test \u2014 not applicable to file:// (no service workers); standalone file makes no network requests",
+  "ok": true,
+  "detail": "n/a"
+ },
+ {
+  "id": "E2E-29",
+  "name": "No uncaught page errors or console errors during the whole run",
+  "ok": true,
+  "detail": "[]"
+ }
+]
