@@ -19,7 +19,7 @@
 
   IA.views.technical = (el, tab = 'indicators') => {
     const C = IA.content, tabs = [['indicators', 'Indicator library'], ['patterns', 'Candlestick patterns'], ['charttypes', 'Chart types'], ['structure', 'Structure & levels']];
-    el.append(h('div', { class: 'tabs' }, tabs.map(([k, l]) => h('button', { class: k === tab ? 'on' : '', onclick: () => (location.hash = '#/technical/' + k) }, l))));
+    el.append(h('div', { class: 'tabs' }, tabs.map(([k, l]) => h('button', { class: k === tab ? 'on' : '', onclick: () => IA.go('#/technical/' + k) }, l))));
     if (tab === 'indicators') {
       const list = C.indicators || []; if (!list.length) return el.append(h('p', { class: 'muted' }, 'Indicator library content not loaded.'));
       el.append(h('p', { class: 'muted' }, `${list.length} indicators and tools. Each entry: definition, formula, worked calculation, interpretation, signals, chart example, entries/exits, conditions, weaknesses, mistakes, timeframes, combinations, and practice. Green = established maths/mechanics; amber = mixed evidence of usefulness; violet = subjective framework.`));

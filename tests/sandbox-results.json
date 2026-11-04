@@ -1,0 +1,134 @@
+[
+ {
+  "id": "SBX-01",
+  "name": "[allow-scripts] sidebar #/academy",
+  "ok": true,
+  "detail": "Learning Academy"
+ },
+ {
+  "id": "SBX-02",
+  "name": "[allow-scripts] sidebar #/simulator",
+  "ok": true,
+  "detail": "Trading Simulator"
+ },
+ {
+  "id": "SBX-03",
+  "name": "[allow-scripts] sidebar #/calculators",
+  "ok": true,
+  "detail": "Calculators"
+ },
+ {
+  "id": "SBX-04",
+  "name": "[allow-scripts] sidebar #/journal",
+  "ok": true,
+  "detail": "Trading Journal"
+ },
+ {
+  "id": "SBX-05",
+  "name": "[allow-scripts] sidebar #/dashboard",
+  "ok": true,
+  "detail": "Dashboard"
+ },
+ {
+  "id": "SBX-06",
+  "name": "[allow-scripts] tab button Options paper",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "SBX-07",
+  "name": "[allow-scripts] in-page link to module",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "SBX-08",
+  "name": "[allow-scripts] Strategy bot advances inside the frame",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "SBX-09",
+  "name": "[allow-scripts] in-app confirm dialog appears",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "SBX-10",
+  "name": "[allow-scripts] dialog OK runs action",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "SBX-11",
+  "name": "[allow-scripts] no page errors",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "SBX-12",
+  "name": "[allow-scripts allow-same-origin] sidebar #/academy",
+  "ok": true,
+  "detail": "Learning Academy"
+ },
+ {
+  "id": "SBX-13",
+  "name": "[allow-scripts allow-same-origin] sidebar #/simulator",
+  "ok": true,
+  "detail": "Trading Simulator"
+ },
+ {
+  "id": "SBX-14",
+  "name": "[allow-scripts allow-same-origin] sidebar #/calculators",
+  "ok": true,
+  "detail": "Calculators"
+ },
+ {
+  "id": "SBX-15",
+  "name": "[allow-scripts allow-same-origin] sidebar #/journal",
+  "ok": true,
+  "detail": "Trading Journal"
+ },
+ {
+  "id": "SBX-16",
+  "name": "[allow-scripts allow-same-origin] sidebar #/dashboard",
+  "ok": true,
+  "detail": "Dashboard"
+ },
+ {
+  "id": "SBX-17",
+  "name": "[allow-scripts allow-same-origin] tab button Options paper",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "SBX-18",
+  "name": "[allow-scripts allow-same-origin] in-page link to module",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "SBX-19",
+  "name": "[allow-scripts allow-same-origin] Strategy bot advances inside the frame",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "SBX-20",
+  "name": "[allow-scripts allow-same-origin] in-app confirm dialog appears",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "SBX-21",
+  "name": "[allow-scripts allow-same-origin] dialog OK runs action",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "SBX-22",
+  "name": "[allow-scripts allow-same-origin] no page errors",
+  "ok": true,
+  "detail": ""
+ }
+]

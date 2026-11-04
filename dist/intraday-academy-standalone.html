@@ -2,7 +2,7 @@
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="utf-8">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-uuCKiWKTg5GvPK0LXvf9Y0Z12nL8ryyxjppxUNwNVps='; style-src 'unsafe-inline'; img-src data: blob:; font-src data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-mSzJKfn8Isyl8kgJL+m+Pw39v5bgSReypm3HaHE7EiY='; style-src 'unsafe-inline'; img-src data: blob:; font-src data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'">
   <meta name="referrer" content="no-referrer">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0b0f14">
@@ -216,6 +216,8 @@ table.t tbody tr:hover{background:var(--panel2)}
   .form{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media print{.sidebar,.bottomnav,.topbar{display:none}}
+
+pre.code{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r2);padding:10px;font-family:var(--mono);color:var(--text);line-height:1.45}
 
 </style>
 </head>
@@ -1322,69 +1324,92 @@ table.t tbody tr:hover{background:var(--panel2)}
   const SIGNALS = {
     ema_cross: { label: 'Fast EMA crosses slow EMA', params: { fast: 9, slow: 21 }, fn: (c, p, side) => { const cl = c.map((b) => b.c), f = I().ema(cl, p.fast), s = I().ema(cl, p.slow); return c.map((_, i) => i > 0 && f[i] != null && s[i] != null && f[i - 1] != null && s[i - 1] != null && (side > 0 ? f[i - 1] <= s[i - 1] && f[i] > s[i] : f[i - 1] >= s[i - 1] && f[i] < s[i])); } },
     vwap_side: { label: 'Close on the trade side of VWAP', params: {}, fn: (c, p, side) => { const v = I().vwap(c); return c.map((b, i) => v[i] != null && (side > 0 ? b.c > v[i] : b.c < v[i])); } },
-    vwap_reclaim: { label: 'Price crosses VWAP', params: {}, fn: (c, p, side) => { const v = I().vwap(c); return c.map((b, i) => i > 0 && c[i - 1].d === b.d && (side > 0 ? c[i - 1].c <= v[i - 1] && b.c > v[i] : c[i - 1].c >= v[i - 1] && b.c < v[i])); } },
+    vwap_reclaim: { label: 'Price crosses VWAP', params: {}, fn: (c, p, side) => { const v = I().vwap(c); return c.map((b, i) => i > 0 && c[i - 1].d === b.d && v[i] != null && v[i - 1] != null && (side > 0 ? c[i - 1].c <= v[i - 1] && b.c > v[i] : c[i - 1].c >= v[i - 1] && b.c < v[i])); } },
     rsi_extreme: { label: 'RSI crosses back from extreme (mean reversion)', params: { n: 14, lo: 30, hi: 70 }, fn: (c, p, side) => { const r = I().rsi(c.map((b) => b.c), p.n); return c.map((_, i) => i > 0 && r[i] != null && r[i - 1] != null && (side > 0 ? r[i - 1] < p.lo && r[i] >= p.lo : r[i - 1] > p.hi && r[i] <= p.hi)); } },
     rsi_trend: { label: 'RSI above/below 50 (momentum filter)', params: { n: 14 }, fn: (c, p, side) => { const r = I().rsi(c.map((b) => b.c), p.n); return r.map((x) => x != null && (side > 0 ? x > 50 : x < 50)); } },
     macd_cross: { label: 'MACD crosses signal line', params: { f: 12, s: 26, sig: 9 }, fn: (c, p, side) => { const m = I().macd(c.map((b) => b.c), p.f, p.s, p.sig); return c.map((_, i) => i > 0 && m.hist[i] != null && m.hist[i - 1] != null && (side > 0 ? m.hist[i - 1] <= 0 && m.hist[i] > 0 : m.hist[i - 1] >= 0 && m.hist[i] < 0)); } },
     supertrend_flip: { label: 'Supertrend flips direction', params: { n: 10, m: 3 }, fn: (c, p, side) => { const s = I().supertrend(c, p.n, p.m); return c.map((_, i) => i > 0 && s.dir[i] != null && s.dir[i - 1] != null && s.dir[i] === side && s.dir[i - 1] === -side); } },
-    bb_reentry: { label: 'Close back inside Bollinger Band (fade)', params: { n: 20, k: 2 }, fn: (c, p, side) => { const bb = I().bollinger(c.map((b) => b.c), p.n, p.k); return c.map((b, i) => i > 0 && bb.lower[i] != null && (side > 0 ? c[i - 1].c < bb.lower[i - 1] && b.c > bb.lower[i] : c[i - 1].c > bb.upper[i - 1] && b.c < bb.upper[i])); } },
+    bb_reentry: { label: 'Close back inside Bollinger Band (fade)', params: { n: 20, k: 2 }, fn: (c, p, side) => { const bb = I().bollinger(c.map((b) => b.c), p.n, p.k); return c.map((b, i) => i > 0 && bb.lower[i] != null && bb.lower[i - 1] != null && (side > 0 ? c[i - 1].c < bb.lower[i - 1] && b.c > bb.lower[i] : c[i - 1].c > bb.upper[i - 1] && b.c < bb.upper[i])); } },
     orb: { label: 'Opening-range breakout', params: { bars: 3 }, fn: (c, p, side) => { const out = new Array(c.length).fill(false); let day = null, k = 0, hi = 0, lo = 0, fired = false; c.forEach((b, i) => { if (b.d !== day) { day = b.d; k = 0; hi = -Infinity; lo = Infinity; fired = false; } k++; if (k <= p.bars) { hi = Math.max(hi, b.h); lo = Math.min(lo, b.l); return; } if (!fired && (side > 0 ? b.c > hi : b.c < lo)) { out[i] = true; fired = true; } }); return out; } },
     pdh_break: { label: 'Break of previous-day high / low', params: {}, fn: (c, p, side) => { const out = new Array(c.length).fill(false); let day = null, ph = null, pl = null, ch = -Infinity, clo = Infinity, fired = false; c.forEach((b, i) => { if (b.d !== day) { if (day !== null) { ph = ch; pl = clo; } day = b.d; ch = -Infinity; clo = Infinity; fired = false; } if (ph !== null && !fired && (side > 0 ? b.c > ph && c[i - 1].c <= ph : b.c < pl && c[i - 1].c >= pl)) { out[i] = true; fired = true; } ch = Math.max(ch, b.h); clo = Math.min(clo, b.l); }); return out; } },
     volume_spike: { label: 'Volume ≥ k × 20-bar average', params: { k: 1.8 }, fn: (c, p) => { const av = I().sma(c.map((b) => b.v), 20); return c.map((b, i) => av[i] != null && b.v >= p.k * av[i]); } },
     adx_trend: { label: 'ADX above threshold (trending)', params: { n: 14, min: 22 }, fn: (c, p) => { const a = I().adx(c, p.n); return a.adx.map((x) => x != null && x >= p.min); } },
   };
 
-  function run(candles, cfg) {
-    const C = Object.assign({ side: 1, entry: [{ id: 'ema_cross' }], stop: { type: 'atr', mult: 1.5 }, target: { rr: 2 }, capital: 100000, riskPct: 1, slippageTicks: 1, tick: 0.05, costBps: 3, eodExit: true, noEntryLastBars: 3, maxTradesPerDay: 3, lot: 1, maxVolPct: 0 }, cfg);
-    if (!candles || candles.length < 30) return { error: 'Need at least 30 bars.' };
-    const entrySig = C.signal ? C.signal : (() => { const sigs = C.entry.map((e) => { const S = SIGNALS[e.id]; return S.fn(candles, Object.assign({}, S.params, e.params || {}), C.side); }); return candles.map((_, i) => sigs.every((s) => s[i])); })();
-    const atr = I().atr(candles, 14);
+  const DEFAULTS = { side: 1, entry: [{ id: 'ema_cross' }], stop: { type: 'atr', mult: 1.5 }, target: { rr: 2 }, capital: 100000, riskPct: 1, slippageTicks: 1, tick: 0.05, costBps: 3, eodExit: true, noEntryLastBars: 3, maxTradesPerDay: 3, lot: 1, maxVolPct: 0, maxLeverage: 1 };
+  const config = (cfg) => Object.assign({}, DEFAULTS, cfg);
+  // Entry signal (ALL conditions true on the bar's close) for every bar of `candles`.
+  function entrySignal(candles, C) { const sigs = C.entry.map((e) => { const S = SIGNALS[e.id]; return S.fn(candles, Object.assign({}, S.params, e.params || {}), C.side); }); return candles.map((_, i) => sigs.every((s) => s[i])); }
+  // Session calendar (uses timestamps/dates only, never prices): is bar i the last of its day, and bars left in the day.
+  function calendar(candles) {
     const lastOfDay = candles.map((b, i) => i === candles.length - 1 || candles[i + 1].d !== b.d);
     const barsLeft = new Array(candles.length).fill(0); for (let i = candles.length - 1, k = 0; i >= 0; i--) { k = lastOfDay[i] ? 0 : k + 1; barsLeft[i] = k; }
-    let equity = C.capital, pos = null; const trades = [], curve = [{ i: 0, eq: equity }]; let dayCount = {}; let pending = false;
-    const slip = C.slippageTicks * C.tick;
-    const cost = (val) => (val * C.costBps) / 1e4;
-    for (let i = 1; i < candles.length; i++) {
-      const b = candles[i];
-      // 1) fill pending entry at this bar's open
-      if (pending && !pos) {
-        pending = false;
-        const fill = b.o + C.side * slip, a = atr[i - 1];
-        const stopDist = C.stop.type === 'atr' ? (a || b.o * 0.003) * C.stop.mult : (b.o * C.stop.pct) / 100;
-        const stop = fill - C.side * stopDist, target = C.target.rr ? fill + C.side * stopDist * C.target.rr : null;
-        const riskAmt = (equity * C.riskPct) / 100; let qty = Math.floor(riskAmt / stopDist / C.lot) * C.lot;
-        qty = Math.min(qty, Math.floor(equity / fill / C.lot) * C.lot);
-        let partial = false; if (C.maxVolPct > 0) { const cap = Math.floor((b.v * C.maxVolPct) / C.lot) * C.lot; if (qty > cap) { qty = cap; partial = true; } }
-        if (qty > 0) { pos = { entryI: i, entry: fill, stop, target, qty, stopDist, partial }; dayCount[b.d] = (dayCount[b.d] || 0) + 1; }
-      }
-      // 2) manage open position within this bar
-      if (pos) {
-        let exit = null, why = null;
-        const hitStop = C.side > 0 ? b.l <= pos.stop : b.h >= pos.stop;
-        const hitTgt = pos.target != null && (C.side > 0 ? b.h >= pos.target : b.l <= pos.target);
-        if (hitStop) { const gapThrough = C.side > 0 ? b.o < pos.stop : b.o > pos.stop; exit = (gapThrough ? b.o : pos.stop) - C.side * slip; why = gapThrough ? 'stop (gapped)' : 'stop'; }
-        else if (hitTgt) { exit = pos.target - C.side * slip; why = 'target'; }
-        else if (C.eodExit && lastOfDay[i]) { exit = b.c - C.side * slip; why = 'end of day'; }
-        if (exit != null) {
-          const gross = C.side * (exit - pos.entry) * pos.qty, costs = cost(pos.entry * pos.qty) + cost(exit * pos.qty);
-          const net = gross - costs; equity += net;
-          trades.push({ entryI: pos.entryI, exitI: i, entryT: candles[pos.entryI].t, exitT: b.t, entry: pos.entry, exit, qty: pos.qty, gross, costs, net, R: net / (pos.stopDist * pos.qty), why, side: C.side > 0 ? 'long' : 'short', day: b.d, partial: pos.partial });
-          pos = null; curve.push({ i, eq: equity });
-        }
-      }
-      // 3) evaluate signal on this bar's close → fill next bar
-      if (!pos && !pending && entrySig[i] && barsLeft[i] >= C.noEntryLastBars && (dayCount[b.d] || 0) < C.maxTradesPerDay && i < candles.length - 1) pending = true;
-      if (pending && lastOfDay[i]) pending = false; // never carry an entry overnight
+    return { lastOfDay, barsLeft };
+  }
+  function newState(candles, C) { const cal = calendar(candles); return { equity: C.capital, pos: null, trades: [], curve: [{ i: 0, eq: C.capital }], dayCount: {}, pending: false, atr: I().atr(candles, 14), lastOfDay: cal.lastOfDay, barsLeft: cal.barsLeft }; }
+  // One bar of the simulation. Shared by run() and the paper-trading bot, so both apply identical rules.
+  // `sig` is the entry signal evaluated on bar i's close. Returns a list of events describing what happened.
+  function stepBar(S, candles, C, i, sig) {
+    const b = candles[i], ev = [], slip = C.slippageTicks * C.tick, cost = (val) => (val * C.costBps) / 1e4;
+    // 1) fill pending entry at this bar's open
+    if (S.pending && !S.pos) {
+      S.pending = false;
+      const fill = b.o + C.side * slip, a = S.atr[i - 1];
+      const stopDist = C.stop.type === 'atr' ? (a || b.o * 0.003) * C.stop.mult : (b.o * C.stop.pct) / 100;
+      const stop = fill - C.side * stopDist, target = C.target.rr ? fill + C.side * stopDist * C.target.rr : null;
+      const riskAmt = (S.equity * C.riskPct) / 100; let qty = Math.floor(riskAmt / stopDist / C.lot) * C.lot;
+      // exposure cap: notional ≤ equity × maxLeverage (1 = no leverage, as in cash equity; futures need only margin)
+      qty = Math.min(qty, Math.floor((S.equity * (C.maxLeverage || 1)) / fill / C.lot) * C.lot);
+      let partial = false; if (C.maxVolPct > 0) { const cap = Math.floor((b.v * C.maxVolPct) / C.lot) * C.lot; if (qty > cap) { qty = cap; partial = true; } }
+      if (qty > 0) { S.pos = { entryI: i, entry: fill, stop, target, qty, stopDist, partial }; S.dayCount[b.d] = (S.dayCount[b.d] || 0) + 1; ev.push({ type: 'entry', i, price: fill, qty, stop, target, partial }); }
+      else { S.skippedSize = (S.skippedSize || 0) + 1; S.oneLotRisk = Math.max(S.oneLotRisk || 0, stopDist * C.lot); ev.push({ type: 'skip', i, why: `size rounds to zero: one lot risks ${Math.round(stopDist * C.lot)} but the budget is ${Math.round(riskAmt)} (raise capital or risk %, or widen the exposure cap)` }); }
     }
-    const stats = IA.risk.tradeStats(trades.map((t) => t.net));
-    const eqs = curve.map((p) => p.eq), dd = IA.risk.maxDrawdown(eqs);
-    stats.maxDD = dd.maxDD; stats.maxDDPct = dd.maxDDPct; stats.finalEquity = equity; stats.returnPct = ((equity - C.capital) / C.capital) * 100;
+    // 2) manage open position within this bar
+    if (S.pos) {
+      const pos = S.pos; let exit = null, why = null;
+      const hitStop = C.side > 0 ? b.l <= pos.stop : b.h >= pos.stop;
+      const hitTgt = pos.target != null && (C.side > 0 ? b.h >= pos.target : b.l <= pos.target);
+      if (hitStop) { const gapThrough = C.side > 0 ? b.o < pos.stop : b.o > pos.stop; exit = (gapThrough ? b.o : pos.stop) - C.side * slip; why = gapThrough ? 'stop (gapped)' : 'stop'; }
+      else if (hitTgt) { exit = pos.target - C.side * slip; why = 'target'; }
+      else if (C.eodExit && S.lastOfDay[i]) { exit = b.c - C.side * slip; why = 'end of day'; }
+      if (exit != null) {
+        const gross = C.side * (exit - pos.entry) * pos.qty, costs = cost(pos.entry * pos.qty) + cost(exit * pos.qty);
+        const net = gross - costs; S.equity += net;
+        const t = { entryI: pos.entryI, exitI: i, entryT: candles[pos.entryI].t, exitT: b.t, entry: pos.entry, exit, qty: pos.qty, gross, costs, net, R: net / (pos.stopDist * pos.qty), why, side: C.side > 0 ? 'long' : 'short', day: b.d, partial: pos.partial };
+        S.trades.push(t); S.pos = null; S.curve.push({ i, eq: S.equity }); ev.push({ type: 'exit', i, trade: t });
+      }
+    }
+    // 3) evaluate signal on this bar's close → fill next bar
+    if (sig && !S.pos && !S.pending) {
+      if (S.barsLeft[i] < C.noEntryLastBars) ev.push({ type: 'skip', i, why: 'too close to the session close' });
+      else if ((S.dayCount[b.d] || 0) >= C.maxTradesPerDay) ev.push({ type: 'skip', i, why: 'daily trade limit reached' });
+      else if (i >= candles.length - 1) ev.push({ type: 'skip', i, why: 'no next bar to fill on' });
+      else { S.pending = true; ev.push({ type: 'signal', i }); }
+    }
+    if (S.pending && S.lastOfDay[i]) S.pending = false; // never carry an entry overnight
+    return ev;
+  }
+  function summarise(S, C) {
+    const trades = S.trades, stats = IA.risk.tradeStats(trades.map((t) => t.net));
+    const eqs = S.curve.map((p) => p.eq), dd = IA.risk.maxDrawdown(eqs);
+    stats.maxDD = dd.maxDD; stats.maxDDPct = dd.maxDDPct; stats.finalEquity = S.equity; stats.returnPct = ((S.equity - C.capital) / C.capital) * 100;
     stats.avgR = trades.length ? trades.reduce((a, t) => a + t.R, 0) / trades.length : 0;
     stats.totalCosts = trades.reduce((a, t) => a + t.costs, 0);
+    stats.skippedSize = S.skippedSize || 0; stats.oneLotRisk = S.oneLotRisk || 0;
+    return stats;
+  }
+  function run(candles, cfg) {
+    const C = config(cfg);
+    if (!candles || candles.length < 30) return { error: 'Need at least 30 bars.' };
+    const entrySig = C.signal ? C.signal : entrySignal(candles, C);
+    const S = newState(candles, C);
+    for (let i = 1; i < candles.length; i++) stepBar(S, candles, C, i, entrySig[i]);
+    const stats = summarise(S, C), trades = S.trades;
     const warnings = [];
+    if (stats.skippedSize) warnings.push(`${stats.skippedSize} signal(s) could not be traded because one lot needs more risk (up to ${Math.round(stats.oneLotRisk).toLocaleString('en-IN')}) than ${C.riskPct}% of capital allows, or exceeds the ${C.maxLeverage}× exposure cap. Raise capital or risk %, or use a wider exposure cap for futures.`);
     if (trades.length < 30) warnings.push(`Only ${trades.length} trades — far too few to judge anything. Aim for hundreds across different regimes.`);
     warnings.push('Results are from SYNTHETIC data and say nothing about how this rule would perform on real markets.');
-    return { trades, curve, stats, warnings, config: C };
+    return { trades, curve: S.curve, stats, warnings, config: C };
   }
 
   function monteCarlo(pnls, { start = 100000, paths = 1000, seed = 7, ruinPct = 50 } = {}) {
@@ -1447,7 +1472,506 @@ table.t tbody tr:hover{background:var(--panel2)}
     const strat = base.stats.net; const p = (nets.filter((x) => x >= strat).length + 1) / (runs + 1); nets.sort((a, b) => a - b);
     return { strategyNet: strat, trades: n, runs, p, randomMedian: nets[Math.floor(runs / 2)], random95: nets[Math.floor(runs * 0.95)], random5: nets[Math.floor(runs * 0.05)] };
   }
-  IA.bt = { SIGNALS, run, monteCarlo, riskOfRuinSim, groupStats, walkForward, optimiseOOS, randomEntryTest };
+  IA.bt = { SIGNALS, DEFAULTS, config, entrySignal, calendar, newState, stepBar, summarise, run, monteCarlo, riskOfRuinSim, groupStats, walkForward, optimiseOOS, randomEntryTest };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+/* ==== js/engines/bot.js ==== */
+/* Paper-trading bot: runs a backtester rule set live, one bar at a time.
+   Causal by construction — at bar i the entry signal is computed from candles[0..i] only (a prefix), and the
+   per-bar logic is the backtester's own IA.bt.stepBar, so the bot and the backtester apply identical rules.
+   The only forward-looking input is the session calendar (which bar closes the day), i.e. timestamps, never prices. */
+(function (root) {
+  const IA = (root.IA = root.IA || {});
+
+  function create(candles, cfg, { startI = 1 } = {}) {
+    const C = IA.bt.config(cfg);
+    return { C, i: Math.max(1, startI), startI: Math.max(1, startI), S: IA.bt.newState(candles, C), log: [], done: false };
+  }
+  // Signal on bar i's close using only bars 0..i.
+  function signalAt(candles, C, i) {
+    if (C.signal) return !!C.signal[i];
+    const pre = candles.slice(0, i + 1);
+    return IA.bt.entrySignal(pre, C)[i];
+  }
+  function step(bot, candles) {
+    if (bot.i >= candles.length) { bot.done = true; return []; }
+    const i = bot.i, sig = signalAt(candles, bot.C, i);
+    const ev = IA.bt.stepBar(bot.S, candles, bot.C, i, sig);
+    ev.forEach((e) => bot.log.push(e));
+    bot.i++; if (bot.i >= candles.length) bot.done = true;
+    return ev;
+  }
+  // Advance n bars, or to the end of the current session with n = 'eod', or to the end with n = 'all'.
+  function advance(bot, candles, n) {
+    const out = []; if (bot.done) return out;
+    const day = candles[bot.i] && candles[bot.i].d; let k = 0;
+    while (!bot.done && (n === 'all' ? true : n === 'eod' ? candles[bot.i].d === day : k < n)) { out.push(...step(bot, candles)); k++; }
+    return out;
+  }
+  function lastClose(bot, candles) { return candles[Math.max(0, bot.i - 1)].c; }
+  function unrealised(bot, candles) { const p = bot.S.pos; if (!p) return 0; return bot.C.side * (lastClose(bot, candles) - p.entry) * p.qty; }
+  function equity(bot, candles) { return bot.S.equity + unrealised(bot, candles); }
+  function summary(bot) { return IA.bt.summarise(bot.S, bot.C); }
+
+  const hm = (t) => new Date(t).toISOString().slice(11, 16);
+  function describe(e, candles, C, fmt = (x) => x.toFixed(2)) {
+    const b = candles[e.i], at = `${b.d} ${hm(b.t)}`, side = C.side > 0 ? 'BUY' : 'SELL SHORT';
+    if (e.type === 'signal') return `${at} · entry conditions all true on the close → ${side} at the next bar's open`;
+    if (e.type === 'entry') return `${at} · ${C.side > 0 ? 'bought' : 'shorted'} ${e.qty} @ ${fmt(e.price)} · stop ${fmt(e.stop)}${e.target != null ? ' · target ' + fmt(e.target) : ''}${e.partial ? ' (partial: volume cap)' : ''}`;
+    if (e.type === 'exit') { const t = e.trade; return `${at} · exit by ${t.why} @ ${fmt(t.exit)} · net ${t.net >= 0 ? '+' : ''}${fmt(t.net)} (${t.R >= 0 ? '+' : ''}${t.R.toFixed(2)}R, costs ${fmt(t.costs)})`; }
+    if (e.type === 'skip') return `${at} · signal ignored: ${e.why}`;
+    return at;
+  }
+  IA.bot = { create, step, advance, signalAt, unrealised, equity, summary, describe, lastClose };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+/* ==== js/engines/codegen.js ==== */
+/* Strategy code export: turns a backtester configuration into
+   - a standalone Python 3 script (standard library only) that re-implements the app's indicators, signals
+     and bar-by-bar rules exactly, so its trades match the app on the same CSV (verified by tests), and
+   - a TradingView Pine Script v5 strategy that follows the same rules using Pine's built-in functions
+     (close, but not identical: Pine's fills, warm-up and session handling differ; not executed here). */
+(function (root) {
+  const IA = (root.IA = root.IA || {});
+  const RULE_TEXT = (C) => C.entry.map((e) => { const S = IA.bt.SIGNALS[e.id]; const p = Object.assign({}, S.params, e.params || {}); const ps = Object.entries(p).map(([k, v]) => `${k}=${v}`).join(', '); return `${S.label}${ps ? ' (' + ps + ')' : ''}`; });
+  const clean = (C) => { const o = {}; ['side', 'entry', 'stop', 'target', 'capital', 'riskPct', 'slippageTicks', 'tick', 'costBps', 'eodExit', 'noEntryLastBars', 'maxTradesPerDay', 'lot', 'maxVolPct', 'maxLeverage'].forEach((k) => { if (C[k] !== undefined) o[k] = C[k]; }); o.entry = (o.entry || []).map((e) => ({ id: e.id, params: Object.assign({}, IA.bt.SIGNALS[e.id].params, e.params || {}) })); if (!o.target) o.target = { rr: null }; return o; };
+  const pyLit = (v) => JSON.stringify(v, null, 2).replace(/\btrue\b/g, 'True').replace(/\bfalse\b/g, 'False').replace(/\bnull\b/g, 'None');
+
+  function python(cfg, meta = {}) {
+    const C = clean(IA.bt.config(cfg)), rules = RULE_TEXT(C);
+    return `#!/usr/bin/env python3
+"""
+${meta.name || 'Strategy'} - exported from Intraday Mastery Academy v${IA.VERSION || ''} on ${meta.date || new Date().toISOString().slice(0, 10)}
+
+Rules (${C.side > 0 ? 'LONG' : 'SHORT'} only; ALL entry conditions must be true on a bar's close, entry at the NEXT bar's open):
+${rules.map((r) => '  - ' + r).join('\n')}
+Stop: ${C.stop.type === 'atr' ? C.stop.mult + ' x ATR(14) of the signal bar' : C.stop.pct + '% of the entry bar open'}; target: ${C.target.rr ? C.target.rr + 'R' : 'none'}; exit at session close: ${C.eodExit ? 'yes' : 'no'}
+Risk ${C.riskPct}% of equity per trade (exposure capped at ${C.maxLeverage}× equity), max ${C.maxTradesPerDay} trades/day, no entries in the last ${C.noEntryLastBars} bars of a session.
+Costs ${C.costBps} bps per side, slippage ${C.slippageTicks} tick(s) of ${C.tick}. If stop and target are both inside one bar, the stop is assumed hit first.
+
+This script re-implements the app's indicators and rules exactly, using only the Python standard library.
+On the same bars it should reproduce the app's backtest trade for trade.
+
+Usage:   python3 ${meta.file || 'strategy.py'} bars.csv [trades_out.csv]
+CSV:     header row, oldest bar first, one row per bar, exchange-local time:
+         datetime,open,high,low,close,volume      e.g. 2026-11-02 09:15,25810.5,25840,25795.2,25832.1,182500
+         (also accepted: separate date,time columns; column names are case-insensitive)
+
+EDUCATIONAL USE ONLY. Not investment advice. A backtest describes the past on the data you supply; it does not
+predict future results. Read the "Going live" notes at the end before connecting anything to a broker.
+"""
+import csv
+import math
+import sys
+
+CONFIG = ${pyLit(C)}
+
+# ---------------------------------------------------------------- data
+def load_bars(path):
+    with open(path, newline="", encoding="utf-8-sig") as f:
+        rd = csv.DictReader(f)
+        cols = {k.strip().lower(): k for k in rd.fieldnames}
+        def col(*names):
+            for n in names:
+                if n in cols:
+                    return cols[n]
+            return None
+        cdt, cd, ct = col("datetime", "timestamp", "date_time"), col("date"), col("time")
+        co, ch, cl, cc, cv = col("open", "o"), col("high", "h"), col("low", "l"), col("close", "c"), col("volume", "vol", "v")
+        if not (co and ch and cl and cc) or not (cdt or cd):
+            sys.exit("CSV needs datetime (or date[,time]), open, high, low, close[, volume] columns")
+        bars = []
+        for r in rd:
+            stamp = r[cdt].strip() if cdt else (r[cd].strip() + (" " + r[ct].strip() if ct else ""))
+            stamp = stamp.replace("T", " ")
+            bars.append({"d": stamp[:10], "t": stamp, "o": float(r[co]), "h": float(r[ch]), "l": float(r[cl]),
+                         "c": float(r[cc]), "v": float(r[cv]) if cv and r[cv].strip() else 0.0})
+    return bars
+
+# ---------------------------------------------------------------- indicators (same definitions as the app)
+def sma(src, n):
+    out, s = [None] * len(src), 0.0
+    for i, x in enumerate(src):
+        s += x
+        if i >= n:
+            s -= src[i - n]
+        if i >= n - 1:
+            out[i] = s / n
+    return out
+
+def ema(src, n):  # seeded with the SMA of the first n values
+    out, k, prev, start = [None] * len(src), 2 / (n + 1), None, -1
+    for i, x in enumerate(src):
+        if x is None:
+            continue
+        if start < 0:
+            start = i
+        if i - start == n - 1:
+            prev = sum(src[start:i + 1]) / n
+            out[i] = prev
+        elif prev is not None:
+            prev = x * k + prev * (1 - k)
+            out[i] = prev
+    return out
+
+def rma(src, n):  # Wilder smoothing, seeded by the SMA
+    out, prev, cnt, s = [None] * len(src), None, 0, 0.0
+    for i, x in enumerate(src):
+        if x is None:
+            continue
+        if prev is None:
+            s += x
+            cnt += 1
+            if cnt == n:
+                prev = s / n
+                out[i] = prev
+        else:
+            prev = (prev * (n - 1) + x) / n
+            out[i] = prev
+    return out
+
+def stdev(src, n):  # population SD (Bollinger convention)
+    out = [None] * len(src)
+    for i in range(n - 1, len(src)):
+        w = src[i - n + 1:i + 1]
+        m = 0.0
+        for x in w:
+            m += x
+        m /= n
+        v = 0.0
+        for x in w:
+            v += (x - m) ** 2
+        out[i] = math.sqrt(v / n)
+    return out
+
+def rsi(src, n=14):
+    g, l = [None], [None]
+    for i in range(1, len(src)):
+        d = src[i] - src[i - 1]
+        g.append(max(d, 0))
+        l.append(max(-d, 0))
+    ag, al = rma(g, n), rma(l, n)
+    out = []
+    for i in range(len(src)):
+        if ag[i] is None or al[i] is None:
+            out.append(None)
+        elif al[i] == 0:
+            out.append(50 if ag[i] == 0 else 100)
+        else:
+            out.append(100 - 100 / (1 + ag[i] / al[i]))
+    return out
+
+def true_range(c):
+    return [b["h"] - b["l"] if i == 0 else max(b["h"] - b["l"], abs(b["h"] - c[i - 1]["c"]), abs(b["l"] - c[i - 1]["c"]))
+            for i, b in enumerate(c)]
+
+def atr(c, n=14):
+    return rma(true_range(c), n)
+
+def macd_hist(src, f, s, sig):
+    ef, es = ema(src, f), ema(src, s)
+    line = [ef[i] - es[i] if ef[i] is not None and es[i] is not None else None for i in range(len(src))]
+    sg = ema(line, sig)
+    return [line[i] - sg[i] if line[i] is not None and sg[i] is not None else None for i in range(len(src))]
+
+def bollinger(src, n, k):
+    m, sd = sma(src, n), stdev(src, n)
+    up = [None if m[i] is None else m[i] + k * sd[i] for i in range(len(src))]
+    lo = [None if m[i] is None else m[i] - k * sd[i] for i in range(len(src))]
+    return up, lo
+
+def vwap(c):  # session VWAP, resets each calendar day
+    pv = v = 0.0
+    last, out = None, []
+    for b in c:
+        if b["d"] != last:
+            pv = v = 0.0
+            last = b["d"]
+        tp = (b["h"] + b["l"] + b["c"]) / 3
+        pv += tp * b["v"]
+        v += b["v"]
+        out.append(pv / v if v else None)
+    return out
+
+def adx(c, n=14):
+    pdm, ndm = [0.0], [0.0]
+    for i in range(1, len(c)):
+        up, dn = c[i]["h"] - c[i - 1]["h"], c[i - 1]["l"] - c[i]["l"]
+        pdm.append(up if up > dn and up > 0 else 0.0)
+        ndm.append(dn if dn > up and dn > 0 else 0.0)
+    tr = true_range(c)
+    tr[0] = pdm[0] = ndm[0] = None
+    st, sp, sn = rma(tr, n), rma(pdm, n), rma(ndm, n)
+    pdi = [100 * sp[i] / t if t else None for i, t in enumerate(st)]
+    ndi = [100 * sn[i] / t if t else None for i, t in enumerate(st)]
+    dx = [None if p is None else (0 if p + ndi[i] == 0 else 100 * abs(p - ndi[i]) / (p + ndi[i])) for i, p in enumerate(pdi)]
+    return rma(dx, n)
+
+def supertrend_dir(c, n=10, m=3):
+    a = atr(c, n)
+    out, fu, fl, d = [], None, None, 1
+    for i, b in enumerate(c):
+        if a[i] is None:
+            out.append(None)
+            continue
+        hl2 = (b["h"] + b["l"]) / 2
+        bu, bl = hl2 + m * a[i], hl2 - m * a[i]
+        pc = c[i - 1]["c"] if i > 0 else b["c"]
+        fu = bu if (fu is None or bu < fu or pc > fu) else fu
+        fl = bl if (fl is None or bl > fl or pc < fl) else fl
+        if d == 1 and b["c"] < fl:
+            d = -1
+        elif d == -1 and b["c"] > fu:
+            d = 1
+        out.append(d)
+    return out
+
+# ---------------------------------------------------------------- signals (side: +1 long, -1 short)
+def sig_ema_cross(c, p, side):
+    cl = [b["c"] for b in c]
+    f, s = ema(cl, p["fast"]), ema(cl, p["slow"])
+    return [i > 0 and None not in (f[i], s[i], f[i - 1], s[i - 1]) and
+            ((f[i - 1] <= s[i - 1] and f[i] > s[i]) if side > 0 else (f[i - 1] >= s[i - 1] and f[i] < s[i])) for i in range(len(c))]
+
+def sig_vwap_side(c, p, side):
+    v = vwap(c)
+    return [v[i] is not None and (b["c"] > v[i] if side > 0 else b["c"] < v[i]) for i, b in enumerate(c)]
+
+def sig_vwap_reclaim(c, p, side):
+    v = vwap(c)
+    return [i > 0 and c[i - 1]["d"] == b["d"] and v[i] is not None and v[i - 1] is not None and
+            ((c[i - 1]["c"] <= v[i - 1] and b["c"] > v[i]) if side > 0 else (c[i - 1]["c"] >= v[i - 1] and b["c"] < v[i])) for i, b in enumerate(c)]
+
+def sig_rsi_extreme(c, p, side):
+    r = rsi([b["c"] for b in c], p["n"])
+    return [i > 0 and r[i] is not None and r[i - 1] is not None and
+            ((r[i - 1] < p["lo"] and r[i] >= p["lo"]) if side > 0 else (r[i - 1] > p["hi"] and r[i] <= p["hi"])) for i in range(len(c))]
+
+def sig_rsi_trend(c, p, side):
+    r = rsi([b["c"] for b in c], p["n"])
+    return [x is not None and (x > 50 if side > 0 else x < 50) for x in r]
+
+def sig_macd_cross(c, p, side):
+    h = macd_hist([b["c"] for b in c], p["f"], p["s"], p["sig"])
+    return [i > 0 and h[i] is not None and h[i - 1] is not None and
+            ((h[i - 1] <= 0 and h[i] > 0) if side > 0 else (h[i - 1] >= 0 and h[i] < 0)) for i in range(len(c))]
+
+def sig_supertrend_flip(c, p, side):
+    d = supertrend_dir(c, p["n"], p["m"])
+    return [i > 0 and d[i] is not None and d[i - 1] is not None and d[i] == side and d[i - 1] == -side for i in range(len(c))]
+
+def sig_bb_reentry(c, p, side):
+    up, lo = bollinger([b["c"] for b in c], p["n"], p["k"])
+    return [i > 0 and lo[i] is not None and lo[i - 1] is not None and
+            ((c[i - 1]["c"] < lo[i - 1] and b["c"] > lo[i]) if side > 0 else (c[i - 1]["c"] > up[i - 1] and b["c"] < up[i])) for i, b in enumerate(c)]
+
+def sig_orb(c, p, side):
+    out, day, k, hi, lo, fired = [False] * len(c), None, 0, 0.0, 0.0, False
+    for i, b in enumerate(c):
+        if b["d"] != day:
+            day, k, hi, lo, fired = b["d"], 0, -math.inf, math.inf, False
+        k += 1
+        if k <= p["bars"]:
+            hi, lo = max(hi, b["h"]), min(lo, b["l"])
+            continue
+        if not fired and (b["c"] > hi if side > 0 else b["c"] < lo):
+            out[i] = fired = True
+    return out
+
+def sig_pdh_break(c, p, side):
+    out, day, ph, pl, ch, clo, fired = [False] * len(c), None, None, None, -math.inf, math.inf, False
+    for i, b in enumerate(c):
+        if b["d"] != day:
+            if day is not None:
+                ph, pl = ch, clo
+            day, ch, clo, fired = b["d"], -math.inf, math.inf, False
+        if ph is not None and not fired and ((b["c"] > ph and c[i - 1]["c"] <= ph) if side > 0 else (b["c"] < pl and c[i - 1]["c"] >= pl)):
+            out[i] = fired = True
+        ch, clo = max(ch, b["h"]), min(clo, b["l"])
+    return out
+
+def sig_volume_spike(c, p, side):
+    av = sma([b["v"] for b in c], 20)
+    return [av[i] is not None and b["v"] >= p["k"] * av[i] for i, b in enumerate(c)]
+
+def sig_adx_trend(c, p, side):
+    a = adx(c, p["n"])
+    return [x is not None and x >= p["min"] for x in a]
+
+SIGNALS = {name[4:]: fn for name, fn in globals().items() if name.startswith("sig_")}
+
+def entry_signal(c, cfg):
+    sigs = [SIGNALS[e["id"]](c, e["params"], cfg["side"]) for e in cfg["entry"]]
+    return [all(s[i] for s in sigs) for i in range(len(c))]
+
+# ---------------------------------------------------------------- bar-by-bar backtest (same rules as the app)
+def backtest(c, cfg):
+    side, slip = cfg["side"], cfg["slippageTicks"] * cfg["tick"]
+    cost = lambda val: val * cfg["costBps"] / 1e4
+    sig, a = entry_signal(c, cfg), atr(c, 14)
+    last_of_day = [i == len(c) - 1 or c[i + 1]["d"] != b["d"] for i, b in enumerate(c)]
+    bars_left, k = [0] * len(c), 0
+    for i in range(len(c) - 1, -1, -1):
+        k = 0 if last_of_day[i] else k + 1
+        bars_left[i] = k
+    equity, pos, pending, trades, day_count, curve = cfg["capital"], None, False, [], {}, [cfg["capital"]]
+    for i in range(1, len(c)):
+        b = c[i]
+        if pending and pos is None:
+            pending = False
+            fill = b["o"] + side * slip
+            stop_dist = (a[i - 1] or b["o"] * 0.003) * cfg["stop"]["mult"] if cfg["stop"]["type"] == "atr" else b["o"] * cfg["stop"]["pct"] / 100
+            stop = fill - side * stop_dist
+            target = fill + side * stop_dist * cfg["target"]["rr"] if cfg["target"].get("rr") else None
+            qty = math.floor(equity * cfg["riskPct"] / 100 / stop_dist / cfg["lot"]) * cfg["lot"]
+            qty = min(qty, math.floor(equity * cfg.get("maxLeverage", 1) / fill / cfg["lot"]) * cfg["lot"])  # exposure cap
+            partial = False
+            if cfg.get("maxVolPct", 0) > 0:
+                cap = math.floor(b["v"] * cfg["maxVolPct"] / cfg["lot"]) * cfg["lot"]
+                if qty > cap:
+                    qty, partial = cap, True
+            if qty > 0:
+                pos = {"i": i, "entry": fill, "stop": stop, "target": target, "qty": qty, "dist": stop_dist}
+                day_count[b["d"]] = day_count.get(b["d"], 0) + 1
+        if pos is not None:
+            exit_px = why = None
+            hit_stop = b["l"] <= pos["stop"] if side > 0 else b["h"] >= pos["stop"]
+            hit_tgt = pos["target"] is not None and (b["h"] >= pos["target"] if side > 0 else b["l"] <= pos["target"])
+            if hit_stop:
+                gap = b["o"] < pos["stop"] if side > 0 else b["o"] > pos["stop"]
+                exit_px, why = (b["o"] if gap else pos["stop"]) - side * slip, "stop (gapped)" if gap else "stop"
+            elif hit_tgt:
+                exit_px, why = pos["target"] - side * slip, "target"
+            elif cfg["eodExit"] and last_of_day[i]:
+                exit_px, why = b["c"] - side * slip, "end of day"
+            if exit_px is not None:
+                gross = side * (exit_px - pos["entry"]) * pos["qty"]
+                costs = cost(pos["entry"] * pos["qty"]) + cost(exit_px * pos["qty"])
+                net = gross - costs
+                equity += net
+                trades.append({"entry_time": c[pos["i"]]["t"], "exit_time": b["t"], "side": "long" if side > 0 else "short",
+                               "qty": pos["qty"], "entry": round(pos["entry"], 4), "exit": round(exit_px, 4), "why": why,
+                               "gross": round(gross, 2), "costs": round(costs, 2), "net": round(net, 2),
+                               "R": round(net / (pos["dist"] * pos["qty"]), 4)})
+                curve.append(equity)
+                pos = None
+        if pos is None and not pending and sig[i] and bars_left[i] >= cfg["noEntryLastBars"] \\
+                and day_count.get(b["d"], 0) < cfg["maxTradesPerDay"] and i < len(c) - 1:
+            pending = True
+        if pending and last_of_day[i]:
+            pending = False
+    peak, mdd = curve[0], 0.0
+    for e in curve:
+        peak = max(peak, e)
+        mdd = max(mdd, (peak - e) / peak if peak else 0)
+    return trades, equity, mdd
+
+def main():
+    if len(sys.argv) < 2:
+        sys.exit(__doc__)
+    bars = load_bars(sys.argv[1])
+    if len(bars) < 30:
+        sys.exit("Need at least 30 bars.")
+    trades, final, mdd = backtest(bars, CONFIG)
+    n, wins = len(trades), sum(1 for t in trades if t["net"] > 0)
+    net = sum(t["net"] for t in trades)
+    print(f"bars {len(bars)}  trades {n}  win rate {100 * wins / n if n else 0:.1f}%  net {net:,.2f}  "
+          f"final equity {final:,.2f}  avg R {sum(t['R'] for t in trades) / n if n else 0:.3f}  max DD {100 * mdd:.2f}%")
+    if n < 30:
+        print(f"Only {n} trades - far too few to judge anything.")
+    if len(sys.argv) > 2:
+        with open(sys.argv[2], "w", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=list(trades[0].keys()) if trades else ["entry_time"])
+            w.writeheader()
+            w.writerows(trades)
+        print("trades written to", sys.argv[2])
+
+if __name__ == "__main__":
+    main()
+
+# ---------------------------------------------------------------- Going live (read before connecting a broker)
+# 1. Paper-trade first. Run the same rules forward on new data (the app's Strategy bot does this) and compare with
+#    the backtest. Live fills, gaps, outages and costs are usually worse than any backtest.
+# 2. In India, automated orders from your own code go through your broker's API, under SEBI's framework for retail
+#    algorithmic trading (see the app lesson "Algo trading rules in India"): the broker is responsible for the algo,
+#    orders carry an exchange algo ID, API access needs the broker's controls (e.g. static IP, 2FA), and above an
+#    order-rate threshold a self-built algo must be registered through the broker. Check your broker's current rules.
+# 3. Build a kill switch, a daily loss limit and position limits into the live code, and log every order.
+# 4. This file deliberately contains no order-placement code.
+`;
+  }
+
+  function pine(cfg, meta = {}) {
+    const C = clean(IA.bt.config(cfg)), long = C.side > 0, rules = RULE_TEXT(C);
+    const tf = meta.tfMin || 5, end = meta.sessionEnd || '15:30';
+    const [eh, em] = end.split(':').map(Number), endMin = eh * 60 + em;
+    const fmt = (m) => String(Math.floor(m / 60)).padStart(2, '0') + String(m % 60).padStart(2, '0');
+    const lastEntryMin = endMin - (C.noEntryLastBars + 1) * tf, squareMin = endMin - tf;
+    const S = (id) => C.entry.find((e) => e.id === id);
+    const lines = [], conds = [];
+    C.entry.forEach((e, k) => {
+      const p = e.params, v = `c${k + 1}`;
+      switch (e.id) {
+        case 'ema_cross': lines.push(`emaF${k} = ta.ema(close, ${p.fast})`, `emaS${k} = ta.ema(close, ${p.slow})`, `${v} = ${long ? `ta.crossover(emaF${k}, emaS${k})` : `ta.crossunder(emaF${k}, emaS${k})`}`); break;
+        case 'vwap_side': lines.push(`vw${k} = ta.vwap(hlc3)`, `${v} = close ${long ? '>' : '<'} vw${k}`); break;
+        case 'vwap_reclaim': lines.push(`vw${k} = ta.vwap(hlc3)`, `${v} = not session.isfirstbar and ${long ? `close[1] <= vw${k}[1] and close > vw${k}` : `close[1] >= vw${k}[1] and close < vw${k}`}`); break;
+        case 'rsi_extreme': lines.push(`r${k} = ta.rsi(close, ${p.n})`, `${v} = ${long ? `r${k}[1] < ${p.lo} and r${k} >= ${p.lo}` : `r${k}[1] > ${p.hi} and r${k} <= ${p.hi}`}`); break;
+        case 'rsi_trend': lines.push(`r${k} = ta.rsi(close, ${p.n})`, `${v} = r${k} ${long ? '> 50' : '< 50'}`); break;
+        case 'macd_cross': lines.push(`[m${k}, s${k}, h${k}] = ta.macd(close, ${p.f}, ${p.s}, ${p.sig})`, `${v} = ${long ? `h${k}[1] <= 0 and h${k} > 0` : `h${k}[1] >= 0 and h${k} < 0`}`); break;
+        case 'supertrend_flip': lines.push(`[st${k}, stDir${k}] = ta.supertrend(${p.m}, ${p.n})`, `// Pine's direction is -1 in an uptrend and +1 in a downtrend`, `${v} = ${long ? `stDir${k} == -1 and stDir${k}[1] == 1` : `stDir${k} == 1 and stDir${k}[1] == -1`}`); break;
+        case 'bb_reentry': lines.push(`[bbM${k}, bbU${k}, bbL${k}] = ta.bb(close, ${p.n}, ${p.k})`, `${v} = ${long ? `close[1] < bbL${k}[1] and close > bbL${k}` : `close[1] > bbU${k}[1] and close < bbU${k}`}`); break;
+        case 'orb': lines.push(`var int orbN${k} = 0`, `var float orbH${k} = na`, `var float orbL${k} = na`, `var bool orbDone${k} = false`, `if session.isfirstbar`, `    orbN${k} := 0`, `    orbH${k} := high`, `    orbL${k} := low`, `    orbDone${k} := false`, `orbN${k} += 1`, `if orbN${k} <= ${p.bars}`, `    orbH${k} := math.max(orbH${k}, high)`, `    orbL${k} := math.min(orbL${k}, low)`, `${v} = orbN${k} > ${p.bars} and not orbDone${k} and close ${long ? `> orbH${k}` : `< orbL${k}`}`, `if ${v}`, `    orbDone${k} := true`); break;
+        case 'pdh_break': lines.push(`var float pdH${k} = na`, `var float pdL${k} = na`, `var float dH${k} = na`, `var float dL${k} = na`, `var bool pdDone${k} = false`, `if session.isfirstbar`, `    pdH${k} := dH${k}`, `    pdL${k} := dL${k}`, `    dH${k} := high`, `    dL${k} := low`, `    pdDone${k} := false`, `${v} = not na(pdH${k}) and not pdDone${k} and ${long ? `close > pdH${k} and close[1] <= pdH${k}` : `close < pdL${k} and close[1] >= pdL${k}`}`, `if ${v}`, `    pdDone${k} := true`, `dH${k} := math.max(dH${k}, high)`, `dL${k} := math.min(dL${k}, low)`); break;
+        case 'volume_spike': lines.push(`${v} = volume >= ${p.k} * ta.sma(volume, 20)`); break;
+        case 'adx_trend': lines.push(`[diP${k}, diM${k}, adx${k}] = ta.dmi(${p.n}, ${p.n})`, `${v} = adx${k} >= ${p.min}`); break;
+      }
+      conds.push(v);
+    });
+    const stopExpr = C.stop.type === 'atr' ? `ta.atr(14) * ${C.stop.mult}` : `close * ${C.stop.pct} / 100  // app uses the entry bar's open; Pine uses the signal bar's close`;
+    return `//@version=5
+// ${meta.name || 'Strategy'} - exported from Intraday Mastery Academy v${IA.VERSION || ''} on ${meta.date || new Date().toISOString().slice(0, 10)}
+// Rules (${long ? 'LONG' : 'SHORT'} only, ALL true on a bar's close, entry at the next bar's open):
+${rules.map((r) => '//   - ' + r).join('\n')}
+// Stop ${C.stop.type === 'atr' ? C.stop.mult + ' x ATR(14)' : C.stop.pct + '%'}, target ${C.target.rr ? C.target.rr + 'R' : 'none'}, risk ${C.riskPct}% of equity, max ${C.maxTradesPerDay} trades/day,
+// square-off before the session close (${end}, ${tf}-minute bars assumed).
+// Results in TradingView will be CLOSE TO, NOT IDENTICAL WITH, the app: Pine's indicator warm-up, intrabar
+// stop/target ordering and session handling differ. This script was generated but not run in TradingView here.
+// EDUCATIONAL USE ONLY - not investment advice.
+strategy("${(meta.name || 'IMA strategy').replace(/"/g, "'")}", overlay = true, initial_capital = ${C.capital}, commission_type = strategy.commission.percent, commission_value = ${(C.costBps / 100).toFixed(4)}, slippage = ${C.slippageTicks}, process_orders_on_close = false)
+
+riskPct      = input.float(${C.riskPct}, "Risk per trade %", step = 0.1)
+lotSize      = input.int(${C.lot}, "Lot size", minval = 1)
+maxPerDay    = input.int(${C.maxTradesPerDay}, "Max trades per day", minval = 1)
+lastEntryHHMM = input.int(${+fmt(lastEntryMin)}, "No new entries after (HHMM, exchange time)")
+squareHHMM   = input.int(${+fmt(squareMin)}, "Square off at (HHMM, exchange time)")
+rr           = input.float(${C.target.rr || 0}, "Target in R (0 = none)", step = 0.5)
+
+${lines.join('\n')}
+
+entrySig = ${conds.join(' and ')}
+
+hhmm = hour(time, syminfo.timezone) * 100 + minute(time, syminfo.timezone)
+var int tradesToday = 0
+if session.isfirstbar
+    tradesToday := 0
+
+stopDist = ${stopExpr}
+qtyRaw = math.floor(strategy.equity * riskPct / 100 / stopDist / lotSize) * lotSize
+maxLev = input.float(${C.maxLeverage}, "Max exposure (x equity)", step = 0.5)
+qty = math.min(qtyRaw, math.floor(strategy.equity * maxLev / close / lotSize) * lotSize)
+
+if entrySig and strategy.position_size == 0 and tradesToday < maxPerDay and hhmm <= lastEntryHHMM and qty > 0
+    strategy.entry("E", ${long ? 'strategy.long' : 'strategy.short'}, qty = qty)
+    strategy.exit("X", "E", loss = stopDist / syminfo.mintick, profit = rr > 0 ? stopDist * rr / syminfo.mintick : na)
+    tradesToday += 1
+${C.eodExit ? `
+if hhmm >= squareHHMM
+    strategy.close_all(comment = "end of day")
+` : ''}
+plotshape(entrySig, "Signal", ${long ? 'shape.triangleup, location.belowbar, color.new(color.blue, 0)' : 'shape.triangledown, location.abovebar, color.new(color.orange, 0)'})
+`;
+  }
+  IA.codegen = { python, pine, rules: RULE_TEXT, clean };
 })(typeof window !== 'undefined' ? window : globalThis);
 
 /* ==== js/engines/clock.js ==== */
@@ -1914,7 +2438,7 @@ table.t tbody tr:hover{background:var(--panel2)}
     ] },
     { n: 4, name: 'Professional mastery', goal: 'Analyse independently, research and validate rules-based strategies, and measure yourself like a professional.', modules: [
       { id: 'L4-M1', title: 'Order flow and execution', track: 'ta', lessons: [L('l4-depth', 'Level 2, time & sales and tape reading', 'ta'), L('l4-footprint', 'Footprint charts, delta and cumulative delta', 'ta'), L('l4-execution', 'Execution quality, slippage and market impact', 'ta'), L('l4-scalping', 'Scalping and momentum day-trading in practice: costs, speed and survival', 'strategy')] },
-      { id: 'L4-M2', title: 'Quantitative foundations', track: 'quant', lessons: [L('l4-probability', 'Probability and distributions for traders', 'quant'), L('l4-correlation-regression', 'Correlation and regression', 'quant'), L('l4-mean-rev-momentum', 'Mean reversion and momentum models', 'quant'), L('l4-statarb', 'Statistical arbitrage and algorithmic trading concepts', 'quant')] },
+      { id: 'L4-M2', title: 'Quantitative foundations', track: 'quant', lessons: [L('l4-probability', 'Probability and distributions for traders', 'quant'), L('l4-correlation-regression', 'Correlation and regression', 'quant'), L('l4-mean-rev-momentum', 'Mean reversion and momentum models', 'quant'), L('l4-statarb', 'Statistical arbitrage and algorithmic trading concepts', 'quant'), L('l4-algo-india', 'From backtest to live algo: India\'s retail algo rules', 'quant')] },
       { id: 'L4-M3', title: 'Strategy research process', track: 'strategy', lessons: [L('l4-walkforward', 'Walk-forward and out-of-sample testing', 'strategy'), L('l4-montecarlo', 'Monte Carlo analysis of a trade list', 'strategy'), L('l4-live-transition', 'Paper → small live → scale: a staged process', 'strategy')] },
       { id: 'L4-M4', title: 'Advanced market analysis', track: 'global', lessons: [L('l4-intermarket', 'Intermarket analysis and sector rotation', 'global'), L('l4-regimes', 'Volatility regimes and correlation breakdowns', 'global'), L('l4-gex', 'Open-interest analysis, gamma exposure and expiry behaviour', 'deriv')] },
       { id: 'L4-M5', title: 'Performance and discipline system', track: 'psych', lessons: [L('l4-metrics', 'Measuring yourself: risk-adjusted performance', 'risk'), L('l4-review', 'The professional review cycle', 'psych'), L('l4-readiness', 'Are you ready for real money? An honest framework', 'risk')] },
@@ -11134,6 +11658,136 @@ Market hours: 09:15–15:30 IST. The first 15 minutes have the widest spreads; t
   );
 })(typeof window !== 'undefined' ? window : globalThis);
 
+/* ==== js/content/lessons-algo.js ==== */
+/* v2.2 lesson: from backtest to a live algorithm, and India's retail algo rules (as of Nov 2026). */
+(function (root) {
+  const IA = (root.IA = root.IA || {}); IA.content = IA.content || {};
+  IA.content.lessons = IA.content.lessons || []; IA.content.questions = IA.content.questions || [];
+  IA.content.lessons.push({
+    id: 'l4-algo-india', module: 'L4-M2', level: 4, track: 'quant', title: 'From backtest to live algo: India\'s retail algo rules', mins: 26,
+    summary: 'Take a rule from backtest to paper bot to code, know what SEBI\'s retail algo framework requires before any of it touches a real account, and judge when automation helps and when it only loses money faster.',
+    evidence: 'established',
+    sections: [
+      { h: 'Beginner view', md: `An **algorithm** is just your trading rules written so precisely that a computer can follow them without asking you anything: when to enter, how much to buy, where the stop and target go, when to stop for the day.
+
+Automation does three useful things: it removes hesitation, it applies the rules identically every time, and it can watch many bars without tiring. It does **not** create an edge. A rule that loses money by hand loses money faster, and more consistently, when a computer runs it.
+
+The safe path has four steps, and this app lets you do the first three:
+
+1. **Backtest** the rule on past bars (Quantitative Research → Backtester).
+2. **Paper-trade it forward** with a bot on bars it has never seen (Trading Simulator → Strategy bot).
+3. **Export the rules as code** you can read and run yourself (Python, or a TradingView Pine Script).
+4. Only then, and only through a broker that offers it under SEBI's rules, run it with small real money.
+
+> [!warn] SEBI's study of individual traders in equity derivatives (published 20 Aug 2026, covering FY25–FY26) found that roughly 88% of individual traders made a net loss in FY26, with aggregate losses of about ₹91,685 crore. Automation does not exempt you from those odds.` },
+      { h: 'Intermediate view', md: `### What "the same rules" must mean
+A backtest, a paper bot and live code are only comparable if they apply *exactly* the same rules. In this app the bot and the backtester share one bar-by-bar engine, and the exported Python re-implements the same indicators and rules line by line. The test suite checks that the Python produces the same trades as the app on the same bars.
+
+The rules in every version:
+- The signal is checked on a bar's **close**; the order fills at the **next bar's open** (no look-ahead).
+- If the stop and target are both inside one bar, the **stop** is assumed hit first (conservative).
+- Size = risk budget ÷ stop distance, rounded down to whole lots.
+- No entries in the last few bars of the session; square off at the close; a maximum number of trades per day.
+
+### Paper bot: the forward test
+A backtest is fitted, knowingly or not, to the data you looked at. The bot runs the rules on bars **one at a time**, computing every signal from past bars only, and logs each decision: signal, fill, stop, exit, or "signal ignored: daily limit reached". Run it across many sessions and compare with the backtest:
+
+| Check | Healthy | Warning |
+|---|---|---|
+| Average R per trade | Similar sign and size to the backtest | Sign flips or shrinks to near zero |
+| Trade frequency | Similar | Far more or far fewer trades |
+| Cost share of gross P&L | Similar | Costs eat most of the gross |
+| Worst losing streak | Within the backtest's Monte Carlo range | Beyond it |
+
+### From code to broker
+Exported code is a **specification you can read**. To trade, your code must send orders through your broker's API. In India that is regulated, and the rules are below.` },
+      { h: 'Advanced view', md: `### What breaks between a backtest and live trading
+- **Fills.** Live market orders cross the spread and may slip more than the ticks you assumed; limit orders may not fill at all, often on the trades that would have been winners.
+- **Data.** Live bars can arrive late, be revised, or miss a print; your code must handle a missing bar without double-counting.
+- **State.** If the program restarts mid-session it must reload its position from the broker, not from memory. Reconcile your position with the broker before every new order.
+- **Idempotency.** A timeout does not mean an order failed. Re-sending blindly can double your position. Use your own order tags and check order status before retrying.
+- **Runaway loops.** A bug that fires an order on every tick can exceed the exchange order-rate threshold and your loss limit within minutes. Hard-code a maximum number of orders per minute and per day, and a daily loss stop that cancels everything.
+- **Clock and calendar.** Holidays, special sessions and changed session times (for example NSE's closing-auction changes in 2026) must be read from a calendar, not assumed.
+
+### The kill switch hierarchy
+Under SEBI's framework the **exchange** can halt orders carrying a given algo ID, described as the last line of defence. Your broker has its own risk controls. You need a third layer in your own code: a manual stop, a daily loss limit, a maximum position, and an order-rate cap. These are cheap to build and the only ones that act on *your* definition of "something is wrong".
+
+### Overfitting, again
+Every parameter you tuned on the backtest makes the live result worse than the backtest, on average. Use the out-of-sample and random-entry tests first, keep the rule simple, and expect live performance to be meaningfully lower than the backtest.` },
+      { h: 'India', md: `> [!india] SEBI framework for retail algorithmic trading — as of Nov 2026. Verify on sebi.gov.in, NSE/BSE circulars and your broker's API terms before automating anything; details and thresholds change.
+
+**Legal basis.** SEBI circular "Safer participation of retail investors in Algorithmic trading" (SEBI/HO/MIRSD/MIRSD-PoD/P/CIR/2025/0000013, 4 Feb 2025), with exchange implementation standards (NSE, May 2025). The original 1 Aug 2025 start was extended; a SEBI circular of 30 Sep 2025 set a glide path, and full compliance by all brokers was required from **1 Apr 2026** (reported by brokers and the press; check the circular).
+
+| Rule | What it means for you |
+|---|---|
+| **Broker is the principal** | Algos reach you only through a broker, who is responsible for them and for your grievances. Algo providers and vendors act as the broker's agents and must be **empanelled with the exchange**; each algo needs exchange approval, and changes need fresh approval. |
+| **White box vs black box** | White box: logic disclosed and replicable. Black box: logic not known to the user and not replicable; its provider must be a SEBI-registered **Research Analyst** and keep a research report for each algo. |
+| **Algo ID** | Every algo order must carry an exchange-issued identifier. NSE treats client API orders as algo orders. |
+| **Self-built algos and the order-rate threshold** | You may write your own algo for yourself (and, once registered, family: spouse, dependent children and parents). Above **10 orders per second** it must be registered through your broker and gets its own algo ID; below that, orders are tagged with a generic retail algo ID. Reports differ on whether the 10 per second applies per exchange or per exchange segment — confirm with your broker. |
+| **API access** | No open APIs. Access uses an API key specific to you and the vendor, a **static IP** whitelisted by the broker, and OAuth authentication with two-factor login. Brokers have also moved to daily re-authentication (reported in broker notices, 2026). |
+| **Advertising** | Since SEBI's circular of 2 Sep 2022, brokers must not refer, directly or indirectly, to past or expected returns of an algorithm, or associate with platforms that do. A seller quoting algo returns at you is a red flag. |
+
+**What this means in practice:**
+- A strategy exported from this app and run through your broker's API from a whitelisted static IP, sending well under 10 orders per second, falls in the self-built, below-threshold category. Your broker decides the exact onboarding steps.
+- "Copy my algo, guaranteed 5% a month" offers break the advertising rule and the black-box registration requirement unless the provider is a registered RA working through an empanelled arrangement.
+
+[[link:l4-statarb]]` },
+      { h: 'The maths', md: `### Will costs kill the algo before it starts?
+Suppose the backtest on Nifty futures shows 300 trades a year, a 45% win rate, average win 1.8R and average loss 1R, with R = ₹3,000 per trade (one lot, 46-point stop × 65).
+
+:::formula
+Expectancy per trade (gross) = 0.45 × 1.8R − 0.55 × 1R = 0.81R − 0.55R = 0.26R = ₹780
+Round-trip cost of one Nifty futures lot ≈ ₹950–1,000 (see the charges calculator)
+Net expectancy ≈ ₹780 − ₹975 = −₹195 per trade → about −₹58,500 a year on 300 trades
+:::
+
+The rule looked profitable before costs and loses after them. Automation would execute it faithfully and lose faster. Fixes are economic, not technical: trade less often with a larger R, or find a rule whose gross edge is several times its cost.
+
+[[widget:charges-india]]` },
+      { h: 'Common misconceptions', md: `- **"An algo removes emotion, so it will profit."** It removes hesitation, not the need for an edge. Most losses come from rules with no edge after costs.
+- **"Backtest profit is what I will earn."** Live results are usually worse: real fills, missed data, parameter overfitting and changing regimes.
+- **"Retail algo trading is banned in India."** It is permitted under a broker-responsible framework with algo IDs, API controls and, above a threshold, registration.
+- **"A vendor's algo with published returns is approved."** Return claims for algos are prohibited for brokers; exchange empanelment and approval of an algo are not endorsements of its profitability.
+- **"If the API times out, just resend."** That is how traders end up with double or triple positions.` },
+      { h: 'When it fails', md: `**A realistic failure.** A trader backtests an opening-range breakout on 60 synthetic sessions, sees a profit factor of 1.4, and goes live with 3 lots. On day four the data feed lags; the script reads a stale bar, enters late, and the API times out. The script resends; both orders fill. The stop logic manages only the position it thinks it has (3 lots), so 3 extra lots run unprotected into the close. A gap the next morning turns a planned ₹9,000 risk into a ₹40,000 loss.
+
+What would have prevented it:
+1. Reconcile the broker position before and after every order.
+2. Use order tags and status checks instead of blind retries.
+3. Cap position size and orders per minute in code.
+4. A daily loss limit that flattens everything and stops the script.
+5. Weeks of paper trading forward before any live order.
+
+The algorithm also fails, more quietly, when the edge was never there: costs, regime change or overfitting. That failure is slower and more common than the dramatic one.` },
+      { h: 'Exercise', md: `1. In **Quantitative Research → Backtester**, build a rule (for example opening-range breakout plus close above VWAP), run it, and note trades, average R and costs paid.
+2. Press **Send to Strategy bot**. In **Trading Simulator → Strategy bot**, advance several sessions and read the decision log. Compare the bot's average R with the backtest.
+3. Back in the Backtester, use **Export as Python** and **Export as Pine Script**. Open the Python file and find the stop, the target and the "last bars" rule. Confirm they match what you set.
+4. If you have Python, press **Download these bars (CSV)** next to the export buttons and run the script on that file (python3 strategy.py bars.csv). The trade count and net should match the app.
+5. Write down, before any live use: your daily loss limit, maximum position, maximum orders per minute, and the broker's API requirements you would have to meet.` },
+    ],
+    check: [
+      { q: 'Your algo sends at most 2 orders per second through your broker\'s API. Under the framework as of 2026, which describes your position?', o: ['It must be registered as a black-box algo with an RA licence', 'It is below the 10 orders-per-second threshold; it still goes through the broker\'s API controls and is tagged with a generic retail algo ID', 'Retail clients cannot use APIs at all', 'It needs no broker involvement'], a: 1, why: 'Self-built algos below the exchange threshold need not be registered, but they still run only through the broker\'s API with its controls, and orders carry the generic retail algo identifier.' },
+      { q: 'A backtest shows gross expectancy of ₹600 per trade on one Nifty futures lot. Round-trip cost is about ₹975. What should you conclude?', o: ['Automate it; consistency will fix the gap', 'The rule loses about ₹375 per trade after costs; automation would lose faster', 'Costs only matter for options', 'Increase position size to cover costs'], a: 1, why: 'Net expectancy = 600 − 975 = −375. Automating a negative-expectancy rule only executes the loss more consistently; bigger size scales the loss.' },
+      { q: 'Your script gets a timeout when placing an order. What is the correct next step?', o: ['Resend immediately', 'Query the order book and position by your order tag; act only on the confirmed state', 'Double the next order to catch up', 'Restart the script and assume no position'], a: 1, why: 'A timeout says nothing about whether the order reached the exchange. Reconcile with the broker before sending anything else.' },
+      { q: 'Which is a white-box algo?', o: ['A vendor algo whose logic you cannot see', 'Your own rule set whose logic is disclosed and replicable', 'Any algo sold by a Research Analyst', 'Any algo above 10 orders per second'], a: 1, why: 'White box means the logic is disclosed and replicable; black box means it is not known to the user, and its provider must be a registered Research Analyst.' },
+    ],
+    refs: [
+      'SEBI — Safer participation of retail investors in Algorithmic trading, circular SEBI/HO/MIRSD/MIRSD-PoD/P/CIR/2025/0000013 (sebi.gov.in, 4 Feb 2025)',
+      'SEBI — Glide path for implementation of the retail algo framework, circular SEBI/HO/MIRSD/MIRSD-PoD/P/CIR/2025/132 (sebi.gov.in, 30 Sep 2025)',
+      'NSE — Retail algo trading FAQ and implementation standards (nseindia.com, 2025)',
+      'SEBI — circular SEBI/HO/MIRSD/DOP/P/CIR/2022/117 on algo platforms and return claims (2 Sep 2022), as reproduced in NSE circular 64/2022',
+      'SEBI — Study: Profitability of individual traders in the equity derivatives segment, FY25–FY26 (sebi.gov.in, 20 Aug 2026)',
+      'Ernest P. Chan — Algorithmic Trading: Winning Strategies and Their Rationale (book)',
+    ],
+  });
+  IA.content.questions.push(
+    { id: 'L4-M2-q16', module: 'L4-M2', d: 2, q: 'From when did SEBI require all brokers to comply fully with the retail algo framework (as of Nov 2026; verify)?', o: ['1 Aug 2025', '1 Oct 2025', '1 Apr 2026', 'It has no compliance date'], a: 2, why: 'The original 1 Aug 2025 start was extended; the Sep 2025 glide path led to full compliance by all brokers from 1 Apr 2026.' },
+    { id: 'L4-M2-q17', module: 'L4-M2', d: 2, q: 'A vendor advertises "our algo made 62% last year" and asks you to connect your broker account. Under SEBI rules, what is the main red flag?', o: ['Nothing; past returns are standard disclosure', 'Brokers may not refer to past or expected algo returns or associate with platforms that do, and a black-box provider must be a registered RA working through an empanelled arrangement', 'Only that 62% is too low', 'Vendors may advertise but not brokers'], a: 1, why: 'SEBI\'s 2022 circular bars return claims for algos by brokers and their associates; the 2025 framework requires empanelment and RA registration for black-box algos.' },
+    { id: 'L4-M2-q18', module: 'L4-M2', d: 3, q: 'Your backtest and your paper bot use the same rules on the same synthetic market. The backtest shows +0.20R per trade; the bot forward-tested on new sessions shows −0.05R over 120 trades. What is the best interpretation?', o: ['The bot is broken; trust the backtest', 'The edge did not hold out of sample; treat the rule as unproven and do not automate it with real money', 'Increase risk per trade to recover', 'Optimise parameters on the bot sessions too'], a: 1, why: 'A forward test on unseen data is the honest check. A sign flip over a reasonable sample says the backtest result was likely fit to the data; re-optimising on the new sessions repeats the same mistake.' },
+    { id: 'L4-M2-q19', module: 'L4-M2', d: 1, q: 'Under the retail framework, who can halt all orders carrying a particular algo ID as the last line of defence?', o: ['The exchange', 'The algo vendor', 'The client only', 'No one'], a: 0, why: 'The SEBI circular gives exchanges the ability to stop orders from a given algo ID (a kill switch), in addition to broker controls and your own.' },
+  );
+})(typeof window !== 'undefined' ? window : globalThis);
+
 /* ==== js/content/indicators-lib.js ==== */
 /* Indicator reference library. Formulas match js/engines/indicators.js (IA.ind). See docs/CONTENT-SPEC.md. */
 (function (root) {
@@ -15136,7 +15790,7 @@ Annie Duke's idea of resulting, from *Thinking in Bets*, describes this error: j
   function modal(content, { onClose } = {}) {
     const bg = h('div', { class: 'modal-bg', onclick: (e) => { if (e.target === bg) close(); } });
     const m = h('div', { class: 'modal', role: 'dialog' }, content); bg.append(m); document.body.append(bg);
-    function close() { bg.remove(); onClose && onClose(); }
+    let closed = false; function close() { if (closed) return; closed = true; bg.remove(); document.removeEventListener('keydown', esc2); onClose && onClose(); }
     const esc2 = (e) => { if (e.key === 'Escape') { close(); document.removeEventListener('keydown', esc2); } }; document.addEventListener('keydown', esc2);
     return { close, el: m };
   }
@@ -15151,7 +15805,24 @@ Annie Duke's idea of resulting, from *Thinking in Bets*, describes this error: j
   function seg(options, value, onChange) { const s = h('div', { class: 'seg' }); options.forEach(([v, l]) => { const b = h('button', { type: 'button', class: String(v) === String(value) ? 'on' : '', onclick: () => { $$('button', s).forEach((x) => x.classList.remove('on')); b.classList.add('on'); onChange(v); } }, l); s.append(b); }); return s; }
   function evTag(ev) { const m = { established: 'Established', mixed: 'Mixed evidence', subjective: 'Subjective framework', speculative: 'Speculative' }; return h('span', { class: 'tag ev-' + ev, title: 'Evidence status' }, m[ev] || ev || '—'); }
 
-  IA.ui = { h, $, $$, esc, md, inline, hydrate, prose, calcForm, resultBlock, errBlock, quiz, toast, modal, download, pickFile, csv, parseCsv, table, seg, evTag, num, money, pct, signCls, CUR };
+
+  // In-app replacements for confirm()/prompt(). Native dialogs are silently blocked in sandboxed
+  // previews (e.g. a chat app's file viewer), which made buttons appear dead. These always work.
+  function dialog(message, withInput, def) {
+    return new Promise((res) => {
+      let done = false, m = null; const fin = (v) => { if (done) return; done = true; if (m) m.close(); res(v); };
+      const input = withInput ? h('input', { class: 'i', type: 'text', value: def == null ? '' : String(def), 'aria-label': 'Answer', style: { width: '100%', marginTop: '8px' } }) : null;
+      const ok = h('button', { class: 'btn', type: 'button', 'data-dlg': 'ok', onclick: () => fin(withInput ? input.value : true) }, 'OK');
+      const cancel = h('button', { class: 'btn ghost', type: 'button', 'data-dlg': 'cancel', onclick: () => fin(withInput ? null : false) }, 'Cancel');
+      const body = h('div', { class: 'dlg' }, h('p', { style: { whiteSpace: 'pre-line', margin: '0 0 6px' } }, String(message)), input, h('div', { class: 'row', style: { marginTop: '14px', justifyContent: 'flex-end', gap: '8px' } }, cancel, ok));
+      m = modal(body, { onClose: () => fin(withInput ? null : false) });
+      if (input) input.addEventListener('keydown', (e) => { if (e.key === 'Enter') fin(input.value); });
+      setTimeout(() => (input || ok).focus(), 0);
+    });
+  }
+  const ask = (message) => dialog(message, false);
+  const askText = (message, def) => dialog(message, true, def);
+  IA.ui = { h, $, $$, esc, md, inline, hydrate, prose, calcForm, resultBlock, errBlock, quiz, toast, modal, ask, askText, download, pickFile, csv, parseCsv, table, seg, evTag, num, money, pct, signCls, CUR };
 })(typeof window !== 'undefined' ? window : globalThis);
 
 /* ==== js/core/chart.js ==== */
@@ -15414,7 +16085,7 @@ Annie Duke's idea of resulting, from *Thinking in Bets*, describes this error: j
   function shell() {
     const side = h('aside', { class: 'sidebar' }, h('div', { class: 'brand' }, logo(), h('div', null, 'Intraday Mastery', h('small', null, 'Global Trading Academy'))), h('nav', { class: 'nav' }, NAV.map(([k, l, ic], i) => [i === 6 || i === 11 || i === 16 ? h('div', { class: 'sep' }) : null, h('a', { href: '#/' + k, 'data-nav': k }, icon(ic), l)])));
     const search = h('input', { type: 'search', placeholder: 'Search lessons, indicators, strategies…', 'aria-label': 'Search', id: 'gsearch' });
-    search.addEventListener('keydown', (e) => { if (e.key === 'Enter' && search.value.trim()) { location.hash = '#/search/' + encodeURIComponent(search.value.trim()); search.blur(); } });
+    search.addEventListener('keydown', (e) => { if (e.key === 'Enter' && search.value.trim()) { IA.go('#/search/' + encodeURIComponent(search.value.trim())); search.blur(); } });
     const top = h('header', { class: 'topbar' }, h('h1', { id: 'title' }, ''), h('div', { class: 'search' }, icon('search'), search), h('span', { class: 'offline-pill', id: 'netpill' }, 'offline-ready'));
     const bottom = h('nav', { class: 'bottomnav' }, BOTTOM.map((k) => { const n = NAV.find((x) => x[0] === k); return h('a', { href: '#/' + k, 'data-nav': k }, icon(n[2]), n[1].split(' ')[0]); }), h('button', { type: 'button', onclick: drawer, 'aria-label': 'More sections' }, icon('more'), 'More'));
     const main = h('div', { class: 'main' }, top, h('main', { class: 'view', id: 'view' }), h('footer', { class: 'disclaimer' }, 'Educational tool, not financial advice. Charts and simulations use synthetic data unless you import your own. Trading can lose all of your capital. Market specifications are dated — verify with your exchange and broker.'));
@@ -15432,8 +16103,22 @@ Annie Duke's idea of resulting, from *Thinking in Bets*, describes this error: j
     [/^settings$/, 'settings'], [/^search\/(.*)$/, 'search'],
   ];
   let current = null;
+  // Routing keeps its own copy of the current route instead of relying only on location.hash. Inside a
+  // sandboxed preview (an iframe with srcdoc, e.g. a chat app's file viewer) "#/x" links resolve against the
+  // parent page's URL, so a normal click navigates away or is blocked and every link looks dead. All in-app
+  // links are intercepted and routed here; the address bar is updated only where the browser allows it.
+  let curHash = null;
+  const readHash = () => { try { return location.hash || ''; } catch (e) { return ''; } };
+  IA.go = (hash) => {
+    hash = String(hash || '#/'); if (!hash.startsWith('#')) hash = '#' + hash;
+    curHash = hash;
+    try { if (readHash() !== hash) history.pushState(null, '', hash); } catch (e) { /* sandboxed: keep internal route only */ }
+    return route();
+  };
+  const onUrlChange = () => { const hsh = readHash(); if (hsh !== curHash) { curHash = hsh; route(); } };
+  IA.currentRoute = () => (curHash == null ? readHash() : curHash);
   async function route() {
-    const full = decodeURIComponent(location.hash.replace(/^#\/?/, '')); const qi = full.indexOf('?');
+    const full = decodeURIComponent(IA.currentRoute().replace(/^#\/?/, '')); const qi = full.indexOf('?');
     const path = qi >= 0 && !full.startsWith('search/') ? full.slice(0, qi) : full, query = qi >= 0 ? new URLSearchParams(full.slice(qi + 1)) : new URLSearchParams();
     IA.query = query;
     let name = 'notfound', arg = null; for (const [re, n] of ROUTES) { const m = path.match(re); if (m) { name = n; arg = m[1]; break; } }
@@ -15485,7 +16170,13 @@ Annie Duke's idea of resulting, from *Thinking in Bets*, describes this error: j
     await IA.progress.load();
     const pill = $('#netpill'); const net = () => { pill.textContent = navigator.onLine ? 'online · works offline' : 'offline'; pill.classList.toggle('ok', true); }; net(); addEventListener('online', net); addEventListener('offline', net);
     if (!(await IA.db.persistent())) IA.ui.toast('Storage unavailable — progress will not be saved in this browser mode.', 6000);
-    addEventListener('hashchange', route); await route();
+    document.addEventListener('click', (e) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const a = e.target.closest && e.target.closest('a[href^="#"]'); if (!a || a.target === '_blank' || a.hasAttribute('download')) return;
+      const href = a.getAttribute('href'); if (href === '#' || !href.startsWith('#/')) return;
+      e.preventDefault(); IA.go(href);
+    });
+    curHash = readHash(); addEventListener('hashchange', onUrlChange); addEventListener('popstate', onUrlChange); await route();
     if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(() => {});
   }
   const BAD = new Set(['__proto__', 'constructor', 'prototype']);
@@ -15728,7 +16419,7 @@ Annie Duke's idea of resulting, from *Thinking in Bets*, describes this error: j
 
   IA.views.technical = (el, tab = 'indicators') => {
     const C = IA.content, tabs = [['indicators', 'Indicator library'], ['patterns', 'Candlestick patterns'], ['charttypes', 'Chart types'], ['structure', 'Structure & levels']];
-    el.append(h('div', { class: 'tabs' }, tabs.map(([k, l]) => h('button', { class: k === tab ? 'on' : '', onclick: () => (location.hash = '#/technical/' + k) }, l))));
+    el.append(h('div', { class: 'tabs' }, tabs.map(([k, l]) => h('button', { class: k === tab ? 'on' : '', onclick: () => IA.go('#/technical/' + k) }, l))));
     if (tab === 'indicators') {
       const list = C.indicators || []; if (!list.length) return el.append(h('p', { class: 'muted' }, 'Indicator library content not loaded.'));
       el.append(h('p', { class: 'muted' }, `${list.length} indicators and tools. Each entry: definition, formula, worked calculation, interpretation, signals, chart example, entries/exits, conditions, weaknesses, mistakes, timeframes, combinations, and practice. Green = established maths/mechanics; amber = mixed evidence of usefulness; violet = subjective framework.`));
@@ -15884,7 +16575,7 @@ The same synthetic Nifty session drawn six ways. Time-based charts (candles, bar
 
   IA.views.markets = (el, tab = 'clock') => {
     const tabs = [['clock', 'Global clock'], ['compare', 'Market comparison'], ['india', 'India'], ['us', 'United States'], ['global', 'Europe & Asia'], ['assets', 'Other assets'], ['specs', 'Specs & dates']];
-    el.append(h('div', { class: 'tabs' }, tabs.map(([k, l]) => h('button', { class: k === tab ? 'on' : '', onclick: () => (location.hash = '#/markets/' + k) }, l))));
+    el.append(h('div', { class: 'tabs' }, tabs.map(([k, l]) => h('button', { class: k === tab ? 'on' : '', onclick: () => IA.go('#/markets/' + k) }, l))));
     if (tab === 'clock') return clock(el);
     if (tab === 'specs') return specs(el);
     if (tab === 'compare') return compare(el);
@@ -16030,9 +16721,10 @@ Perpetual futures have no expiry; a **funding rate** paid between longs and shor
   const PRESETS = () => Object.keys(IA.exec.INSTR);
 
   IA.views.simulator = (el, tab = 'replay') => {
-    const tabs = [['replay', 'Chart replay'], ['decision', 'Decision simulator'], ['paper', 'Paper trading'], ['options', 'Options paper']];
-    el.append(h('div', { class: 'tabs' }, tabs.map(([k, l]) => h('button', { class: k === tab ? 'on' : '', onclick: () => (location.hash = '#/simulator/' + k) }, l))));
+    const tabs = [['replay', 'Chart replay'], ['decision', 'Decision simulator'], ['paper', 'Paper trading'], ['options', 'Options paper'], ['bot', 'Strategy bot']];
+    el.append(h('div', { class: 'tabs' }, tabs.map(([k, l]) => h('button', { class: k === tab ? 'on' : '', onclick: () => IA.go('#/simulator/' + k) }, l))));
     if (tab === 'options') return IA.optPaperView(el);
+    if (tab === 'bot') return IA.botView(el);
     return ({ replay, decision, paper }[tab] || replay)(el);
   };
 
@@ -16046,10 +16738,10 @@ Perpetual futures have no expiry; a **funding rate** paid between longs and shor
     const info = h('div', { class: 'small muted', style: { margin: '6px 0' } });
     const calc = () => { const px = state.price(); const st = +f.stop.value; if (!st || !px) { info.textContent = 'Enter a stop-loss to size by risk.'; return null; } const side = st < px ? 1 : -1; const r = IA.risk.positionSize({ capital: state.equity(), riskPct: +f.risk.value || 0.5, entry: px, stop: st, lot: I().lot, leverage: I().seg === 'futures' ? 8 : I().seg === 'eqIntraday' ? 5 : 2 }); if (r.error) { info.textContent = r.error; return null; } const tg = +f.target.value; info.textContent = `Suggested: ${r.units} (${r.lots} lots) · risk ${money(r.actualRisk, I().cur)}${tg ? ` · R:R ${num(Math.abs(tg - px) / Math.abs(px - st), 2)}` : ''}`; return { side, units: r.units }; };
     Object.values(f).forEach((i) => i.addEventListener('input', calc));
-    const go = (side) => { const sz = calc(); let qty = +f.qty.value || (sz ? sz.units : 0); qty = Math.floor(qty / I().lot) * I().lot; if (!qty) { toast('Quantity is zero — set a stop and risk %, or a quantity.'); return; } const st = +f.stop.value || null, tg = +f.target.value || null, px = state.price();
+    const go = async (side) => { const sz = calc(); let qty = +f.qty.value || (sz ? sz.units : 0); qty = Math.floor(qty / I().lot) * I().lot; if (!qty) { toast('Quantity is zero — set a stop and risk %, or a quantity.'); return; } const st = +f.stop.value || null, tg = +f.target.value || null, px = state.price();
       if (st && (side > 0 ? st >= px : st <= px)) { toast('Stop is on the wrong side of the current price.'); return; }
       if (tg && (side > 0 ? tg <= px : tg >= px)) { toast('Target is on the wrong side of the current price.'); return; }
-      if (!st && !state.allowNoStop) { if (!confirm('No stop-loss. Trading without a stop is the single most common way accounts blow up. Place anyway?')) return; }
+      if (!st && !state.allowNoStop) { if (!(await IA.ui.ask('No stop-loss. Trading without a stop is the single most common way accounts blow up. Place anyway?'))) return; }
       onSubmit({ side, qty, type: type.value, price: +f.price.value || undefined, stop: st, target: tg }); };
     box.append(g, info, h('div', { class: 'row' }, h('button', { class: 'btn buy', type: 'button', onclick: () => go(1) }, 'BUY / LONG'), h('button', { class: 'btn sell', type: 'button', onclick: () => go(-1) }, 'SELL / SHORT')));
     box.refresh = calc; return box;
@@ -16059,6 +16751,7 @@ Perpetual futures have no expiry; a **funding rate** paid between longs and shor
     return h('div', { class: 'grid g4 kpis' }, [['Equity', money(eq, cur), IA.ui.signCls(eq - acc.start)], ['Realised (net)', money(acc.realized - acc.charges, cur), IA.ui.signCls(acc.realized - acc.charges)], ['Unrealised', money(un, cur), IA.ui.signCls(un)], ['Position', acc.pos.qty ? `${acc.pos.qty > 0 ? 'Long' : 'Short'} ${Math.abs(acc.pos.qty)} @ ${IA.fmtP(acc.pos.avg)}` : 'Flat'], ['Charges paid', money(acc.charges, cur)], ['Trades', String(acc.trades.length)]].map(([l, v, c]) => h('div', { class: 'card kpi' }, h('span', { class: 'l' }, l), h('span', { class: 'v ' + (c || ''), style: { fontSize: '1.05rem' } }, v))));
   }
   const tradeCols = (cur) => [{ label: 'Side', k: 'side' }, { label: 'Qty', k: 'qty', n: 1 }, { label: 'Entry', get: (t) => IA.fmtP(t.entry), n: 1 }, { label: 'Exit', get: (t) => IA.fmtP(t.exit), n: 1 }, { label: 'Exit reason', k: 'why' }, { label: 'Gross', get: (t) => money(t.gross, cur), n: 1, cls: (t) => IA.ui.signCls(t.gross) }, { label: 'Charges', get: (t) => money(t.charges, cur), n: 1 }, { label: 'Net', get: (t) => money(t.net, cur), n: 1, cls: (t) => IA.ui.signCls(t.net) }];
+  IA.simToJournal = (...a) => toJournal(...a);
   async function toJournal(trades, ins, source) { for (const t of trades) await IA.db.put('journal', { date: new Date(t.openT || Date.now()).toISOString().slice(0, 10), market: ins.cur === 'INR' ? 'India' : 'Global', exchange: ins.cur === 'INR' ? 'NSE (simulated)' : 'Simulated', instrument: ins.sym, strategy: '', timeframe: '5m', side: t.side, entry: t.entry, exit: t.exit, stop: t.stop || '', target: t.target || '', qty: t.qty, gross: t.gross, charges: t.charges, net: t.net, entryTime: t.openT, exitTime: t.closeT, source, synthetic: true, notes: `Exit: ${t.why}` }); }
 
   // ---------- 1. Chart replay ----------
@@ -16141,14 +16834,14 @@ Perpetual futures have no expiry; a **funding rate** paid between longs and shor
     const q = IA.query || new URLSearchParams();
     let S = await IA.db.get('paper', null);
     const newBook = (preset, cash) => ({ preset, seed: Math.floor(Math.random() * 1e6), idx: 0, acc: IA.exec.newAccount(cash, preset), created: Date.now() });
-    if (!S || (q.get('preset') && q.get('preset') !== S.preset && confirm('Start a new paper account on ' + IA.gen.PRESETS[q.get('preset')].name + '? Your current paper account will be reset (journalled trades are kept).'))) S = newBook(q.get('preset') || 'NIFTY', 500000);
+    if (!S || (q.get('preset') && q.get('preset') !== S.preset && await IA.ui.ask('Start a new paper account on ' + IA.gen.PRESETS[q.get('preset')].name + '? Your current paper account will be reset (journalled trades are kept).'))) S = newBook(q.get('preset') || 'NIFTY', 500000);
     const ins = () => IA.exec.INSTR[S.preset];
     const data = IA.gen.generate({ preset: S.preset, seed: S.seed, days: 20, tfMin: 5 }).candles; if (!S.idx) S.idx = data.filter((b) => b.d === data[0].d).length + 3;
     const rng = IA.gen.rng(S.seed + S.idx);
     const kp = h('div', { style: { margin: '12px 0' } }), chartHost = h('div'), orders = h('div'), trades = h('div'), log = h('div', { class: 'small muted' });
     el.append(h('p', { class: 'muted' }, 'A persistent virtual account on a synthetic 20-session market. Time moves only when you advance it. Realism: next-bar execution, spread, slippage, partial fills when your size exceeds ~10% of bar volume, gaps between sessions, India/US charges, and automatic square-off at each session close. Nothing here touches a real broker.'));
     const top = h('div', { class: 'card' }); el.append(top, kp);
-    top.append(h('div', { class: 'row' }, h('b', null, IA.gen.PRESETS[S.preset].name), h('span', { class: 'tag' }, ins().sym), h('span', { class: 'tag warn' }, 'synthetic'), h('span', { class: 'small muted', id: 'pp-day' })), h('div', { class: 'row', style: { margin: '10px 0' } }, h('button', { class: 'btn primary', type: 'button', onclick: () => adv(1) }, 'Advance 1 bar'), h('button', { class: 'btn', type: 'button', onclick: () => adv(6) }, '+30 min'), h('button', { class: 'btn', type: 'button', onclick: () => adv('eod') }, 'To session close'), h('button', { class: 'btn ghost', type: 'button', onclick: async () => { const sel2 = prompt('New paper account.\nInstrument (' + PRESETS().join(', ') + '):', S.preset); if (!sel2 || !IA.exec.INSTR[sel2.toUpperCase()]) return; const cash = +prompt('Starting virtual capital:', IA.exec.INSTR[sel2.toUpperCase()].cur === 'INR' ? 500000 : 25000); if (!(cash > 0)) return; S = newBook(sel2.toUpperCase(), cash); await IA.db.set('paper', S); IA.views.simulator(el.replaceChildren() || el, 'paper'); } }, 'Reset account')), chartHost);
+    top.append(h('div', { class: 'row' }, h('b', null, IA.gen.PRESETS[S.preset].name), h('span', { class: 'tag' }, ins().sym), h('span', { class: 'tag warn' }, 'synthetic'), h('span', { class: 'small muted', id: 'pp-day' })), h('div', { class: 'row', style: { margin: '10px 0' } }, h('button', { class: 'btn primary', type: 'button', onclick: () => adv(1) }, 'Advance 1 bar'), h('button', { class: 'btn', type: 'button', onclick: () => adv(6) }, '+30 min'), h('button', { class: 'btn', type: 'button', onclick: () => adv('eod') }, 'To session close'), h('button', { class: 'btn ghost', type: 'button', onclick: async () => { const sel2 = await IA.ui.askText('New paper account.\nInstrument (' + PRESETS().join(', ') + '):', S.preset); if (!sel2 || !IA.exec.INSTR[sel2.toUpperCase()]) return; const cash = +await IA.ui.askText('Starting virtual capital:', IA.exec.INSTR[sel2.toUpperCase()].cur === 'INR' ? 500000 : 25000); if (!(cash > 0)) return; S = newBook(sel2.toUpperCase(), cash); await IA.db.set('paper', S); IA.views.simulator(el.replaceChildren() || el, 'paper'); } }, 'Reset account')), chartHost);
     const chart = new IA.Chart(chartHost, { height: 340, paneH: 70 }); chartHost.prepend(IA.chartToolbar(chart, { types: false })); chart.setTokens(data, ['vol', 'vwap', 'ema20']);
     const tk = ticket({ preset: S.preset, price: () => data[S.idx - 1].c, equity: () => IA.exec.equity(S.acc, data[S.idx - 1].c) }, async (o) => { IA.exec.place(S.acc, o); log.prepend(h('div', null, `Placed #${S.acc.seq - 1}: ${o.side > 0 ? 'BUY' : 'SELL'} ${o.qty} ${o.type}${o.price ? ' @ ' + o.price : ''}`)); await save(); upd(); });
     el.append(h('div', { class: 'grid g2' }, tk, h('div', { class: 'card' }, h('h3', null, 'Working orders'), orders, h('h3', { style: { marginTop: '12px' } }, 'Event log'), log)), h('div', { class: 'card', style: { marginTop: '12px' } }, h('div', { class: 'spread' }, h('h3', null, 'Closed trades'), h('button', { class: 'btn sm', type: 'button', onclick: async () => { const nw = S.acc.trades.filter((t) => !t.journalled); if (!nw.length) return toast('No new trades to journal.'); await toJournal(nw, ins(), 'paper'); nw.forEach((t) => (t.journalled = true)); await save(); toast(`${nw.length} trade(s) journalled`); } }, 'Send new trades to journal')), trades));
@@ -16305,6 +16998,92 @@ Perpetual futures have no expiry; a **funding rate** paid between longs and shor
   };
 })(typeof window !== 'undefined' ? window : globalThis);
 
+/* ==== js/modules/bot-ui.js ==== */
+/* Strategy bot (Simulator → Strategy bot) and the "Automate these rules" panel shown under backtest results. */
+(function (root) {
+  const IA = (root.IA = root.IA || {});
+  const { h, toast, table, money, num } = IA.ui;
+  const KEY = 'botcfg', STATE = 'botstate', MAXBARS = 1500;
+  const DEFAULT = () => ({ name: 'Opening-range breakout above VWAP (long)', data: { preset: 'NIFTY', seed: Math.floor(Math.random() * 1e6), days: 20, tf: 5 }, cfg: { side: 1, entry: [{ id: 'orb', params: { bars: 3 } }, { id: 'vwap_side' }], stop: { type: 'atr', mult: 1.5 }, target: { rr: 2 }, capital: 2000000, riskPct: 0.5, costBps: 3, slippageTicks: 1, maxTradesPerDay: 2, maxLeverage: 5 } });
+  const sessionEnd = (ins) => (ins && ins.cur === 'INR' ? '15:30' : '16:00');
+  const hm = (t) => new Date(t).toISOString().slice(11, 16);
+  const safeName = (s) => String(s || 'strategy').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || 'strategy';
+
+  async function loadData(spec) {
+    // The bot recomputes every signal from past bars at each step (honest, but O(n²)), so it runs on at most MAXBARS bars.
+    if (spec.dsId) { const ds = await IA.datasets.get(spec.dsId); if (ds) { const c = ds.candles.length > MAXBARS ? ds.candles.slice(-MAXBARS) : ds.candles; return { candles: c, ins: IA.datasets.instr(ds), label: `HISTORICAL · ${ds.name}${c.length < ds.candles.length ? ` (last ${c.length} bars)` : ''}`, synthetic: false, tf: ds.tfMin || 5 }; } }
+    const p = spec.preset && IA.gen.PRESETS[spec.preset] ? spec.preset : 'NIFTY';
+    const tf = spec.tf || 5, perDay = Math.ceil((IA.gen.PRESETS[p].minutes || 375) / tf), days = Math.max(3, Math.min(spec.days || 20, Math.floor(MAXBARS / perDay)));
+    return { candles: IA.gen.generate({ preset: p, seed: spec.seed || 1, days, tfMin: tf }).candles, ins: IA.exec.INSTR[p], label: `SYNTHETIC · ${IA.gen.PRESETS[p].name} · seed ${spec.seed}`, synthetic: true, tf: spec.tf || 5, preset: p };
+  }
+  const barsCsv = (c) => 'datetime,open,high,low,close,volume\n' + c.map((b) => `${b.d} ${hm(b.t)},${b.o},${b.h},${b.l},${b.c},${b.v}`).join('\n') + '\n';
+
+  // Panel used under backtest results and on the bot screen.
+  IA.automatePanel = ({ cfg, candles, ins, name, tf, dataSpec, showBot = true }) => {
+    const meta = { name, tfMin: tf || 5, sessionEnd: sessionEnd(ins), date: new Date().toISOString().slice(0, 10) };
+    const base = safeName(name), pyName = base + '.py';
+    const pre = h('pre', { class: 'code', style: { maxHeight: '320px', overflow: 'auto', fontSize: '12px', whiteSpace: 'pre' } });
+    const show = (txt) => { pre.textContent = txt; det.open = true; };
+    const det = h('details', { style: { marginTop: '10px' } }, h('summary', { class: 'small' }, 'Preview code'), pre);
+    return h('div', { class: 'card', style: { marginTop: '12px' } }, h('h3', null, 'Automate these rules'),
+      h('p', { class: 'small muted' }, 'Forward-test the exact rules with the paper bot, or export them as code. The Python file re-implements the app\'s indicators and rules with the standard library only and reproduces this backtest trade for trade on the same bars. The Pine Script follows the same rules in TradingView, but its results will be close to, not identical with, the app\'s. Neither file places orders. Read the lesson on India\'s retail algo rules before automating anything.'),
+      h('div', { class: 'row' },
+        showBot ? h('button', { class: 'btn primary', type: 'button', onclick: async () => { await IA.db.set(KEY, { name, data: dataSpec, cfg: JSON.parse(JSON.stringify(cfg)) }); await IA.db.del(STATE); IA.go('#/simulator/bot'); } }, 'Send to Strategy bot') : null,
+        h('button', { class: 'btn', type: 'button', onclick: () => { const s = IA.codegen.python(cfg, { ...meta, file: pyName }); show(s); IA.ui.download(pyName, s, 'text/x-python'); } }, 'Export as Python'),
+        h('button', { class: 'btn', type: 'button', onclick: () => { const s = IA.codegen.pine(cfg, meta); show(s); IA.ui.download(base + '.pine', s, 'text/plain'); } }, 'Export as Pine Script'),
+        candles ? h('button', { class: 'btn ghost', type: 'button', onclick: () => IA.ui.download(base + '-bars.csv', barsCsv(candles), 'text/csv') }, 'Download these bars (CSV)') : null,
+        h('a', { class: 'btn ghost', href: '#/lesson/l4-algo-india' }, 'Algo rules in India')),
+      h('p', { class: 'small muted', style: { marginTop: '6px' } }, `Run the Python on the bars file: python3 ${pyName} ${base}-bars.csv trades.csv`), det);
+  };
+
+  IA.botView = async (el) => {
+    let spec = (await IA.db.get(KEY, null)) || DEFAULT();
+    const D = await loadData(spec.data || {}); const candles = D.candles;
+    const cfg = { ...spec.cfg, tick: D.ins.tick, lot: D.ins.lot };
+    const firstDay = candles[0].d, startI = Math.max(1, candles.findIndex((b) => b.d !== firstDay));
+    const bot = IA.bot.create(candles, cfg, { startI });
+    const saved = await IA.db.get(STATE, null);
+    if (saved && saved.key === JSON.stringify([spec.data, spec.cfg]) && saved.i > startI) IA.bot.advance(bot, candles, saved.i - startI);
+    const save = () => IA.db.set(STATE, { key: JSON.stringify([spec.data, spec.cfg]), i: bot.i, journalled: journalled });
+    let journalled = saved && saved.key === JSON.stringify([spec.data, spec.cfg]) ? saved.journalled || 0 : 0;
+    const C = bot.C, fmt = (x) => IA.fmtP(x);
+
+    el.append(h('p', { class: 'muted' }, 'A paper-trading bot runs your backtester rules bar by bar on bars it has not seen, using only past bars for every decision, and logs what it does and why. Session 1 is indicator history; the bot trades from session 2. Nothing here touches a real broker.'));
+    const rules = IA.codegen.rules(C);
+    el.append(h('div', { class: 'card' }, h('div', { class: 'spread' }, h('h3', { style: { margin: 0 } }, spec.name || 'Strategy'), h('span', { class: 'tag ' + (D.synthetic ? 'warn' : '') }, D.label)),
+      h('ul', { class: 'small', style: { margin: '8px 0' } }, h('li', null, `${C.side > 0 ? 'Long' : 'Short'} when ALL are true on a bar's close: ${rules.join(' + ')}; entry at the next bar's open.`), h('li', null, `Stop ${C.stop.type === 'atr' ? C.stop.mult + ' × ATR(14)' : C.stop.pct + '%'} · target ${C.target && C.target.rr ? C.target.rr + 'R' : 'none'} · risk ${C.riskPct}% of equity · exposure ≤ ${C.maxLeverage}× equity · max ${C.maxTradesPerDay} trades/day · square-off at the session close.`), h('li', null, `Costs ${C.costBps} bps per side, slippage ${C.slippageTicks} tick(s); ${D.ins.sym}, lot ${C.lot}, tick ${C.tick}.`)),
+      h('div', { class: 'row' }, h('a', { class: 'btn sm ghost', href: '#/quant/backtest' }, 'Change rules in the Backtester'), h('button', { class: 'btn sm ghost', type: 'button', onclick: async () => { if (!(await IA.ui.ask('Start the bot again on a new synthetic market (new seed)?'))) return; spec = { ...spec, data: { ...(spec.data || {}), dsId: null, seed: Math.floor(Math.random() * 1e6) } }; await IA.db.set(KEY, spec); await IA.db.del(STATE); IA.views.simulator(el.replaceChildren() || el, 'bot'); } }, 'New market'), h('button', { class: 'btn sm ghost', type: 'button', onclick: async () => { await IA.db.del(STATE); IA.views.simulator(el.replaceChildren() || el, 'bot'); } }, 'Restart this market'))));
+
+    const kp = h('div', { class: 'grid g4 kpis', style: { margin: '12px 0' } }), dayLbl = h('span', { class: 'small muted', id: 'bot-day' });
+    const per30 = Math.max(1, Math.round(30 / (D.tf || 5)));
+    const ctrl = h('div', { class: 'card' }, h('div', { class: 'row' }, h('button', { class: 'btn primary', type: 'button', onclick: () => adv(1) }, 'Advance 1 bar'), h('button', { class: 'btn', type: 'button', onclick: () => adv(per30) }, '+30 min'), h('button', { class: 'btn', type: 'button', onclick: () => adv('eod') }, 'To session close'), h('button', { class: 'btn', type: 'button', onclick: () => adv('all') }, 'Run to the end'), dayLbl));
+    const chartHost = h('div', { style: { marginTop: '10px' } }); ctrl.append(chartHost);
+    const log = h('div', { class: 'small', style: { maxHeight: '320px', overflow: 'auto' } }), trades = h('div');
+    el.append(ctrl, kp, h('div', { class: 'grid g2' }, h('div', { class: 'card' }, h('h3', null, 'Decision log'), log), h('div', { class: 'card' }, h('div', { class: 'spread' }, h('h3', null, 'Closed trades'), h('button', { class: 'btn sm', type: 'button', onclick: toJournal }, 'Send new trades to journal')), trades)));
+    el.append(IA.automatePanel({ cfg: C, candles, ins: D.ins, name: spec.name, tf: D.tf, dataSpec: spec.data, showBot: false }));
+    const chart = new IA.Chart(chartHost, { height: 320, paneH: 70, synthetic: D.synthetic }); chart.setTokens(candles, ['vol', 'vwap']);
+
+    async function toJournal() {
+      const nw = bot.S.trades.slice(journalled); if (!nw.length) return toast('No new trades to journal.');
+      await IA.simToJournal(nw.map((t) => ({ ...t, openT: t.entryT, closeT: t.exitT, charges: t.costs, stop: null })), D.ins, 'strategy-bot');
+      journalled = bot.S.trades.length; await save(); toast(`${nw.length} trade(s) saved to the journal (marked synthetic)`);
+    }
+    function adv(n) { if (bot.done) return toast('The bot has processed every bar of this market. Start a new market to continue.'); const t0 = Date.now(); IA.bot.advance(bot, candles, n); save(); draw(); if (Date.now() - t0 > 1500) toast('Done'); }
+    function draw() {
+      const s = IA.bot.summary(bot), eq = IA.bot.equity(bot, candles), op = IA.bot.unrealised(bot, candles), last = candles[Math.max(0, bot.i - 1)];
+      dayLbl.textContent = bot.done ? 'End of data' : `Bar ${bot.i - startI} of ${candles.length - startI} · ${last.d} ${hm(last.t)}`;
+      kp.innerHTML = ''; [['Equity', money(eq), IA.ui.signCls(eq - C.capital)], ['Open P&L', money(op), IA.ui.signCls(op)], ['Position', bot.S.pos ? `${C.side > 0 ? 'long' : 'short'} ${bot.S.pos.qty} @ ${fmt(bot.S.pos.entry)}` : bot.S.pending ? 'order pending' : 'flat'], ['Closed trades', s.n || 0], ['Net (closed)', money(s.net || 0), IA.ui.signCls(s.net)], ['Win rate', IA.ui.pct(s.winRate || 0, 0)], ['Avg R', num(s.avgR || 0, 2), IA.ui.signCls(s.avgR)], ['Costs paid', money(s.totalCosts || 0)]].forEach(([l, v, cl]) => kp.append(h('div', { class: 'card kpi' }, h('span', { class: 'l' }, l), h('span', { class: 'v ' + (cl || '') }, String(v)))));
+      log.innerHTML = ''; const lines = bot.log.slice(-250).reverse(); if (!lines.length) log.append(h('p', { class: 'muted' }, 'No decisions yet. Advance the bot.'));
+      lines.forEach((e) => log.append(h('div', { class: e.type === 'exit' ? (e.trade.net >= 0 ? 'up' : 'down') : e.type === 'skip' ? 'warn' : e.type === 'entry' ? '' : 'muted', style: { padding: '2px 0' } }, IA.bot.describe(e, candles, C, fmt))));
+      trades.innerHTML = ''; trades.append(table([{ label: 'Day', k: 'day' }, { label: 'In', get: (t) => hm(t.entryT) }, { label: 'Out', get: (t) => hm(t.exitT) }, { label: 'Qty', k: 'qty', n: 1 }, { label: 'Entry', get: (t) => fmt(t.entry), n: 1 }, { label: 'Exit', get: (t) => fmt(t.exit), n: 1 }, { label: 'Net', get: (t) => money(t.net), n: 1, cls: (t) => IA.ui.signCls(t.net) }, { label: 'R', get: (t) => num(t.R, 2), n: 1 }, { label: 'Why', k: 'why' }], bot.S.trades.slice().reverse(), { empty: 'No closed trades yet.' }));
+      chart.markers = bot.S.trades.flatMap((t) => [{ i: t.entryI, pos: C.side > 0 ? 'below' : 'above', color: '#4fb3ff', text: 'in' }, { i: t.exitI, pos: C.side > 0 ? 'above' : 'below', color: t.net > 0 ? '#26c281' : '#ef5361', text: t.why === 'target' ? 'T' : t.why.startsWith('stop') ? 'S' : 'E' }]).concat(bot.S.pos ? [{ i: bot.S.pos.entryI, pos: C.side > 0 ? 'below' : 'above', color: '#f2b84b', text: 'open' }] : []);
+      chart.levels = bot.S.pos ? [{ price: bot.S.pos.stop, color: '#ef5361', label: 'stop' }].concat(bot.S.pos.target != null ? [{ price: bot.S.pos.target, color: '#26c281', label: 'target' }] : []) : [];
+      chart.setEnd(bot.i);
+    }
+    draw();
+  };
+})(typeof window !== 'undefined' ? window : globalThis);
+
 /* ==== js/modules/strategies.js ==== */
 /* Strategy Academy: 30-strategy library + comparison lab (backtests on identical synthetic data). */
 (function (root) {
@@ -16355,7 +17134,7 @@ Perpetual futures have no expiry; a **funding rate** paid between longs and shor
   const { h, prose, table, num, money } = IA.ui;
   IA.views.derivatives = (el, tab = 'overview') => {
     const tabs = [['overview', 'Overview'], ['payoff', 'Strategy builder'], ['risk', 'Scenario risk'], ['matrix', 'Strategy matrix'], ['greeks', 'Greeks lab'], ['chain', 'Option chain'], ['futures', 'Futures lab']];
-    el.append(h('div', { class: 'tabs' }, tabs.map(([k, l]) => h('button', { class: k === tab ? 'on' : '', onclick: () => (location.hash = '#/derivatives/' + k) }, l))));
+    el.append(h('div', { class: 'tabs' }, tabs.map(([k, l]) => h('button', { class: k === tab ? 'on' : '', onclick: () => IA.go('#/derivatives/' + k) }, l))));
     if (tab === 'overview') {
       const ls = IA.content.lessonIndex().filter((l) => l.track === 'deriv'), written = new Set(IA.content.lessons.map((l) => l.id));
       el.append(prose(`## Futures and options — a specialist track
@@ -16467,13 +17246,13 @@ Derivatives magnify both skill and mistakes. Work through the lessons in order, 
   }
   IA.views.journal = async (el, tab = 'log') => {
     const tabs = [['log', 'Trades'], ['add', 'Add trade'], ['stats', 'Performance analytics'], ['coach', 'Coach']];
-    el.append(h('div', { class: 'tabs' }, tabs.map(([k, l]) => h('button', { class: k === tab ? 'on' : '', onclick: () => (location.hash = '#/journal/' + k) }, l))));
+    el.append(h('div', { class: 'tabs' }, tabs.map(([k, l]) => h('button', { class: k === tab ? 'on' : '', onclick: () => IA.go('#/journal/' + k) }, l))));
     const rows = (await IA.db.rows('journal')).map(derive).sort((a, b) => String(b.date).localeCompare(String(a.date)) || (b.created - a.created));
     if (tab === 'add') return form(el, IA.query?.get('id') ? rows.find((r) => r.id === IA.query.get('id')) : null);
     if (tab === 'stats') return stats(el, rows);
     if (tab === 'coach') return coach(el, rows);
     const filt = h('select', { class: 'i', style: { maxWidth: '220px' } }, [['all', 'All trades'], ['real', 'Real trades only'], ['synthetic', 'Simulated only']].map(([a, b]) => h('option', { value: a }, b)));
-    const list = h('div'); const draw = () => { const f = filt.value, rs = rows.filter((r) => f === 'all' || (f === 'real' ? !r.synthetic : r.synthetic)); list.innerHTML = ''; list.append(table([{ label: 'Date', k: 'date' }, { label: 'Instrument', k: 'instrument' }, { label: 'Strategy', get: (r) => r.strategy || '—' }, { label: 'Side', k: 'side' }, { label: 'Qty', k: 'qty', n: 1 }, { label: 'Entry', get: (r) => IA.fmtP(+r.entry), n: 1 }, { label: 'Exit', get: (r) => IA.fmtP(+r.exit), n: 1 }, { label: 'Net', get: (r) => money(r.net), n: 1, cls: (r) => IA.ui.signCls(r.net) }, { label: 'R', get: (r) => (r.R == null ? '—' : num(r.R, 2)), n: 1 }, { label: '', get: (r) => h('span', { class: 'row', style: { gap: '4px', flexWrap: 'nowrap' } }, r.synthetic ? h('span', { class: 'tag warn' }, 'sim') : null, h('a', { class: 'btn sm ghost', href: '#/journal/add?id=' + r.id }, 'Edit'), h('button', { class: 'btn sm ghost', type: 'button', onclick: async () => { if (confirm('Delete this trade?')) { await IA.db.remove(r.id); IA.views.journal(el.replaceChildren() || el, 'log'); } } }, '✕')) }], rs, { empty: 'No trades yet. Add one, or send trades from the simulator.' })); };
+    const list = h('div'); const draw = () => { const f = filt.value, rs = rows.filter((r) => f === 'all' || (f === 'real' ? !r.synthetic : r.synthetic)); list.innerHTML = ''; list.append(table([{ label: 'Date', k: 'date' }, { label: 'Instrument', k: 'instrument' }, { label: 'Strategy', get: (r) => r.strategy || '—' }, { label: 'Side', k: 'side' }, { label: 'Qty', k: 'qty', n: 1 }, { label: 'Entry', get: (r) => IA.fmtP(+r.entry), n: 1 }, { label: 'Exit', get: (r) => IA.fmtP(+r.exit), n: 1 }, { label: 'Net', get: (r) => money(r.net), n: 1, cls: (r) => IA.ui.signCls(r.net) }, { label: 'R', get: (r) => (r.R == null ? '—' : num(r.R, 2)), n: 1 }, { label: '', get: (r) => h('span', { class: 'row', style: { gap: '4px', flexWrap: 'nowrap' } }, r.synthetic ? h('span', { class: 'tag warn' }, 'sim') : null, h('a', { class: 'btn sm ghost', href: '#/journal/add?id=' + r.id }, 'Edit'), h('button', { class: 'btn sm ghost', type: 'button', onclick: async () => { if (await IA.ui.ask('Delete this trade?')) { await IA.db.remove(r.id); IA.views.journal(el.replaceChildren() || el, 'log'); } } }, '✕')) }], rs, { empty: 'No trades yet. Add one, or send trades from the simulator.' })); };
     filt.onchange = draw;
     el.append(h('div', { class: 'spread' }, filt, h('div', { class: 'row' }, h('a', { class: 'btn primary', href: '#/journal/add' }, '+ Add trade'), h('button', { class: 'btn', type: 'button', onclick: () => exportCsv(rows) }, 'Export CSV'), h('button', { class: 'btn', type: 'button', onclick: () => importCsv(el) }, 'Import CSV'))), h('div', { style: { marginTop: '12px' } }, list)); draw();
   };
@@ -16491,12 +17270,12 @@ Derivatives magnify both skill and mistakes. Work through the lessons in order, 
       else if (t === 'chk') i = h('input', { type: 'checkbox', checked: !!v[k] });
       else i = h('input', { class: 'i' + (t === 'num' ? ' num' : ''), type: t === 'num' ? 'number' : t, step: 'any', value: t === 'time' && typeof v[k] === 'number' ? new Date(v[k]).toISOString().slice(11, 16) : v[k] ?? '' });
       inp[k] = i; g.append(h('label', { class: 'f', style: t === 'multi' || t === 'area' ? { gridColumn: '1 / -1' } : null }, l, i)); });
-    const calcBtn = h('button', { class: 'btn sm', type: 'button', onclick: () => { const seg = inp.market.value === 'India' ? (prompt('Segment: eqIntraday, eqDelivery, futures, options', 'eqIntraday') || 'eqIntraday') : null; const q = +inp.qty.value, en = +inp.entry.value, ex = +inp.exit.value; if (!q || !en || !ex) return toast('Enter qty, entry and exit first.'); const long = inp.side.value === 'long'; const r = seg ? IA.risk.indiaCharges({ segment: seg, buyValue: q * (long ? en : ex), sellValue: q * (long ? ex : en) }) : IA.risk.usCharges({ shares: q, buyPrice: long ? en : ex, sellPrice: long ? ex : en }); if (r.error) return toast(r.error); inp.charges.value = r.total.toFixed(2); toast('Charges estimated: ' + r.total.toFixed(2)); } }, 'Estimate charges');
+    const calcBtn = h('button', { class: 'btn sm', type: 'button', onclick: async () => { const seg = inp.market.value === 'India' ? (await IA.ui.askText('Segment: eqIntraday, eqDelivery, futures, options', 'eqIntraday') || 'eqIntraday') : null; const q = +inp.qty.value, en = +inp.entry.value, ex = +inp.exit.value; if (!q || !en || !ex) return toast('Enter qty, entry and exit first.'); const long = inp.side.value === 'long'; const r = seg ? IA.risk.indiaCharges({ segment: seg, buyValue: q * (long ? en : ex), sellValue: q * (long ? ex : en) }) : IA.risk.usCharges({ shares: q, buyPrice: long ? en : ex, sellPrice: long ? ex : en }); if (r.error) return toast(r.error); inp.charges.value = r.total.toFixed(2); toast('Charges estimated: ' + r.total.toFixed(2)); } }, 'Estimate charges');
     el.append(h('div', { class: 'card' }, h('h3', null, rec ? 'Edit trade' : 'Log a trade'), h('datalist', { id: 'strat-list' }, strategies.map((s) => h('option', { value: s }))), g, h('div', { class: 'row', style: { marginTop: '12px' } }, h('button', { class: 'btn primary', type: 'button', onclick: save }, 'Save trade'), calcBtn, h('a', { class: 'btn ghost', href: '#/journal' }, 'Cancel'))));
     async function save() { const o = rec ? { ...rec } : {}; FIELDS.forEach(([k, , t]) => { if (t === 'multi') o.mistakes = [...inp[k].querySelectorAll('input:checked')].map((x) => x.value); else if (t === 'chk') o[k] = inp[k].checked; else if (t === 'num') o[k] = inp[k].value === '' ? null : +inp[k].value; else o[k] = inp[k].value; }); ['net', 'gross', 'R', 'rr', 'risk', 'dur'].forEach((k) => delete o[k]);
       if (!o.date || !(o.entry > 0) || !(o.exit > 0) || !(o.qty > 0)) return toast('Date, entry, exit and quantity are required (positive numbers).');
       if (o.stop && ((o.side === 'long' && o.stop >= o.entry) || (o.side === 'short' && o.stop <= o.entry))) return toast('Stop is on the wrong side of entry.');
-      await IA.db.put('journal', o); toast('Trade saved'); location.hash = '#/journal'; }
+      await IA.db.put('journal', o); toast('Trade saved'); IA.go('#/journal'); }
   }
   function stats(el, rows) {
     const f = h('select', { class: 'i', style: { maxWidth: '220px' } }, [['real', 'Real trades only'], ['all', 'All trades'], ['synthetic', 'Simulated only']].map(([a, b]) => h('option', { value: a }, b))); const out = h('div');
@@ -16525,7 +17304,7 @@ Derivatives magnify both skill and mistakes. Work through the lessons in order, 
   const { h, table, num, money, pct, prose, toast } = IA.ui;
   IA.views.quant = (el, tab = 'backtest') => {
     const tabs = [['backtest', 'Backtester'], ['walkforward', 'Walk-forward'], ['oos', 'Out-of-sample'], ['overfit', 'Overfitting test'], ['regimes', 'Regime matrix'], ['montecarlo', 'Monte Carlo'], ['ruin', 'Risk of ruin'], ['method', 'Research method']];
-    el.append(h('div', { class: 'tabs' }, tabs.map(([k, l]) => h('button', { class: k === tab ? 'on' : '', onclick: () => (location.hash = '#/quant/' + k) }, l))));
+    el.append(h('div', { class: 'tabs' }, tabs.map(([k, l]) => h('button', { class: k === tab ? 'on' : '', onclick: () => IA.go('#/quant/' + k) }, l))));
     if (tab === 'montecarlo') return el.append(IA.widgets['monte-carlo'](), h('div', { style: { marginTop: '12px' } }, fromJournal()));
     if (tab === 'ruin') return el.append(IA.widgets.ror());
     if (tab === 'method') return el.append(prose(METHOD));
@@ -16537,7 +17316,7 @@ Derivatives magnify both skill and mistakes. Work through the lessons in order, 
   function builder(el, wf) {
     const q = IA.query || new URLSearchParams(); const preStrat = (IA.content.strategies || []).find((s) => s.id === q.get('strategy'));
     const cfg = preStrat?.btConfig ? JSON.parse(JSON.stringify(preStrat.btConfig)) : { side: 1, entry: [{ id: 'orb' }, { id: 'vwap_side' }], stop: { type: 'atr', mult: 1.5 }, target: { rr: 2 } };
-    const st = { preset: 'NIFTY', days: 60, seed: 11, tf: 5, capital: 500000, riskPct: 0.5, costBps: 3, slip: 1, maxTrades: 2, data: null, imported: null };
+    const st = { preset: 'NIFTY', days: 60, seed: 11, tf: 5, capital: 2000000, maxLev: 0, riskPct: 0.5, costBps: 3, slip: 1, maxTrades: 2, data: null, imported: null };
     el.append(h('p', { class: 'muted' }, 'Combine entry conditions (all must be true on a bar\'s close), choose stop, target and costs, and run bar by bar with next-bar fills. Every run on synthetic data is labelled as such. Import a CSV of real bars to test on data you supply.'));
     if (preStrat) el.append(h('div', { class: 'warnbox' }, `Loaded the mechanical approximation of "${preStrat.name}". Read its "How to backtest it" notes for what this approximation leaves out.`));
     const cond = h('div'), out = h('div');
@@ -16548,13 +17327,13 @@ Derivatives magnify both skill and mistakes. Work through the lessons in order, 
     const srcBox = h('div', { class: 'f' }); IA.sourcePicker((src) => { st.imported = src.kind === 'dataset' ? { name: src.ds.name, c: src.ds.candles, ds: src.ds } : null; dataLbl.textContent = st.imported ? `Using HISTORICAL dataset ${src.ds.name} (${src.ds.tfLabel}, ${src.ds.candles.length} bars, ${src.ds.from} → ${src.ds.to}). Synthetic settings are ignored.` : 'Using synthetic data'; }).then((p) => { srcBox.replaceWith(p); if (q.get('ds')) { p.select.value = q.get('ds'); p.select.onchange(); } });
     el.append(h('div', { class: 'card' }, h('h3', null, '1. Data'), h('div', { class: 'form' }, sel(Object.keys(IA.exec.INSTR).map((k) => [k, IA.gen.PRESETS[k].name]), st.preset, (v) => (st.preset = v), 'Synthetic market'), n('days', 'Sessions (≤ 250)'), n('seed', 'Seed'), sel([[1, '1 min'], [3, '3 min'], [5, '5 min'], [15, '15 min']], st.tf, (v) => (st.tf = +v), 'Timeframe'), srcBox), dataLbl),
       h('div', { class: 'card', style: { marginTop: '12px' } }, h('h3', null, '2. Rules'), h('div', { class: 'form' }, sel([[1, 'Long'], [-1, 'Short']], cfg.side, (v) => (cfg.side = +v), 'Direction'), sel([['atr', 'ATR multiple'], ['pct', 'Percent']], cfg.stop.type, (v) => (cfg.stop.type = v), 'Stop type'), n('mult', 'ATR multiple', cfg.stop.mult !== undefined ? cfg.stop : (cfg.stop.mult = 1.5, cfg.stop)), n('pct', 'Stop %', cfg.stop.pct !== undefined ? cfg.stop : (cfg.stop.pct = 0.5, cfg.stop)), n('rr', 'Target (R multiple, 0 = none)', cfg.target), n('maxTrades', 'Max trades/day')), h('h4', { style: { marginTop: '10px' } }, 'Entry conditions (ALL must be true)'), cond),
-      h('div', { class: 'card', style: { marginTop: '12px' } }, h('h3', null, '3. Money & frictions'), h('div', { class: 'form' }, n('capital', 'Capital'), n('riskPct', 'Risk per trade %'), n('costBps', 'Costs (bps per side)'), n('slip', 'Slippage (ticks)')), h('p', { class: 'small muted' }, 'Rough cost guide: Indian index futures ≈ 1.5–3 bps per side all-in; intraday cash ≈ 2–5 bps; options cost far more relative to premium. Check with the charges calculator.'), h('div', { class: 'row' }, h('button', { class: 'btn primary', type: 'button', onclick: run }, wf ? 'Run walk-forward' : 'Run backtest'))), out);
+      h('div', { class: 'card', style: { marginTop: '12px' } }, h('h3', null, '3. Money & frictions'), h('div', { class: 'form' }, n('capital', 'Capital'), n('riskPct', 'Risk per trade %'), n('maxLev', 'Max exposure × capital (0 = auto)'), n('costBps', 'Costs (bps per side)'), n('slip', 'Slippage (ticks)')), h('p', { class: 'small muted' }, 'Max exposure caps position value at a multiple of capital. Auto = 5× for futures (they need only margin) and 1× (no leverage) for cash instruments. With small capital, one futures lot may need more risk than your risk % allows; the results then say how many signals were skipped.'), h('p', { class: 'small muted' }, 'Rough cost guide: Indian index futures ≈ 1.5–3 bps per side all-in; intraday cash ≈ 2–5 bps; options cost far more relative to premium. Check with the charges calculator.'), h('div', { class: 'row' }, h('button', { class: 'btn primary', type: 'button', onclick: run }, wf ? 'Run walk-forward' : 'Run backtest'))), out);
     drawCond();
     function data() { if (st.imported) return st.imported.c; return IA.gen.generate({ preset: st.preset, seed: st.seed, days: Math.max(5, Math.min(250, st.days)), tfMin: st.tf }).candles; }
     function run() {
       out.innerHTML = '<p class="muted">Running…</p>';
       setTimeout(() => {
-        const c = data(), ins = st.imported?.ds ? IA.datasets.instr(st.imported.ds) : IA.exec.INSTR[st.preset]; const C = { ...cfg, target: { rr: cfg.target.rr || null }, capital: st.capital, riskPct: st.riskPct, costBps: st.costBps, slippageTicks: st.slip, tick: ins.tick, lot: ins.lot, maxTradesPerDay: st.maxTrades };
+        const c = data(), ins = st.imported?.ds ? IA.datasets.instr(st.imported.ds) : IA.exec.INSTR[st.preset]; const C = { ...cfg, target: { rr: cfg.target.rr || null }, capital: st.capital, riskPct: st.riskPct, costBps: st.costBps, slippageTicks: st.slip, tick: ins.tick, lot: ins.lot, maxTradesPerDay: st.maxTrades, maxLeverage: st.maxLev > 0 ? st.maxLev : (ins.lot > 1 ? 5 : 1) };
         out.innerHTML = ''; out.append(h('div', { class: 'warnbox' }, st.imported ? `Data: imported file ${st.imported.name}. Results describe the past on this data only.` : `SYNTHETIC DATA (seed ${st.seed}). These results are not historical market performance and must not be read as evidence that this rule works.`));
         if (wf) { const folds = IA.bt.walkForward(c, C, 4); out.append(h('div', { class: 'card', style: { marginTop: '12px' } }, h('h3', null, 'Walk-forward: same rules, four consecutive segments'), table([{ label: 'Segment', k: 'fold' }, { label: 'Trades', get: (r) => r.n ?? 0, n: 1 }, { label: 'Win %', get: (r) => pct(r.winRate || 0, 0), n: 1 }, { label: 'PF', get: (r) => num(r.profitFactor || 0), n: 1 }, { label: 'Net', get: (r) => money(r.net || 0), n: 1, cls: (r) => IA.ui.signCls(r.net) }, { label: 'Max DD', get: (r) => pct(r.maxDDPct || 0, 1), n: 1 }], folds), h('p', { class: 'small muted' }, 'A robust rule should behave similarly across segments. Large swings between segments (especially a sign change in net P&L) mean the full-sample result is fragile. True walk-forward also re-optimises parameters on each in-sample window and tests only on the following window — do that by hand: pick parameters on segment 1, then test unchanged on 2, 3 and 4.'))); return; }
         const r = IA.bt.run(c, C); if (r.error) return out.append(h('p', { class: 'err' }, r.error)); const s = r.stats;
@@ -16565,6 +17344,7 @@ Derivatives magnify both skill and mistakes. Work through the lessons in order, 
         const pl = h('div', { class: 'card', style: { marginTop: '12px' } }, h('h3', null, 'Equity curve')); out.append(pl); IA.plot(pl, [{ pts: r.curve.map((p, j) => ({ x: j, y: p.eq })) }], { zero: false, height: 200 });
         const chBox = h('div', { class: 'card', style: { marginTop: '12px' } }, h('h3', null, 'Trades on chart (last 5 sessions)')); out.append(chBox); const ch = new IA.Chart(chBox, { height: 300, synthetic: !st.imported }); ch.setTokens(c, ['vol', 'vwap']); ch.markers = r.trades.flatMap((t) => [{ i: t.entryI, pos: t.side === 'long' ? 'below' : 'above', color: '#4fb3ff', text: 'in' }, { i: t.exitI, pos: t.side === 'long' ? 'above' : 'below', color: t.net > 0 ? '#26c281' : '#ef5361', text: t.why === 'target' ? 'T' : t.why.startsWith('stop') ? 'S' : 'E' }]); ch.view.n = Math.min(c.length, 75 * 2); ch.render();
         out.append(h('div', { class: 'card', style: { marginTop: '12px' } }, h('div', { class: 'spread' }, h('h3', null, 'Trade list'), h('button', { class: 'btn sm', type: 'button', onclick: () => IA.ui.download('backtest-trades.csv', IA.ui.csv(r.trades, ['day', 'side', 'entry', 'exit', 'qty', 'gross', 'costs', 'net', 'R', 'why'].map((k) => ({ k, label: k }))), 'text/csv') }, 'Export CSV')), table([{ label: 'Day', k: 'day' }, { label: 'Side', k: 'side' }, { label: 'Entry', get: (t) => IA.fmtP(t.entry), n: 1 }, { label: 'Exit', get: (t) => IA.fmtP(t.exit), n: 1 }, { label: 'Qty', k: 'qty', n: 1 }, { label: 'Net', get: (t) => money(t.net), n: 1, cls: (t) => IA.ui.signCls(t.net) }, { label: 'R', get: (t) => num(t.R, 2), n: 1 }, { label: 'Exit', k: 'why' }], r.trades.slice(-200).reverse())));
+        out.append(IA.automatePanel({ cfg: C, candles: c, ins, name: (preStrat && preStrat.name) || IA.codegen.rules(C).join(' + ') + (C.side > 0 ? ' (long)' : ' (short)'), tf: st.imported?.ds?.tfMin || st.tf, dataSpec: st.imported?.ds ? { dsId: st.imported.ds.id } : { preset: st.preset, seed: st.seed, days: Math.min(60, Math.max(5, st.days)), tf: st.tf } }));
         if (r.trades.length >= 5) { const mc = IA.bt.monteCarlo(r.trades.map((t) => t.net), { start: st.capital, paths: 1000 }); out.append(h('div', { class: 'card', style: { marginTop: '12px' } }, h('h3', null, 'Monte Carlo on this trade list'), IA.ui.resultBlock([['5th pct final', money(mc.finals.p5), 'down'], ['Median final', money(mc.finals.p50)], ['95th pct final', money(mc.finals.p95), 'up'], ['95th pct max DD', pct(mc.maxDD.p95)], ['P(net loss)', pct(mc.probLoss)]]))); }
       }, 20);
     }
@@ -16657,7 +17437,7 @@ See [[link:l3-hypothesis]], [[link:l3-biases]], [[link:l3-significance]], [[link
     [['pre', 'Pre-market'], ['during', 'During the session'], ['post', 'Post-market']].forEach(([k, l]) => {
       const box = h('div', { class: 'card', style: { marginTop: '12px' } }); const draw = () => { box.innerHTML = ''; const done = tpl[k].filter((_, i) => day[k].includes(i)).length; box.append(h('div', { class: 'spread' }, h('h3', null, l), h('span', { class: 'small muted' }, `${done}/${tpl[k].length}`)), h('div', { class: 'bar up', style: { margin: '6px 0 10px' } }, h('i', { style: { width: (done / tpl[k].length) * 100 + '%' } })));
         tpl[k].forEach((t, i) => box.append(h('label', { class: 'chk' }, h('input', { type: 'checkbox', checked: day[k].includes(i), onchange: async (e) => { day[k] = e.target.checked ? [...day[k], i] : day[k].filter((x) => x !== i); await save(); draw(); } }), h('span', null, t))));
-        box.append(h('div', { class: 'row', style: { marginTop: '8px' } }, h('button', { class: 'btn sm ghost', type: 'button', onclick: async () => { const t = prompt('New checklist item:'); if (t) { tpl[k].push(t); await IA.db.set('checklistTpl', tpl); draw(); } } }, '+ Add item'), h('button', { class: 'btn sm ghost', type: 'button', onclick: async () => { const n = prompt('Item number to remove (1–' + tpl[k].length + '):'); const i = +n - 1; if (i >= 0 && i < tpl[k].length) { tpl[k].splice(i, 1); day[k] = []; await IA.db.set('checklistTpl', tpl); await save(); draw(); } } }, 'Remove item'))); };
+        box.append(h('div', { class: 'row', style: { marginTop: '8px' } }, h('button', { class: 'btn sm ghost', type: 'button', onclick: async () => { const t = await IA.ui.askText('New checklist item:'); if (t) { tpl[k].push(t); await IA.db.set('checklistTpl', tpl); draw(); } } }, '+ Add item'), h('button', { class: 'btn sm ghost', type: 'button', onclick: async () => { const n = await IA.ui.askText('Item number to remove (1–' + tpl[k].length + '):'); const i = +n - 1; if (i >= 0 && i < tpl[k].length) { tpl[k].splice(i, 1); day[k] = []; await IA.db.set('checklistTpl', tpl); await save(); draw(); } } }, 'Remove item'))); };
       draw(); el.append(box); });
     const hist = Object.entries(all).sort((a, b) => b[0].localeCompare(a[0])).slice(0, 14);
     el.append(h('div', { class: 'card', style: { marginTop: '12px' } }, h('h3', null, 'Routine consistency (last 14 days with entries)'), table([{ label: 'Date', get: (r) => r[0] }, { label: 'Pre', get: (r) => `${r[1].pre.length}/${tpl.pre.length}`, n: 1 }, { label: 'During', get: (r) => `${r[1].during.length}/${tpl.during.length}`, n: 1 }, { label: 'Post', get: (r) => `${r[1].post.length}/${tpl.post.length}`, n: 1 }], hist)));
@@ -16667,7 +17447,7 @@ See [[link:l3-hypothesis]], [[link:l3-biases]], [[link:l3-significance]], [[link
   IA.views.library = (el, tab = 'books') => {
     const L = IA.content.library; if (!L) return el.append(h('p', { class: 'muted' }, 'Library content not loaded.'));
     const tabs = [['books', 'Books'], ['resources', 'Official resources'], ['glossary', 'Glossary'], ['reading', 'Reading by subject'], ['bookmarks', 'My bookmarks & notes']];
-    el.append(h('div', { class: 'tabs' }, tabs.map(([k, l]) => h('button', { class: k === tab ? 'on' : '', onclick: () => (location.hash = '#/library/' + k) }, l))));
+    el.append(h('div', { class: 'tabs' }, tabs.map(([k, l]) => h('button', { class: k === tab ? 'on' : '', onclick: () => IA.go('#/library/' + k) }, l))));
     if (tab === 'books') { el.append(h('p', { class: 'muted small' }, 'Descriptions are our own summaries. No book content is reproduced — buy or borrow the books.'), h('div', { class: 'grid gauto' }, L.books.map((b) => h('div', { class: 'card' }, h('b', null, b.title), h('div', { class: 'small muted' }, b.author + (b.level ? ' · ' + b.level : '')), h('p', { class: 'small' }, b.why), b.readWhen ? h('p', { class: 'tiny dim' }, 'Read when: ' + b.readWhen) : null, h('div', { class: 'row', style: { gap: '4px' } }, (b.topics || []).map((t) => h('span', { class: 'tag' }, t))))))); }
     else if (tab === 'resources') { el.append(h('p', { class: 'muted small' }, 'External links open in your browser and need a connection; everything else in the app works offline.'), h('div', { class: 'grid gauto' }, L.resources.map((r) => h('div', { class: 'card' }, h('a', { href: r.url, target: '_blank', rel: 'noopener' }, h('b', null, r.name)), h('p', { class: 'small' }, r.what), h('div', { class: 'tiny dim' }, r.url))))); }
     else if (tab === 'glossary') { const s = h('input', { class: 'i', type: 'search', placeholder: `Filter ${L.glossary.length} terms…` }); const list = h('div'); const draw = () => { const q = s.value.toLowerCase(); list.innerHTML = ''; L.glossary.filter((g) => !q || g.term.toLowerCase().includes(q) || g.def.toLowerCase().includes(q)).sort((a, b) => a.term.localeCompare(b.term)).forEach((g) => list.append(h('div', { style: { padding: '8px 0', borderBottom: '1px solid var(--line)' } }, h('b', null, g.term), h('div', { class: 'small', html: IA.ui.inline(g.def) })))); }; s.oninput = draw; el.append(s, list); draw(); }
@@ -16720,14 +17500,14 @@ See [[link:l3-hypothesis]], [[link:l3-biases]], [[link:l3-significance]], [[link
     el.append(h('div', { class: 'card' }, h('h3', null, 'Preferences'), h('div', { class: 'form' }, sel('theme', [['dark', 'Dark (default)'], ['light', 'Light']], 'Theme'), sel('currency', Object.keys(IA.specs.fx.rates).map((c) => [c, c]), 'Calculator currency'), sel('dailyGoal', [[1, '1 lesson/day'], [2, '2 lessons/day'], [3, '3 lessons/day'], [5, '5 lessons/day']], 'Daily goal'))));
     el.append(h('div', { class: 'card', style: { marginTop: '12px' } }, h('h3', null, 'Backup, restore & export'), h('p', { class: 'small muted' }, 'Everything is stored only in this browser (IndexedDB). Back up regularly — clearing site data or uninstalling the browser deletes it.'), h('div', { class: 'row' },
       h('button', { class: 'btn primary', type: 'button', onclick: async () => { IA.ui.download(`intraday-academy-backup-${new Date().toISOString().slice(0, 10)}.json`, JSON.stringify(await IA.db.exportAll(), null, 1)); toast('Backup downloaded'); } }, 'Download full backup'),
-      h('button', { class: 'btn', type: 'button', onclick: async () => { const f = await IA.ui.pickFile('.json,application/json'); if (!f) return; try { const obj = JSON.parse(f.text); const v = await IA.db.verify(obj); if (v.status === 'mismatch' && !confirm('WARNING: this backup\'s checksum does not match its contents — the file was modified or corrupted after export. Restore anyway?')) return; if (!confirm(`Restore backup from ${obj.exported || 'unknown date'}${v.status === 'ok' ? ' (checksum verified)' : v.status === 'none' ? ' (no checksum — older backup)' : ''}? This REPLACES all current data on this device.`)) return; await IA.db.importAll(obj); toast('Restored — reloading'); setTimeout(() => location.reload(), 600); } catch (e) { toast('Restore failed: ' + e.message, 5000); } } }, 'Restore from backup'),
+      h('button', { class: 'btn', type: 'button', onclick: async () => { const f = await IA.ui.pickFile('.json,application/json'); if (!f) return; try { const obj = JSON.parse(f.text); const v = await IA.db.verify(obj); if (v.status === 'mismatch' && !await IA.ui.ask('WARNING: this backup\'s checksum does not match its contents — the file was modified or corrupted after export. Restore anyway?')) return; if (!await IA.ui.ask(`Restore backup from ${obj.exported || 'unknown date'}${v.status === 'ok' ? ' (checksum verified)' : v.status === 'none' ? ' (no checksum — older backup)' : ''}? This REPLACES all current data on this device.`)) return; await IA.db.importAll(obj); toast('Restored — reloading'); setTimeout(() => location.reload(), 600); } catch (e) { toast('Restore failed: ' + e.message, 5000); } } }, 'Restore from backup'),
       h('a', { class: 'btn', href: '#/journal' }, 'Journal CSV export'),
-      h('button', { class: 'btn ghost', type: 'button', onclick: async () => { if (!confirm('Delete ALL progress, notes, journal and settings on this device?')) return; if (!confirm('Really delete everything? Download a backup first if unsure.')) return; await IA.db.wipe(); location.reload(); } }, 'Erase all data'))));
+      h('button', { class: 'btn ghost', type: 'button', onclick: async () => { if (!await IA.ui.ask('Delete ALL progress, notes, journal and settings on this device?')) return; if (!await IA.ui.ask('Really delete everything? Download a backup first if unsure.')) return; await IA.db.wipe(); location.reload(); } }, 'Erase all data'))));
     const si = await IA.db.storageInfo(); const fmtB = (b) => (b == null ? '—' : b > 1e9 ? (b / 1e9).toFixed(1) + ' GB' : (b / 1e6).toFixed(1) + ' MB');
     el.append(h('div', { class: 'card', style: { marginTop: '12px' } }, h('h3', null, 'Storage on this device'), IA.ui.resultBlock([['Persistent storage', si.persisted === null ? 'unknown' : si.persisted ? 'granted' : 'not granted', si.persisted ? 'up' : 'warn'], ['Used', fmtB(si.usage)], ['Available quota', fmtB(si.quota)]]), h('p', { class: 'small muted' }, 'Without persistent storage the browser may clear app data when the device is low on space. Installing the app (PWA) usually grants it.'), si.persisted ? null : h('button', { class: 'btn sm', type: 'button', onclick: async () => { const r = await IA.db.requestPersist(); toast(r ? 'Persistent storage granted' : 'The browser declined (install the app or use it regularly, then retry)'); } }, 'Request persistent storage')));
     el.append(h('div', { class: 'card', style: { marginTop: '12px' } }, h('h3', null, 'Using the app on phone AND laptop'), IA.ui.prose(`Each browser keeps its **own** copy of your progress, journal and datasets — nothing is synced through the internet (by design: no account, no server). To move your data:\n\n1. On the device you have been using: **Download full backup** (above).\n2. Send the file to the other device (email to yourself, Google Drive, WhatsApp to yourself, USB).\n3. On the other device open the app → Settings → **Restore from backup** and pick the file. The checksum is verified.\n\nRestore **replaces** that device's data, so always restore onto the device that is behind. A simple routine: do your learning on one device and move the backup whenever you switch.`)));
     const specsTxt = h('textarea', { class: 'i mono', rows: 18, style: { fontSize: '.8rem' } }, JSON.stringify(IA.specs, null, 1));
-    el.append(h('div', { class: 'card', style: { marginTop: '12px' } }, h('h3', null, 'Market specifications (advanced)'), h('p', { class: 'small muted' }, 'Lot sizes, charges, sessions and FX rates used by every calculator and simulator. Update the asOf dates when you change values. Add exchange holidays as "holidays": {"NSE": ["2026-11-24", …]}.'), specsTxt, h('div', { class: 'row', style: { marginTop: '8px' } }, h('button', { class: 'btn primary', type: 'button', onclick: async () => { try { const o = JSON.parse(specsTxt.value); if (!o.india || !o.us || !Array.isArray(o.sessions) || !o.fx) throw new Error('missing india/us/sessions/fx'); await IA.db.set('specs', o); IA.specs = IA.deepMerge(structuredClone(IA.specsDefault), o); toast('Specifications saved'); } catch (e) { toast('Invalid JSON: ' + e.message, 5000); } } }, 'Save specifications'), h('button', { class: 'btn ghost', type: 'button', onclick: async () => { if (!confirm('Reset specifications to the app defaults?')) return; await IA.db.del('specs'); IA.specs = structuredClone(IA.specsDefault); specsTxt.value = JSON.stringify(IA.specs, null, 1); toast('Reset'); } }, 'Reset to defaults'))));
+    el.append(h('div', { class: 'card', style: { marginTop: '12px' } }, h('h3', null, 'Market specifications (advanced)'), h('p', { class: 'small muted' }, 'Lot sizes, charges, sessions and FX rates used by every calculator and simulator. Update the asOf dates when you change values. Add exchange holidays as "holidays": {"NSE": ["2026-11-24", …]}.'), specsTxt, h('div', { class: 'row', style: { marginTop: '8px' } }, h('button', { class: 'btn primary', type: 'button', onclick: async () => { try { const o = JSON.parse(specsTxt.value); if (!o.india || !o.us || !Array.isArray(o.sessions) || !o.fx) throw new Error('missing india/us/sessions/fx'); await IA.db.set('specs', o); IA.specs = IA.deepMerge(structuredClone(IA.specsDefault), o); toast('Specifications saved'); } catch (e) { toast('Invalid JSON: ' + e.message, 5000); } } }, 'Save specifications'), h('button', { class: 'btn ghost', type: 'button', onclick: async () => { if (!await IA.ui.ask('Reset specifications to the app defaults?')) return; await IA.db.del('specs'); IA.specs = structuredClone(IA.specsDefault); specsTxt.value = JSON.stringify(IA.specs, null, 1); toast('Reset'); } }, 'Reset to defaults'))));
     el.append(h('div', { class: 'card', style: { marginTop: '12px' } }, h('h3', null, 'About'), h('p', { class: 'small' }, `Intraday Mastery Academy · version ${IA.VERSION} · content ${IA.content.lessons.length}/${IA.content.lessonIndex().length} lessons, ${IA.content.questions.length} questions, ${(IA.content.indicators || []).length} indicators, ${(IA.content.strategies || []).length} strategies, ${(IA.content.patterns || []).length} patterns.`), h('p', { class: 'small muted' }, 'Educational software. Not investment advice, not a broker, no live data, no order routing. All charts are synthetic unless you import data.')));
   };
 })(typeof window !== 'undefined' ? window : globalThis);
@@ -16788,7 +17568,7 @@ See [[link:l3-hypothesis]], [[link:l3-biases]], [[link:l3-significance]], [[link
     }
     const libBox = h('div', { class: 'card', style: { marginTop: '14px' } }); el.append(libBox);
     async function lib() {
-      const ds = await IA.datasets.list(); libBox.innerHTML = ''; libBox.append(h('h3', null, 'Dataset library'), table([{ label: 'Name', k: 'name' }, { label: 'TF', k: 'tfLabel' }, { label: 'Exchange', k: 'exchange' }, { label: 'Range', get: (d) => `${d.from} → ${d.to}` }, { label: 'Bars', k: 'bars', n: 1 }, { label: 'Quality', k: 'quality' }, { label: '', get: (d) => h('span', { class: 'row', style: { gap: '4px', flexWrap: 'nowrap' } }, h('a', { class: 'btn sm', href: '#/chartlab?ds=' + d.id }, 'Chart'), h('a', { class: 'btn sm', href: '#/simulator/replay?ds=' + d.id }, 'Replay'), h('a', { class: 'btn sm', href: '#/quant/backtest?ds=' + d.id }, 'Backtest'), h('button', { class: 'btn sm ghost', type: 'button', onclick: async () => { if (confirm(`Delete dataset "${d.name}"?`)) { await IA.datasets.remove(d.id); lib(); } } }, '✕')) }], ds, { empty: 'No datasets yet. Import a CSV above.' }));
+      const ds = await IA.datasets.list(); libBox.innerHTML = ''; libBox.append(h('h3', null, 'Dataset library'), table([{ label: 'Name', k: 'name' }, { label: 'TF', k: 'tfLabel' }, { label: 'Exchange', k: 'exchange' }, { label: 'Range', get: (d) => `${d.from} → ${d.to}` }, { label: 'Bars', k: 'bars', n: 1 }, { label: 'Quality', k: 'quality' }, { label: '', get: (d) => h('span', { class: 'row', style: { gap: '4px', flexWrap: 'nowrap' } }, h('a', { class: 'btn sm', href: '#/chartlab?ds=' + d.id }, 'Chart'), h('a', { class: 'btn sm', href: '#/simulator/replay?ds=' + d.id }, 'Replay'), h('a', { class: 'btn sm', href: '#/quant/backtest?ds=' + d.id }, 'Backtest'), h('button', { class: 'btn sm ghost', type: 'button', onclick: async () => { if (await IA.ui.ask(`Delete dataset "${d.name}"?`)) { await IA.datasets.remove(d.id); lib(); } } }, '✕')) }], ds, { empty: 'No datasets yet. Import a CSV above.' }));
       libBox.append(h('p', { class: 'small muted' }, 'Where to get data: NSE and BSE publish daily historical prices and bhavcopies on their websites; most Indian and US brokers export intraday OHLCV for your instruments. Check the source\'s terms of use. The app never downloads data itself.'));
     }
     lib();
@@ -16925,7 +17705,7 @@ See [[link:l3-hypothesis]], [[link:l3-biases]], [[link:l3-significance]], [[link
 
 /* ==== js/boot.js ==== */
 /* Boot (kept out of index.html so the Content-Security-Policy can forbid inline scripts). */
-IA.VERSION = '2.1.0';
+IA.VERSION = '2.2.0';
 IA.start();
 if (IA.db && IA.db.requestPersist) IA.db.requestPersist();
 </script>

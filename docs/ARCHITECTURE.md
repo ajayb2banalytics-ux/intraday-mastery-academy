@@ -1,6 +1,6 @@
 # Intraday Mastery Academy — Architecture
 
-Version 2.1.0 · 4 Nov 2026
+Version 2.2.0 · 4 Nov 2026
 
 ## 1. Principles
 
@@ -87,6 +87,8 @@ Export = all keys + all rows → one JSON file with schema version and a SHA-256
 
 * Served PWA: meta CSP `default-src 'self'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'` — no inline script.
 * Standalone file: one inline script allowed only by its SHA-256 hash; `connect-src 'none'` so the file cannot make network requests.
+* Backtester, strategy bot and code export share one rule definition: `IA.bt.stepBar` is the only per-bar logic (used by `IA.bt.run` and `IA.bot`), the bot computes signals on a prefix of the bars (causal by construction), and `IA.codegen.python` mirrors the indicator and step code line by line — `tests/bot.test.js` runs the generated Python and compares trades.
+* Routing does not depend on the page URL: `IA.go(hash)` keeps the current route internally and a document-level click handler routes every `#/…` link, so the app works inside sandboxed preview iframes (where `#` links resolve against the parent page). Native `confirm()`/`prompt()` are not used; `IA.ui.ask`/`askText` render in-app dialogs instead.
 * All user text inserted as text; markdown renderer escapes first. CSV export neutralises formula injection. See SECURITY-REPORT.md.
 
 ## 6. Time zones

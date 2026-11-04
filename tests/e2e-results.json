@@ -1,7 +1,7 @@
 [
  {
   "id": "E2E-01",
-  "name": "All 102 lessons render every tab with no raw markup, NaN/undefined or failed embeds",
+  "name": "All 103 lessons render every tab with no raw markup, NaN/undefined or failed embeds",
   "ok": true,
   "detail": "[]"
  },
@@ -99,13 +99,13 @@
   "id": "E2E-15",
   "name": "Decision simulator grades the decision, reveals the outcome separately, and records it",
   "ok": true,
-  "detail": "Chart replay\nDecision simulator\nPaper trading\nOptions paper\n\nEach scenario shows a session up to a decision point. Choose what a disciplined trader wo"
+  "detail": "Chart replay\nDecision simulator\nPaper trading\nOptions paper\nStrategy bot\n\nEach scenario shows a session up to a decision point. Choose what a discipli"
  },
  {
   "id": "E2E-16",
   "name": "Paper trading: 1 lot fills next bar, survives reload, is squared off at session close with charges deducted",
   "ok": true,
-  "detail": "{'idx': 79, 'q': 65, 'f': 1} {'idx': 79, 'q': 65} {'q': 0, 't': 1, 'cash': 497775.4464969871, 'start': 500000, 'ch': 983.0535030130002}"
+  "detail": "in-app confirmation shown: False {'idx': 79, 'q': 65, 'f': 1} {'idx': 79, 'q': 65} {'q': 0, 't': 1, 'cash': 486441.65581515006, 'start': 500000, 'ch': 1026.3441848500001}"
  },
  {
   "id": "E2E-17",
@@ -135,7 +135,7 @@
   "id": "E2E-21",
   "name": "Chart-reading drills: data-graded question and tap-the-pattern drill both score and record",
   "ok": true,
-  "detail": "{\"reading\": {\"n\": 1, \"ok\": 1}, \"pattern:bullish-engulfing\": {\"n\": 1, \"ok\": 0}}"
+  "detail": "{\"reading\": {\"n\": 1, \"ok\": 1}, \"pattern:bullish-engulfing\": {\"n\": 1, \"ok\": 1}}"
  },
  {
   "id": "E2E-22",
@@ -165,7 +165,7 @@
   "id": "E2E-26",
   "name": "Search finds lessons, indicators and strategies",
   "ok": true,
-  "detail": "52"
+  "detail": "53"
  },
  {
   "id": "E2E-27",

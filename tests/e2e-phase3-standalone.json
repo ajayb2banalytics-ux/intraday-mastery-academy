@@ -3,13 +3,13 @@
   "id": "P3-01",
   "name": "Options paper: chain shows 13 strikes (ATM \u00b1 6) with bid/ask, delta, IV and B/S buttons; model and synthetic-volatility caveats shown",
   "ok": true,
-  "detail": "[13, 'Chart replay\\nDecision simulator\\nPaper trading\\nOptions paper\\n\\nPractise index options with a virtual account on a synthetic Nifty or Bank Nifty path. Weekly expiry every 5 sessions, cash-settled at intr']"
+  "detail": "[13, 'Chart replay\\nDecision simulator\\nPaper trading\\nOptions paper\\nStrategy bot\\n\\nPractise index options with a virtual account on a synthetic Nifty or Bank Nifty path. Weekly expiry every 5 sessions, cash-se']"
  },
  {
   "id": "P3-02",
   "name": "Options paper: an ATM call bought from the chain fills 1 lot (65) on the NEXT bar at that bar's open ask",
   "ok": true,
-  "detail": "['W1-25500-CE', {'qty': 65, 'avg': 379.9, 'fillT': 1767691800000, 'idx': 79}, 379.9, 'Now: bid 377.50 / ask 379.90 \u00b7 IV 27.7% \u00b7 \u0394 0.53. Premium \u2248 \u20b924,693.50 (max loss']"
+  "detail": "['W1-26300-CE', {'qty': 65, 'avg': 333.55, 'fillT': 1767691800000, 'idx': 79}, 333.55, 'Now: bid 331.45 / ask 333.55 \u00b7 IV 25.2% \u00b7 \u0394 0.51. Premium \u2248 \u20b921,680.75 (max loss']"
  },
  {
   "id": "P3-03",
@@ -21,19 +21,19 @@
   "id": "P3-04",
   "name": "Options paper: selling an ATM put shows an approximate margin above 0",
   "ok": true,
-  "detail": "Approx. margin used\u20b91,65,015.53"
+  "detail": "Approx. margin used\u20b91,72,383.44"
  },
  {
   "id": "P3-05",
   "name": "Options paper: account and positions survive a reload",
   "ok": true,
-  "detail": "Chart replay\nDecision simulator\nPaper trading\nOptions paper\n\nPractise index options with a virtual account on a syntheti"
+  "detail": "Chart replay\nDecision simulator\nPaper trading\nOptions paper\nStrategy bot\n\nPractise index options with a virtual account "
  },
  {
   "id": "P3-06",
   "name": "Options paper: \"Exit all\" closes both legs on the next bar and records two trades with charges",
   "ok": true,
-  "detail": "[[\"W1-25500-CE\",112],[\"W1-25550-PE\",99]]"
+  "detail": "[[\"W1-26300-CE\",98],[\"W1-26250-PE\",95]]"
  },
  {
   "id": "P3-07",
@@ -63,25 +63,25 @@
   "id": "P3-11",
   "name": "Dashboard shows the Spaced review card",
   "ok": true,
-  "detail": "OVERALL MASTERY\n0%\nLEVEL 1\nFoundation\nLESSONS COMPLETED\n0/102\nMODULES MASTERED\n0/25\nSpaced review\n\nQuestions you get wro"
+  "detail": "OVERALL MASTERY\n0%\nLEVEL 1\nFoundation\nLESSONS COMPLETED\n0/103\nMODULES MASTERED\n0/25\nSpaced review\n\nQuestions you get wro"
  },
  {
   "id": "P3-12",
   "name": "Wrong answers in a module assessment enter the review queue (box 1, due in 1 day)",
   "ok": true,
-  "detail": "[6]"
+  "detail": "[7]"
  },
  {
   "id": "P3-13",
   "name": "Review page lists the due questions as a quiz",
   "ok": true,
-  "detail": "[6, 6]"
+  "detail": "[7, 7]"
  },
  {
   "id": "P3-14",
   "name": "Answering due questions correctly moves them to box 2 (next due in 3 days)",
   "ok": true,
-  "detail": "[6, 6]"
+  "detail": "[7, 7]"
  },
  {
   "id": "P3-15",

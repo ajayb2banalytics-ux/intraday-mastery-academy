@@ -1,5 +1,5 @@
 {
  "ok": true,
- "routes": 55,
- "perf": "- served PWA: dashboard first render 551 ms (cold load, headless Chrome, local disk).\n- file:// standalone: dashboard first render 266 ms (cold load, headless Chrome, local disk).\n"
+ "routes": 57,
+ "perf": "- served PWA: dashboard first render 544 ms (cold load, headless Chrome, local disk).\n- file:// standalone: dashboard first render 371 ms (cold load, headless Chrome, local disk).\n"
 }

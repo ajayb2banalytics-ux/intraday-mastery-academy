@@ -17,12 +17,12 @@ Generated 2026-11-04.
 ## Results
 | Check | Result |
 |---|---|
-| Android phone (Pixel 7 emulation): 41 routes — horizontal overflow | none |
-| iPhone 14 viewport (Chromium emulation, not Safari): 41 routes — horizontal overflow | none |
-| Small phone 360×740: 41 routes — horizontal overflow | none |
-| Tablet 820×1180: 41 routes — horizontal overflow | none |
-| Laptop 1366×768: 41 routes — horizontal overflow | none |
-| Desktop 1920×1080: 41 routes — horizontal overflow | none |
+| Android phone (Pixel 7 emulation): 43 routes — horizontal overflow | none |
+| iPhone 14 viewport (Chromium emulation, not Safari): 43 routes — horizontal overflow | none |
+| Small phone 360×740: 43 routes — horizontal overflow | none |
+| Tablet 820×1180: 43 routes — horizontal overflow | none |
+| Laptop 1366×768: 43 routes — horizontal overflow | none |
+| Desktop 1920×1080: 43 routes — horizontal overflow | none |
 | Navigation correct per screen size (bottom bar/drawer on phones, sidebar on laptops) | pass |
 | Touch tap on chart graded (Android emulation) | pass |
 | Keyboard focus visible / replay shortcuts | 12/12 focus steps visible; shortcuts work |

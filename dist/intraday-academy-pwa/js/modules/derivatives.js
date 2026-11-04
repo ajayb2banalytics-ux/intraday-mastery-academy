@@ -4,7 +4,7 @@
   const { h, prose, table, num, money } = IA.ui;
   IA.views.derivatives = (el, tab = 'overview') => {
     const tabs = [['overview', 'Overview'], ['payoff', 'Strategy builder'], ['risk', 'Scenario risk'], ['matrix', 'Strategy matrix'], ['greeks', 'Greeks lab'], ['chain', 'Option chain'], ['futures', 'Futures lab']];
-    el.append(h('div', { class: 'tabs' }, tabs.map(([k, l]) => h('button', { class: k === tab ? 'on' : '', onclick: () => (location.hash = '#/derivatives/' + k) }, l))));
+    el.append(h('div', { class: 'tabs' }, tabs.map(([k, l]) => h('button', { class: k === tab ? 'on' : '', onclick: () => IA.go('#/derivatives/' + k) }, l))));
     if (tab === 'overview') {
       const ls = IA.content.lessonIndex().filter((l) => l.track === 'deriv'), written = new Set(IA.content.lessons.map((l) => l.id));
       el.append(prose(`## Futures and options — a specialist track

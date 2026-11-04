@@ -19,7 +19,7 @@
   function shell() {
     const side = h('aside', { class: 'sidebar' }, h('div', { class: 'brand' }, logo(), h('div', null, 'Intraday Mastery', h('small', null, 'Global Trading Academy'))), h('nav', { class: 'nav' }, NAV.map(([k, l, ic], i) => [i === 6 || i === 11 || i === 16 ? h('div', { class: 'sep' }) : null, h('a', { href: '#/' + k, 'data-nav': k }, icon(ic), l)])));
     const search = h('input', { type: 'search', placeholder: 'Search lessons, indicators, strategies…', 'aria-label': 'Search', id: 'gsearch' });
-    search.addEventListener('keydown', (e) => { if (e.key === 'Enter' && search.value.trim()) { location.hash = '#/search/' + encodeURIComponent(search.value.trim()); search.blur(); } });
+    search.addEventListener('keydown', (e) => { if (e.key === 'Enter' && search.value.trim()) { IA.go('#/search/' + encodeURIComponent(search.value.trim())); search.blur(); } });
     const top = h('header', { class: 'topbar' }, h('h1', { id: 'title' }, ''), h('div', { class: 'search' }, icon('search'), search), h('span', { class: 'offline-pill', id: 'netpill' }, 'offline-ready'));
     const bottom = h('nav', { class: 'bottomnav' }, BOTTOM.map((k) => { const n = NAV.find((x) => x[0] === k); return h('a', { href: '#/' + k, 'data-nav': k }, icon(n[2]), n[1].split(' ')[0]); }), h('button', { type: 'button', onclick: drawer, 'aria-label': 'More sections' }, icon('more'), 'More'));
     const main = h('div', { class: 'main' }, top, h('main', { class: 'view', id: 'view' }), h('footer', { class: 'disclaimer' }, 'Educational tool, not financial advice. Charts and simulations use synthetic data unless you import your own. Trading can lose all of your capital. Market specifications are dated — verify with your exchange and broker.'));
@@ -37,8 +37,22 @@
     [/^settings$/, 'settings'], [/^search\/(.*)$/, 'search'],
   ];
   let current = null;
+  // Routing keeps its own copy of the current route instead of relying only on location.hash. Inside a
+  // sandboxed preview (an iframe with srcdoc, e.g. a chat app's file viewer) "#/x" links resolve against the
+  // parent page's URL, so a normal click navigates away or is blocked and every link looks dead. All in-app
+  // links are intercepted and routed here; the address bar is updated only where the browser allows it.
+  let curHash = null;
+  const readHash = () => { try { return location.hash || ''; } catch (e) { return ''; } };
+  IA.go = (hash) => {
+    hash = String(hash || '#/'); if (!hash.startsWith('#')) hash = '#' + hash;
+    curHash = hash;
+    try { if (readHash() !== hash) history.pushState(null, '', hash); } catch (e) { /* sandboxed: keep internal route only */ }
+    return route();
+  };
+  const onUrlChange = () => { const hsh = readHash(); if (hsh !== curHash) { curHash = hsh; route(); } };
+  IA.currentRoute = () => (curHash == null ? readHash() : curHash);
   async function route() {
-    const full = decodeURIComponent(location.hash.replace(/^#\/?/, '')); const qi = full.indexOf('?');
+    const full = decodeURIComponent(IA.currentRoute().replace(/^#\/?/, '')); const qi = full.indexOf('?');
     const path = qi >= 0 && !full.startsWith('search/') ? full.slice(0, qi) : full, query = qi >= 0 ? new URLSearchParams(full.slice(qi + 1)) : new URLSearchParams();
     IA.query = query;
     let name = 'notfound', arg = null; for (const [re, n] of ROUTES) { const m = path.match(re); if (m) { name = n; arg = m[1]; break; } }
@@ -90,7 +104,13 @@
     await IA.progress.load();
     const pill = $('#netpill'); const net = () => { pill.textContent = navigator.onLine ? 'online · works offline' : 'offline'; pill.classList.toggle('ok', true); }; net(); addEventListener('online', net); addEventListener('offline', net);
     if (!(await IA.db.persistent())) IA.ui.toast('Storage unavailable — progress will not be saved in this browser mode.', 6000);
-    addEventListener('hashchange', route); await route();
+    document.addEventListener('click', (e) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const a = e.target.closest && e.target.closest('a[href^="#"]'); if (!a || a.target === '_blank' || a.hasAttribute('download')) return;
+      const href = a.getAttribute('href'); if (href === '#' || !href.startsWith('#/')) return;
+      e.preventDefault(); IA.go(href);
+    });
+    curHash = readHash(); addEventListener('hashchange', onUrlChange); addEventListener('popstate', onUrlChange); await route();
     if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(() => {});
   }
   const BAD = new Set(['__proto__', 'constructor', 'prototype']);

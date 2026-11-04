@@ -3,7 +3,7 @@
  "profiles": [
   {
    "name": "Android phone (Pixel 7 emulation)",
-   "routes": 41,
+   "routes": 43,
    "overflow": [],
    "smallTargets": 0,
    "navOK": true,
@@ -13,7 +13,7 @@
   },
   {
    "name": "iPhone 14 viewport (Chromium emulation, not Safari)",
-   "routes": 41,
+   "routes": 43,
    "overflow": [],
    "smallTargets": 0,
    "navOK": true,
@@ -23,7 +23,7 @@
   },
   {
    "name": "Small phone 360\u00d7740",
-   "routes": 41,
+   "routes": 43,
    "overflow": [],
    "smallTargets": 0,
    "navOK": true,
@@ -33,7 +33,7 @@
   },
   {
    "name": "Tablet 820\u00d71180",
-   "routes": 41,
+   "routes": 43,
    "overflow": [],
    "smallTargets": 0,
    "navOK": true,
@@ -43,7 +43,7 @@
   },
   {
    "name": "Laptop 1366\u00d7768",
-   "routes": 41,
+   "routes": 43,
    "overflow": [],
    "smallTargets": 0,
    "navOK": true,
@@ -53,7 +53,7 @@
   },
   {
    "name": "Desktop 1920\u00d71080",
-   "routes": 41,
+   "routes": 43,
    "overflow": [],
    "smallTargets": 0,
    "navOK": true,
@@ -64,6 +64,8 @@
  ],
  "axe": {
   "Android phone (Pixel 7 emulation)": {
+   "simulator/bot": [],
+   "lesson/l4-algo-india": [],
    "simulator/options": [],
    "review": [],
    "journal/coach": [],
@@ -86,6 +88,8 @@
    "settings": []
   },
   "Laptop 1366\u00d7768": {
+   "simulator/bot": [],
+   "lesson/l4-algo-india": [],
    "simulator/options": [],
    "review": [],
    "journal/coach": [],

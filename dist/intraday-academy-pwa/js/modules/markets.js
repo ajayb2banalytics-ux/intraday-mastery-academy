@@ -6,7 +6,7 @@
 
   IA.views.markets = (el, tab = 'clock') => {
     const tabs = [['clock', 'Global clock'], ['compare', 'Market comparison'], ['india', 'India'], ['us', 'United States'], ['global', 'Europe & Asia'], ['assets', 'Other assets'], ['specs', 'Specs & dates']];
-    el.append(h('div', { class: 'tabs' }, tabs.map(([k, l]) => h('button', { class: k === tab ? 'on' : '', onclick: () => (location.hash = '#/markets/' + k) }, l))));
+    el.append(h('div', { class: 'tabs' }, tabs.map(([k, l]) => h('button', { class: k === tab ? 'on' : '', onclick: () => IA.go('#/markets/' + k) }, l))));
     if (tab === 'clock') return clock(el);
     if (tab === 'specs') return specs(el);
     if (tab === 'compare') return compare(el);

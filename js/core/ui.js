@@ -130,7 +130,7 @@
   function modal(content, { onClose } = {}) {
     const bg = h('div', { class: 'modal-bg', onclick: (e) => { if (e.target === bg) close(); } });
     const m = h('div', { class: 'modal', role: 'dialog' }, content); bg.append(m); document.body.append(bg);
-    function close() { bg.remove(); onClose && onClose(); }
+    let closed = false; function close() { if (closed) return; closed = true; bg.remove(); document.removeEventListener('keydown', esc2); onClose && onClose(); }
     const esc2 = (e) => { if (e.key === 'Escape') { close(); document.removeEventListener('keydown', esc2); } }; document.addEventListener('keydown', esc2);
     return { close, el: m };
   }
@@ -145,5 +145,22 @@
   function seg(options, value, onChange) { const s = h('div', { class: 'seg' }); options.forEach(([v, l]) => { const b = h('button', { type: 'button', class: String(v) === String(value) ? 'on' : '', onclick: () => { $$('button', s).forEach((x) => x.classList.remove('on')); b.classList.add('on'); onChange(v); } }, l); s.append(b); }); return s; }
   function evTag(ev) { const m = { established: 'Established', mixed: 'Mixed evidence', subjective: 'Subjective framework', speculative: 'Speculative' }; return h('span', { class: 'tag ev-' + ev, title: 'Evidence status' }, m[ev] || ev || '—'); }
 
-  IA.ui = { h, $, $$, esc, md, inline, hydrate, prose, calcForm, resultBlock, errBlock, quiz, toast, modal, download, pickFile, csv, parseCsv, table, seg, evTag, num, money, pct, signCls, CUR };
+
+  // In-app replacements for confirm()/prompt(). Native dialogs are silently blocked in sandboxed
+  // previews (e.g. a chat app's file viewer), which made buttons appear dead. These always work.
+  function dialog(message, withInput, def) {
+    return new Promise((res) => {
+      let done = false, m = null; const fin = (v) => { if (done) return; done = true; if (m) m.close(); res(v); };
+      const input = withInput ? h('input', { class: 'i', type: 'text', value: def == null ? '' : String(def), 'aria-label': 'Answer', style: { width: '100%', marginTop: '8px' } }) : null;
+      const ok = h('button', { class: 'btn', type: 'button', 'data-dlg': 'ok', onclick: () => fin(withInput ? input.value : true) }, 'OK');
+      const cancel = h('button', { class: 'btn ghost', type: 'button', 'data-dlg': 'cancel', onclick: () => fin(withInput ? null : false) }, 'Cancel');
+      const body = h('div', { class: 'dlg' }, h('p', { style: { whiteSpace: 'pre-line', margin: '0 0 6px' } }, String(message)), input, h('div', { class: 'row', style: { marginTop: '14px', justifyContent: 'flex-end', gap: '8px' } }, cancel, ok));
+      m = modal(body, { onClose: () => fin(withInput ? null : false) });
+      if (input) input.addEventListener('keydown', (e) => { if (e.key === 'Enter') fin(input.value); });
+      setTimeout(() => (input || ok).focus(), 0);
+    });
+  }
+  const ask = (message) => dialog(message, false);
+  const askText = (message, def) => dialog(message, true, def);
+  IA.ui = { h, $, $$, esc, md, inline, hydrate, prose, calcForm, resultBlock, errBlock, quiz, toast, modal, ask, askText, download, pickFile, csv, parseCsv, table, seg, evTag, num, money, pct, signCls, CUR };
 })(typeof window !== 'undefined' ? window : globalThis);

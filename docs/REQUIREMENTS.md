@@ -2,7 +2,7 @@
 
 Generated 2026-11-04 by `tools/report.py` from saved test results. **Verified** = every linked automated test ran and passed. **Tested** = smoke-level or partial automation. **Implemented** = built without automated proof. **Not testable here** = needs a browser/device this environment cannot provide.
 
-**Summary:** Implemented: 1, Not testable here: 2, Tested: 5, Verified: 48 — 56 requirements.
+**Summary:** Implemented: 1, Not testable here: 2, Tested: 5, Verified: 53 — 61 requirements.
 
 | ID | Area | Requirement | Status | Tests | Evidence | Limitations |
 |---|---|---|---|---|---|---|
@@ -21,11 +21,11 @@ Generated 2026-11-04 by `tools/report.py` from saved test results. **Verified** 
 | UI-05 | Interface | Laptop keyboard shortcuts for chart replay | **Verified** | pass | MOB-KEYS |  |
 | UI-06 | Interface | Global search | **Verified** | pass | E2E-26 |  |
 | UI-07 | Interface | Touch: chart tap, pan, pinch | **Tested** | pass | MOB-TOUCH | Tap verified by automation; pinch/pan verified by code path and desktop emulation only. |
-| LRN-01 | Curriculum | 102 lessons in 4 levels / 25 modules, all written; every directive subject mapped (see EDUCATIONAL-AUDIT.md) | **Verified** | pass | CONTENT, E2E-01 |  |
+| LRN-01 | Curriculum | 103 lessons in 4 levels / 25 modules, all written; every directive subject mapped (see EDUCATIONAL-AUDIT.md) | **Verified** | pass | CONTENT, E2E-01 |  |
 | LRN-02 | Curriculum | Every lesson: beginner/intermediate/advanced, misconceptions, failure conditions, exercise; maths/India/US where relevant | **Verified** | pass | CONTENT, E2E-01 |  |
 | LRN-03 | Curriculum | Independent educational audit of all lessons, questions, indicators, strategies, patterns, psychology, library | **Implemented** | n/a |  | AI-assisted review with every number recomputed by script; not an independent human-expert or regulatory certification. |
 | LRN-04 | Curriculum | Lesson completion gated by correct check answers; notes; bookmarks | **Verified** | pass | E2E-03, E2E-04 |  |
-| ASM-01 | Assessments | 373 assessment questions (≥12 per module) incl. readiness exam | **Verified** | pass | CONTENT |  |
+| ASM-01 | Assessments | 377 assessment questions (≥12 per module) incl. readiness exam | **Verified** | pass | CONTENT |  |
 | ASM-02 | Assessments | Module assessments, level unlocking by results, readiness evaluation | **Verified** | pass | E2E-05, E2E-06 |  |
 | ASM-03 | Assessments | Chart-reading drills graded from data | **Verified** | pass | E2E-21 |  |
 | ASM-04 | Assessments | Spaced-repetition review: missed lesson-check and assessment questions return after 1/3/7/16/35 days; dashboard card; review page | **Verified** | pass | SRS-01, SRS-02, SRS-03, SRS-04, SRS-05 (+9) |  |
@@ -52,6 +52,11 @@ Generated 2026-11-04 by `tools/report.py` from saved test results. **Verified** 
 | IND-01 | Indicators | 30+ indicators match independent implementations of published definitions and the ta library (after warm-up) | **Verified** | pass | XC-01, XC-02, XC-03, XC-04, XC-05 (+34) | Parabolic SAR differs from the ta library by convention (app follows Wilder; documented). |
 | SIM-01 | Simulators | Chart replay (synthetic & historical), decision simulator, persistent paper trading | **Verified** | pass | E2E-14, E2E-15, E2E-16, P2-07, P2-08 |  |
 | SIM-03 | Simulators | Options paper trading: Nifty/Bank Nifty weekly options chain (BS + smile + bid/ask), next-bar fills, limit/stop/bracket orders, NSE option charges, approximate margin, Greeks, expiry settlement with STT on exercise, journal export | **Verified** | pass | OPT-P01, OPT-P02, OPT-P03, OPT-P04, OPT-P05 (+23) | Synthetic path is more volatile than the real index (stated in-app); margin is an approximation, not SPAN; IV model is stylised. |
+| SIM-04 | Simulators | Strategy bot: backtester rules paper-traded bar by bar with prefix-only (causal) signals, identical to the backtester, decision log, journal export, persistence | **Verified** | pass | BOT-01, BOT-02, BOT-03, BOT-04, BOT-05 (+8) | Synthetic or imported bars; at most 1,500 bars per run. |
+| BT-03 | Backtesting | Strategy code export: standalone Python that reproduces the app's trades on the same bars (verified by running it), and a TradingView Pine Script v5 strategy | **Verified** | pass | CG-01, CG-02, CG-03, CG-04, CG-05 (+4) | Pine output is checked for structure only: TradingView is not available here, so it has not been executed. |
+| BT-04 | Backtesting | Futures sizing: exposure cap (× capital) so one lot can be traded on margin; skipped signals reported with the one-lot risk | **Verified** | pass | V22-01, V22-05 | Before v2.2 the default Nifty/Bank Nifty backtest made 0 trades. |
+| UX-01 | App shell | Works inside a sandboxed preview frame (chat-app file viewer): links, tabs, in-app dialogs, bot | **Verified** | pass | SBX-01, SBX-02, SBX-03, SBX-04, SBX-05 (+17) | Fixed in v2.1.1; downloads and storage may still be blocked by the viewer. |
+| CNT-ALGO | Content | Lesson: from backtest to live algo, and SEBI's retail algo framework (sourced, dated Nov 2026) | **Verified** | pass | V22-11, V22-12, CONTENT | Facts verified against SEBI/NSE documents where they could be fetched; the remainder is marked in the lesson. |
 | SIM-02 | Simulators | Execution realism: next-bar fills, spread, slippage, gaps, partial fills, OCO brackets, EOD square-off, charges | **Verified** | pass | EXE-01, EXE-02, EXE-03, EXE-04, EXE-05 (+5) |  |
 | BT-01 | Backtesting | No look-ahead (future-perturbation invariance on all 12 signals), sequencing, stop/target/gap/EOD, slippage, costs, partial fills | **Verified** | pass | BTA-01, BTA-02, BTA-03, BTA-04, BTA-05 (+28) |  |
 | BT-02 | Backtesting | Walk-forward, out-of-sample optimisation (optimiser never sees OOS bars), random-entry overfitting test, Monte Carlo, regime matrix | **Verified** | pass | BTA-14, BTA-15, BTA-16, BTA-17, BTA-18 (+4) | Synthetic regimes are stylised. |

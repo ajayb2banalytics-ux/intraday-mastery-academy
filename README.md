@@ -1,12 +1,12 @@
-# Intraday Mastery — Global Professional Trading Academy (v2.1.0)
+# Intraday Mastery — Global Professional Trading Academy (v2.2.0)
 
 An offline, mobile-first personal trading academy for phones and laptops. It includes:
-- 102 lessons across four levels, 373 assessment questions and a readiness exam;
+- 103 lessons across four levels, 377 assessment questions and a readiness exam;
 - reference libraries of 38 indicators, 30 strategies and 22 candlestick patterns;
 - a chart laboratory and a Concepts Lab of 15 graded chart-reading exercise types;
 - historical CSV import with validation;
 - chart replay, a decision simulator, futures/stock paper trading and **options paper trading** (Nifty/Bank Nifty weekly chain, Greeks, margin, expiry settlement);
-- a backtester with out-of-sample and overfitting tests;
+- a backtester with out-of-sample and overfitting tests, a **strategy bot** that paper-trades your backtested rules bar by bar, and **strategy code export** (Python that reproduces the app's trades, and TradingView Pine Script), plus a lesson on India's retail algo rules;
 - a trading journal with analytics and a **coach** that finds your weak setups and rule breaches;
 - **spaced-repetition review** of every question you miss;
 - 24 calculators that each show their formula (the payoff builder handles **calendars and diagonals**; charges include **MCX commodities**), a market comparison lab and a DST-safe global market clock.
@@ -35,7 +35,7 @@ index.html, sw.js, manifest.webmanifest, icons/   multi-file PWA
 css/app.css                 design system (dark default, light optional)
 js/files.js                 ordered script list (index, service worker and build all use it)
 js/engines/                 pure maths: indicators, risk and costs, options (+ multi-expiry), options paper,
-                            generator, backtest, clock, execution, specs (+ sources), dataimport, structure,
+                            generator, backtest, bot (strategy bot), codegen (Python/Pine export), clock, execution, specs (+ sources), dataimport, structure,
                             srs (spaced repetition), coach (journal insights)
 js/content/                 curriculum, 102 lessons, question banks, indicators, strategies, patterns,
                             psychology, library
@@ -49,13 +49,14 @@ docs/                       architecture, curriculum, requirements, QA and valid
 ## Development
 ```
 node tests/engines.test.js && node tests/dataimport.test.js && node tests/structure.test.js && node tests/backtest-audit.test.js
-node tests/optpaper.test.js && node tests/srs.test.js && node tests/coach.test.js
+node tests/optpaper.test.js && node tests/srs.test.js && node tests/coach.test.js && node tests/bot.test.js
 node tests/validate-content.js
 python3 tests/crosscheck.py                       # independent validation vs numpy/pandas, ta, SciPy
 python3 tools/build.py                            # build dist/
 cd dist/intraday-academy-pwa && python3 -m http.server 8765 &
 python3 tests/smoke.py http://localhost:8765/ file://$PWD/dist/intraday-academy-standalone.html
-python3 tests/e2e.py URL OUT.json ; python3 tests/e2e_phase2.py URL OUT.json ; python3 tests/e2e_phase3.py URL OUT.json
+python3 tests/sandbox_frame.py dist/intraday-academy-standalone.html   # still works inside a sandboxed preview frame
+python3 tests/e2e.py URL OUT.json ; python3 tests/e2e_phase2.py URL OUT.json ; python3 tests/e2e_phase3.py URL OUT.json ; python3 tests/e2e_v22.py URL OUT.json
 python3 tests/security.py SERVED FILE OUT.json ; python3 tests/mobile_a11y.py SERVED AXE_JS OUT.json
 python3 tools/report.py                           # regenerate all reports from saved results
 ```

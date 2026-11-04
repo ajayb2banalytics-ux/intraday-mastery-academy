@@ -13,17 +13,26 @@ Generated 2026-11-04 in this build environment (Node v22.23.4, headless Google C
 | Options paper engine + multi-expiry payoff tests | 27/27 |  |
 | Spaced-repetition engine tests | 10/10 |  |
 | Journal-coaching engine tests | 15/15 |  |
+| Strategy bot + code export (Python run for real) | 14/14 |  |
 | Independent cross-validation vs Python/ta/SciPy | 59/59 | 1 informational convention difference |
-| Content validation | 0 errors | 102/102 lessons, 373 questions, 38 indicators, 30 strategies, 22 patterns |
-| Route smoke test (all routes, served + standalone) | pass | 55 routes; - served PWA: dashboard first render 551 ms (cold load, headless Chrome, local disk).; - file:// standalone: dashboard first render 266 ms (cold load, headless Chrome, local disk). |
+| Content validation | 0 errors | 103/103 lessons, 377 questions, 38 indicators, 30 strategies, 22 patterns |
+| Route smoke test (all routes, served + standalone) | pass | 57 routes; - served PWA: dashboard first render 544 ms (cold load, headless Chrome, local disk).; - file:// standalone: dashboard first render 371 ms (cold load, headless Chrome, local disk). |
 | End-to-end regression suite — served PWA | 31/31 |  |
 | End-to-end regression suite — standalone file | 31/31 | offline-SW test n/a on file:// |
 | End-to-end Phase 2 — served PWA | 22/22 |  |
 | End-to-end Phase 2 — standalone file | 22/22 |  |
 | End-to-end v2.1 features — served PWA | 19/19 |  |
 | End-to-end v2.1 features — standalone file | 19/19 |  |
+| End-to-end v2.2 (bot, code export, algo lesson) — served PWA | 13/13 |  |
+| End-to-end v2.2 — standalone file | 13/13 |  |
+| Sandboxed preview frame (standalone) | 22/22 |  |
 | Security & data integrity (both builds) | 20/20 |  |
 | Mobile/laptop/accessibility | see report | overflow-free on 6 profiles; axe violations 0; installable True; restart persistence True |
+
+## v2.2 additions (4 Nov 2026, night)
+- Strategy bot (Simulator → Strategy bot), strategy code export (Python, Pine Script v5) with a bars CSV, lesson on India's retail algo rules.
+- v2.1.1 fix: links, tabs and confirmation dialogs did nothing when the file was opened inside a preview window (sandboxed iframe). New suite: sandbox_frame.py.
+- Defects found while building v2.2 and fixed: the default Nifty/Bank Nifty backtest made 0 trades because size was capped at unleveraged capital (now an exposure cap, auto 5× for futures, and skipped signals are reported); the Bollinger-fade and VWAP-cross signals could compare against a missing value (a stray short signal was possible on one warm-up bar).
 
 ## v2.1 additions (4 Nov 2026)
 - Options paper trading (Simulator → Options paper), multi-expiry payoff builder (calendars/diagonals), spaced-repetition review, journal coaching, MCX commodity charges/contracts/session.
@@ -49,7 +58,7 @@ Generated 2026-11-04 in this build environment (Node v22.23.4, headless Google C
 
 | ID | Test | Result |
 |---|---|---|
-| E2E-01 | All 102 lessons render every tab with no raw markup, NaN/undefined or failed embeds | PASS |
+| E2E-01 | All 103 lessons render every tab with no raw markup, NaN/undefined or failed embeds | PASS |
 | E2E-02-indicator | All 38 indicator pages render cleanly | PASS |
 | E2E-02-strategy | All 30 strategy pages render cleanly | PASS |
 | E2E-02-pattern | All 22 pattern pages render cleanly | PASS |
@@ -85,7 +94,7 @@ Generated 2026-11-04 in this build environment (Node v22.23.4, headless Google C
 
 | ID | Test | Result |
 |---|---|---|
-| E2E-01 | All 102 lessons render every tab with no raw markup, NaN/undefined or failed embeds | PASS |
+| E2E-01 | All 103 lessons render every tab with no raw markup, NaN/undefined or failed embeds | PASS |
 | E2E-02-indicator | All 38 indicator pages render cleanly | PASS |
 | E2E-02-strategy | All 30 strategy pages render cleanly | PASS |
 | E2E-02-pattern | All 22 pattern pages render cleanly | PASS |
@@ -219,6 +228,69 @@ Generated 2026-11-04 in this build environment (Node v22.23.4, headless Google C
 | P3-18 | India market page lists the MCX session (09:00–23:55) | PASS |
 | P3-19 | No uncaught page errors during the run | PASS |
 
+### v2.2 (served)
+
+| ID | Test | Result |
+|---|---|---|
+| V22-01 | Backtester defaults on Nifty futures now produce trades (was 0: one lot exceeded unleveraged capital) and show the "Automate these rules" panel | PASS |
+| V22-02 | Export as Python downloads a .py file with the embedded CONFIG, the indicator code and no order-placement code | PASS |
+| V22-03 | Export as Pine Script downloads a .pine file: //@version=5 strategy with entry, exit and square-off | PASS |
+| V22-04 | Download these bars (CSV) exports exactly the bars the backtest used, in the format the Python script reads | PASS |
+| V22-05 | With capital too small for one Nifty lot at the chosen risk %, the backtest says how many signals were skipped and why | PASS |
+| V22-06 | Send to Strategy bot opens Simulator → Strategy bot with the backtest rules, data source and costs | PASS |
+| V22-07 | Advance 1 bar moves the bot one bar; To session close stops after the last bar of that session | PASS |
+| V22-08 | Run to the end: the trade count on screen equals an independent bot run in the page on the same bars and rules; the decision log is filled | PASS |
+| V22-09 | Bot trades go to the journal once (marked synthetic, with costs); pressing again adds nothing | PASS |
+| V22-10 | The bot's progress survives a page reload | PASS |
+| V22-11 | Algo-rules lesson renders: SEBI framework table, 10 orders/second threshold, 1 Apr 2026 compliance date, cost maths with the live charges calculator, and the quiz | PASS |
+| V22-12 | The lesson is listed in Level 4 → Quantitative foundations | PASS |
+| V22-13 | No page errors during the v2.2 flows | PASS |
+
+### v2.2 (standalone)
+
+| ID | Test | Result |
+|---|---|---|
+| V22-01 | Backtester defaults on Nifty futures now produce trades (was 0: one lot exceeded unleveraged capital) and show the "Automate these rules" panel | PASS |
+| V22-02 | Export as Python downloads a .py file with the embedded CONFIG, the indicator code and no order-placement code | PASS |
+| V22-03 | Export as Pine Script downloads a .pine file: //@version=5 strategy with entry, exit and square-off | PASS |
+| V22-04 | Download these bars (CSV) exports exactly the bars the backtest used, in the format the Python script reads | PASS |
+| V22-05 | With capital too small for one Nifty lot at the chosen risk %, the backtest says how many signals were skipped and why | PASS |
+| V22-06 | Send to Strategy bot opens Simulator → Strategy bot with the backtest rules, data source and costs | PASS |
+| V22-07 | Advance 1 bar moves the bot one bar; To session close stops after the last bar of that session | PASS |
+| V22-08 | Run to the end: the trade count on screen equals an independent bot run in the page on the same bars and rules; the decision log is filled | PASS |
+| V22-09 | Bot trades go to the journal once (marked synthetic, with costs); pressing again adds nothing | PASS |
+| V22-10 | The bot's progress survives a page reload | PASS |
+| V22-11 | Algo-rules lesson renders: SEBI framework table, 10 orders/second threshold, 1 Apr 2026 compliance date, cost maths with the live charges calculator, and the quiz | PASS |
+| V22-12 | The lesson is listed in Level 4 → Quantitative foundations | PASS |
+| V22-13 | No page errors during the v2.2 flows | PASS |
+
+### Sandboxed preview frame
+
+| ID | Test | Result |
+|---|---|---|
+| SBX-01 | [allow-scripts] sidebar #/academy | PASS |
+| SBX-02 | [allow-scripts] sidebar #/simulator | PASS |
+| SBX-03 | [allow-scripts] sidebar #/calculators | PASS |
+| SBX-04 | [allow-scripts] sidebar #/journal | PASS |
+| SBX-05 | [allow-scripts] sidebar #/dashboard | PASS |
+| SBX-06 | [allow-scripts] tab button Options paper | PASS |
+| SBX-07 | [allow-scripts] in-page link to module | PASS |
+| SBX-08 | [allow-scripts] Strategy bot advances inside the frame | PASS |
+| SBX-09 | [allow-scripts] in-app confirm dialog appears | PASS |
+| SBX-10 | [allow-scripts] dialog OK runs action | PASS |
+| SBX-11 | [allow-scripts] no page errors | PASS |
+| SBX-12 | [allow-scripts allow-same-origin] sidebar #/academy | PASS |
+| SBX-13 | [allow-scripts allow-same-origin] sidebar #/simulator | PASS |
+| SBX-14 | [allow-scripts allow-same-origin] sidebar #/calculators | PASS |
+| SBX-15 | [allow-scripts allow-same-origin] sidebar #/journal | PASS |
+| SBX-16 | [allow-scripts allow-same-origin] sidebar #/dashboard | PASS |
+| SBX-17 | [allow-scripts allow-same-origin] tab button Options paper | PASS |
+| SBX-18 | [allow-scripts allow-same-origin] in-page link to module | PASS |
+| SBX-19 | [allow-scripts allow-same-origin] Strategy bot advances inside the frame | PASS |
+| SBX-20 | [allow-scripts allow-same-origin] in-app confirm dialog appears | PASS |
+| SBX-21 | [allow-scripts allow-same-origin] dialog OK runs action | PASS |
+| SBX-22 | [allow-scripts allow-same-origin] no page errors | PASS |
+
 ### Options paper, multi-expiry, spaced-repetition and coaching engine tests
 
 | ID | Test | Result |
@@ -275,3 +347,22 @@ Generated 2026-11-04 in this build environment (Node v22.23.4, headless Google C
 | COA-13 | Losing streak longer than the plan's stop rule is flagged | PASS |
 | COA-14 | A random journal with zero mean is NOT called a positive or negative edge as a finding | PASS |
 | COA-15 | Welch t matches a hand calculation | PASS |
+
+### Strategy bot and code export tests
+
+| ID | Test | Result |
+|---|---|---|
+| BOT-01 | Bot started at bar 1 and run to the end reproduces the backtester trade for trade (27 configurations, all 12 signals × both sides) | PASS |
+| BOT-02 | Causality: every signal computed on bars 0..i equals the full-series signal at i (no look-ahead in any signal) | PASS |
+| BOT-03 | Changing every bar after i leaves all bot decisions up to i unchanged | PASS |
+| BOT-04 | "To session close" stops exactly after the last bar of the current session | PASS |
+| BOT-05 | Every closed trade has an entry and an exit event in the log, and each signal event precedes its fill by exactly one bar | PASS |
+| BOT-06 | Equity = realised equity + open P&L marked at the last processed close | PASS |
+| BOT-07 | A bot started on session 2 places no trade before its start bar and still uses session 1 as indicator history | PASS |
+| BOT-08 | Decision log text names the action, price and reason (signal ignored: daily trade limit) | PASS |
+| CG-01 | Exported Python, run by python3 on the same bars, reproduces the app's trades (entry/exit time, qty, exit reason, net within ₹0.01) for all 27 configurations | PASS |
+| CG-02 | Python export uses only the standard library and contains no order-placement code | PASS |
+| CG-03 | Python export embeds the exact configuration (side, stop, target, risk, costs, lot, signal params) | PASS |
+| CG-04 | Pine export is well-formed for every configuration: //@version=5, one strategy() call, a condition per entry rule, entry + exit + square-off, no undefined/NaN | PASS |
+| CG-05 | Pine export: entry cut-off and square-off times are derived from the session end and bar size (NSE 15:30, 5-min, 3 bars → 15:10 / 15:25) | PASS |
+| CG-06 | Pine export maps Supertrend direction correctly (Pine uses −1 for an uptrend) | PASS |

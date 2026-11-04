@@ -170,12 +170,13 @@ Analyse independently, research and validate rules-based strategies, and measure
 3. **Execution quality, slippage and market impact** — `l4-execution` · established · ~1535 words · Beginner view, Intermediate view, Advanced view, The maths, India, US & global, Common misconceptions, When it fails, Exercise
 4. **Scalping and momentum day-trading in practice: costs, speed and survival** — `l4-scalping` · mixed · ~1354 words · Beginner view, Intermediate view, Advanced view, The maths, India, US & global, Common misconceptions, When it fails, Exercise
 
-### L4-M2 · Quantitative foundations (Quant & research; 15 assessment questions)
+### L4-M2 · Quantitative foundations (Quant & research; 19 assessment questions)
 
 1. **Probability and distributions for traders** — `l4-probability` · established · ~1113 words · Beginner view, Intermediate view, Advanced view, The maths, India, Common misconceptions, When it fails, Exercise
 2. **Correlation and regression** — `l4-correlation-regression` · established · ~1070 words · Beginner view, Intermediate view, Advanced view, The maths, India, US & global, Common misconceptions, When it fails, Exercise
 3. **Mean reversion and momentum models** — `l4-mean-rev-momentum` · mixed · ~1133 words · Beginner view, Intermediate view, Advanced view, The maths, India, Common misconceptions, When it fails, Exercise
 4. **Statistical arbitrage and algorithmic trading concepts** — `l4-statarb` · mixed · ~1364 words · Beginner view, Intermediate view, Advanced view, The maths, India, US & global, Common misconceptions, When it fails, Exercise
+5. **From backtest to live algo: India's retail algo rules** — `l4-algo-india` · established · ~1867 words · Beginner view, Intermediate view, Advanced view, India, The maths, Common misconceptions, When it fails, Exercise
 
 ### L4-M3 · Strategy research process (Strategy development; 13 assessment questions)
 

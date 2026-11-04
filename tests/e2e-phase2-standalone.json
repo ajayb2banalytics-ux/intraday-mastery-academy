@@ -75,7 +75,7 @@
   "id": "P2-13",
   "name": "All 15 Concepts-Lab exercises generate a chart, accept an answer, grade it and record the result",
   "ok": true,
-  "detail": "{'mtf': {'n': 1, 'ok': 1}, 'vwap': {'n': 1, 'ok': 0}, 'vp': {'n': 1, 'ok': 0}, 'tpo': {'n': 1, 'ok': 0}, 'sr': {'n': 1, 'ok': 0}, 'sd': {'n': 1, 'ok': 0}, 'structure': {'n': 1, 'ok': 1}, 'bos': {'n': 1, 'ok': 1}, 'sweep': {'n': 1, 'ok': 0}, 'ob': {'n': 1, 'ok': 0}, 'fvg': {'n': 1, 'ok': 0}, 'volume': {'n': 1, 'ok': 1}, 'divergence': {'n': 1, 'ok': 0}, 'rs': {'n': 1, 'ok': 1}, 'orb': {'n': 1, 'ok':"
+  "detail": "{'mtf': {'n': 1, 'ok': 1}, 'vwap': {'n': 1, 'ok': 0}, 'vp': {'n': 1, 'ok': 0}, 'tpo': {'n': 1, 'ok': 0}, 'sr': {'n': 1, 'ok': 0}, 'sd': {'n': 1, 'ok': 0}, 'structure': {'n': 1, 'ok': 0}, 'bos': {'n': 1, 'ok': 0}, 'sweep': {'n': 1, 'ok': 0}, 'ob': {'n': 1, 'ok': 0}, 'fvg': {'n': 1, 'ok': 0}, 'volume': {'n': 1, 'ok': 0}, 'divergence': {'n': 1, 'ok': 0}, 'rs': {'n': 1, 'ok': 0}, 'orb': {'n': 1, 'ok':"
  },
  {
   "id": "P2-14",

@@ -156,15 +156,18 @@ async def main():
         # ---- 11. Paper trading persists ----
         await go(pg, 'simulator/paper', 800)
         tk = await pg.query_selector_all('.view .card input.i'); await tk[4].fill('65')
-        pg.once('dialog', lambda d: asyncio.ensure_future(d.accept()))
         await pg.evaluate("document.querySelector('.btn.buy').click()"); await pg.wait_for_timeout(300)
+        try: await pg.wait_for_selector('.modal [data-dlg=ok]', timeout=1500)
+        except Exception: pass
+        nostop_warned = await pg.evaluate("!!document.querySelector('.modal [data-dlg=ok]') && document.querySelector('.modal').innerText.includes('No stop-loss')")
+        await pg.evaluate("document.querySelector('.modal [data-dlg=ok]') && document.querySelector('.modal [data-dlg=ok]').click()"); await pg.wait_for_timeout(300)
         await pg.evaluate("[...document.querySelectorAll('button')].find(b=>b.textContent==='Advance 1 bar').click()"); await pg.wait_for_timeout(300)
         s1 = await pg.evaluate("IA.db.get('paper').then(s=>({idx:s.idx,q:s.acc.pos.qty,f:s.acc.fills.length}))")
         await pg.reload(); await pg.wait_for_timeout(800); await go(pg, 'simulator/paper', 700)
         s2 = await pg.evaluate("IA.db.get('paper').then(s=>({idx:s.idx,q:s.acc.pos.qty}))")
         await pg.evaluate("[...document.querySelectorAll('button')].find(b=>b.textContent==='To session close').click()"); await pg.wait_for_timeout(500)
         s3 = await pg.evaluate("IA.db.get('paper').then(s=>({q:s.acc.pos.qty,t:s.acc.trades.length,cash:s.acc.cash,start:s.acc.start,ch:s.acc.charges}))")
-        rec('E2E-16', 'Paper trading: 1 lot fills next bar, survives reload, is squared off at session close with charges deducted', s1['q'] == 65 and s1['f'] == 1 and s2 == {'idx': s1['idx'], 'q': 65} and s3['q'] == 0 and s3['t'] == 1 and s3['ch'] > 0, f'{s1} {s2} {s3}')
+        rec('E2E-16', 'Paper trading: 1 lot fills next bar, survives reload, is squared off at session close with charges deducted', s1['q'] == 65 and s1['f'] == 1 and s2 == {'idx': s1['idx'], 'q': 65} and s3['q'] == 0 and s3['t'] == 1 and s3['ch'] > 0, f'in-app confirmation shown: {nostop_warned} {s1} {s2} {s3}')
 
         # ---- 12. Backtester + walk-forward + comparison + every strategy btConfig ----
         await go(pg, 'quant/backtest', 600)

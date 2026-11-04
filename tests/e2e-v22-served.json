@@ -1,0 +1,80 @@
+[
+ {
+  "id": "V22-01",
+  "name": "Backtester defaults on Nifty futures now produce trades (was 0: one lot exceeded unleveraged capital) and show the \"Automate these rules\" panel",
+  "ok": true,
+  "detail": "[23, True]"
+ },
+ {
+  "id": "V22-02",
+  "name": "Export as Python downloads a .py file with the embedded CONFIG, the indicator code and no order-placement code",
+  "ok": true,
+  "detail": "['opening-range-breakout-bars-3-close-on-t.py', 16718]"
+ },
+ {
+  "id": "V22-03",
+  "name": "Export as Pine Script downloads a .pine file: //@version=5 strategy with entry, exit and square-off",
+  "ok": true,
+  "detail": "['opening-range-breakout-bars-3-close-on-t.pine', '//@version=5\\n// Opening-range breakout (bars=3) + Close on t']"
+ },
+ {
+  "id": "V22-04",
+  "name": "Download these bars (CSV) exports exactly the bars the backtest used, in the format the Python script reads",
+  "ok": true,
+  "detail": "[4501, 4500]"
+ },
+ {
+  "id": "V22-05",
+  "name": "With capital too small for one Nifty lot at the chosen risk %, the backtest says how many signals were skipped and why",
+  "ok": true,
+  "detail": "Trades on chart (last 5 sessions)\nSYNTHETIC\n2026-03-27 15:25\nO 30237.4\nH 30291.9\nL 30209.8\nC 30266.4\nV 36,052\nVWAP 30673.0\nTrade list\nExport CSV\n\nNothing yet.\n\nAutomate these rules\n\nForward-test the e"
+ },
+ {
+  "id": "V22-06",
+  "name": "Send to Strategy bot opens Simulator \u2192 Strategy bot with the backtest rules, data source and costs",
+  "ok": true,
+  "detail": "['Chart replay\\nDecision simulator\\nPaper trading\\nOptions paper\\nStrategy bot\\n\\nA paper-trading bot runs your backtester rules bar by bar on bars it has not seen, using only past bars for every decision, an', {'preset': 'NIFTY', 'seed': 11, 'days': 60, 'tf': 5}]"
+ },
+ {
+  "id": "V22-07",
+  "name": "Advance 1 bar moves the bot one bar; To session close stops after the last bar of that session",
+  "ok": true,
+  "detail": "['Bar 0 of 1425 \u00b7 2026-01-05 15:25', 'Bar 1 of 1425 \u00b7 2026-01-06 09:15', 150]"
+ },
+ {
+  "id": "V22-08",
+  "name": "Run to the end: the trade count on screen equals an independent bot run in the page on the same bars and rules; the decision log is filled",
+  "ok": true,
+  "detail": "{'shown': 17, 'engine': 17, 'log': 53}"
+ },
+ {
+  "id": "V22-09",
+  "name": "Bot trades go to the journal once (marked synthetic, with costs); pressing again adds nothing",
+  "ok": true,
+  "detail": "[{'n': 17, 'syn': True, 'charges': True}, 17]"
+ },
+ {
+  "id": "V22-10",
+  "name": "The bot's progress survives a page reload",
+  "ok": true,
+  "detail": "End of data"
+ },
+ {
+  "id": "V22-11",
+  "name": "Algo-rules lesson renders: SEBI framework table, 10 orders/second threshold, 1 Apr 2026 compliance date, cost maths with the live charges calculator, and the quiz",
+  "ok": true,
+  "detail": "[True]"
+ },
+ {
+  "id": "V22-12",
+  "name": "The lesson is listed in Level 4 \u2192 Quantitative foundations",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "V22-13",
+  "name": "No page errors during the v2.2 flows",
+  "ok": true,
+  "detail": "[]"
+ }
+]
