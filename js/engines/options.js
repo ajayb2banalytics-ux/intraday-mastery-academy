@@ -1,14 +1,20 @@
 /* Options maths: Black-Scholes(-Merton) price & Greeks, multi-leg payoff. */
 (function (root) {
   const IA = (root.IA = root.IA || {});
-  // Standard normal CDF (Abramowitz-Stegun 7.1.26 via erf; |err| < 7.5e-8)
-  function erf(x) {
-    const s = Math.sign(x); x = Math.abs(x);
-    const a1 = 0.254829592, a2 = -0.284496736, a3 = 1.421413741, a4 = -1.453152027, a5 = 1.061405429, p = 0.3275911;
-    const t = 1 / (1 + p * x); const y = 1 - ((((a5 * t + a4) * t + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
-    return s * y;
+  // Standard normal CDF — Hart (1968) double-precision algorithm as given by G. West, "Better approximations
+  // to cumulative normal functions" (Wilmott, 2005). Absolute error ~1e-15.
+  function cdf(x) {
+    const z = Math.abs(x); let c;
+    if (z > 37) c = 0;
+    else { const e = Math.exp(-z * z / 2);
+      if (z < 7.07106781186547) {
+        let n = 3.52624965998911e-2 * z + 0.700383064443688; n = n * z + 6.37396220353165; n = n * z + 33.912866078383; n = n * z + 112.079291497871; n = n * z + 221.213596169931; n = n * z + 220.206867912376;
+        let d = 8.83883476483184e-2 * z + 1.75566716318264; d = d * z + 16.064177579207; d = d * z + 86.7807322029461; d = d * z + 296.564248779674; d = d * z + 637.333633378831; d = d * z + 793.826512519948; d = d * z + 440.413735824752;
+        c = e * n / d;
+      } else { let f = z + 0.65; f = z + 4 / f; f = z + 3 / f; f = z + 2 / f; f = z + 1 / f; c = e / f / 2.506628274631; }
+    }
+    return x <= 0 ? c : 1 - c;
   }
-  const cdf = (x) => 0.5 * (1 + erf(x / Math.SQRT2));
   const pdf = (x) => Math.exp(-0.5 * x * x) / Math.sqrt(2 * Math.PI);
 
   // S spot, K strike, T years, r rate (decimal), sigma vol (decimal), q dividend yield
@@ -51,23 +57,20 @@
     const pts = []; for (let i = 0; i <= steps; i++) { const s = lo + ((hi - lo) * i) / steps; pts.push({ s, pnl: legs.reduce((a, l) => a + legPayoff(l, s), 0) }); }
     return pts;
   }
+  // Exact analysis: the expiry payoff is piecewise-linear with kinks only at strikes, so extremes occur at a
+  // kink, at S = 0, or at infinity (decided by the slope beyond the highest strike).
   function analyse(legs, spot) {
-    const strikes = legs.map((l) => l.K).filter((k) => k > 0);
-    const hi = Math.max(spot, ...strikes) * 2;
-    // Evaluate from 0 (price floor) to 2x the highest strike; payoff is piecewise linear
-    const pts = payoff(legs, 0, hi, 4000);
-    let max = -Infinity, min = Infinity; pts.forEach((p) => { max = Math.max(max, p.pnl); min = Math.min(min, p.pnl); });
-    // Slope as price → ∞ decides whether gain/loss is unbounded on the upside
+    const strikes = legs.map((l) => l.K).filter((k) => k > 0); const hi = Math.max(spot, ...strikes) * 2;
+    const val = (s) => legs.reduce((a, l) => a + legPayoff(l, s), 0);
+    const knots = [...new Set([0, ...strikes, hi])].sort((a, b) => a - b); const kv = knots.map(val);
     const slopeHi = legs.reduce((a, l) => a + (l.type === 'call' || l.type === 'stock' || l.type === 'future' ? l.side * l.qty : 0), 0);
+    let max = Math.max(...kv), min = Math.min(...kv);
     const be = [];
-    for (let i = 1; i < pts.length; i++) if ((pts[i - 1].pnl < 0 && pts[i].pnl >= 0) || (pts[i - 1].pnl > 0 && pts[i].pnl <= 0)) {
-      const a = pts[i - 1], b = pts[i]; be.push(a.s + ((0 - a.pnl) * (b.s - a.s)) / (b.pnl - a.pnl));
-    }
+    for (let i = 1; i < knots.length; i++) { const a = kv[i - 1], b = kv[i]; if (a === 0 && i === 1) be.push(knots[0]); if ((a < 0 && b > 0) || (a > 0 && b < 0)) be.push(knots[i - 1] + (0 - a) * (knots[i] - knots[i - 1]) / (b - a)); else if (b === 0) be.push(knots[i]); }
+    const vHi = kv[kv.length - 1]; if (slopeHi !== 0 && Math.sign(vHi) === -Math.sign(slopeHi) && vHi !== 0) be.push(hi - vHi / slopeHi);
+    const pts = payoff(legs, 0, hi, 400);
     const netPremium = legs.reduce((a, l) => a + (l.type === 'call' || l.type === 'put' ? -l.side * l.premium * l.qty : 0), 0);
-    return {
-      pts, breakevens: be, netPremium,
-      maxGain: slopeHi > 0 ? Infinity : max, maxLoss: slopeHi < 0 ? -Infinity : min, slopeHi,
-    };
+    return { pts, breakevens: [...new Set(be.map((x) => Math.round(x * 1e6) / 1e6))].sort((a, b) => a - b), netPremium, maxGain: slopeHi > 0 ? Infinity : max, maxLoss: slopeHi < 0 ? -Infinity : min, slopeHi };
   }
   const templates = {
     'Long call': (S, w) => [{ type: 'call', side: 1, K: S, qty: 1 }],

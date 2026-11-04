@@ -67,13 +67,13 @@ Typical clusters in Indian intraday trading: the 09:15–09:30 opening-range hig
       { h: 'US & global', md: `> [!us] US equities trade across many venues under Reg NMS; the visible top of book is consolidated, but a large share of volume is off-exchange and hidden. Stops are mostly held by brokers rather than exchanges and become market orders when triggered.
 
 Clusters appear at the same kinds of places — prior day high/low, the opening range, round numbers (SPY 600, NVDA 150). In FX, research on currency dealers found stop and take-profit orders concentrating near round numbers, with stop-loss orders associated with faster moves once triggered. That is one of the better-documented findings in this area.` },
-      { h: 'Common misconceptions', md: `- **"The market maker can see my stop and is coming for it."** In an exchange order book, untriggered stops held by your broker are not visible to other participants. Price reaches obvious levels because obvious levels are where many people have orders, not because your order is targeted.
+      { h: 'Common misconceptions', md: `- **"The market maker can see my stop and is coming for it."** In an exchange order book, untriggered stops (held by your broker, or in the exchange's separate stop-loss book on NSE) are not shown in market depth to other participants. Price reaches obvious levels because obvious levels are where many people have orders, not because your order is targeted.
 - **"Every wick through a level is a stop hunt."** Most wicks are noise. Without a defined, tested rule you are pattern-matching after the fact.
 - **"Put the stop just a few ticks beyond the level and you are safe."** A few ticks is often inside the normal sweep range. Use a volatility buffer.
 - **"Liquidity zones are a strategy."** They describe *where* things might happen; they do not tell you *which* outcome will occur.` },
       { h: 'When it fails', md: `The sweep-and-reverse idea fails whenever the level breaks for real. Trend days, news-driven moves and expiry-day flows often run straight through clusters with no reversal.
 
-**Losing example.** Reliance has equal lows at ₹2,890 from the morning. At 13:40 price drops to ₹2,884 with a volume spike and a lower wick, closing the 5-min bar at ₹2,892. You buy at ₹2,893 with a stop at ₹2,879, expecting a sweep reversal. Ten minutes later a sector-wide sell-off following a regulatory headline pushes price to ₹2,868; your stop fills at ₹2,875 after slippage. Loss: (2,893 − 2,875) × 250 shares = ₹4,500 plus costs. The "sweep" was simply the first leg of a genuine break.` },
+**Losing example.** A large-cap NSE stock has equal lows at ₹1,445 from the morning. At 13:40 price drops to ₹1,442 with a volume spike and a lower wick, closing the 5-min bar at ₹1,446. You buy at ₹1,446.50 with a stop at ₹1,439.50, expecting a sweep reversal. Ten minutes later a sector-wide sell-off following a regulatory headline pushes price to ₹1,434; your stop fills at ₹1,437.50 after slippage. Loss: (1,446.50 − 1,437.50) × 500 shares = ₹4,500 plus costs. The "sweep" was simply the first leg of a genuine break.` },
       { h: 'Exercise', md: `1. Open the Chart Lab with Bank Nifty and mark the previous day's high and low and the opening range.
 2. Scroll through 30 sessions. For each touch of those levels, record: broke and continued, swept and reversed (closed back inside within 3 bars), or stalled. Count each outcome.
 3. In the [[widget:position-size]] calculator, size a hypothetical trade twice — once with a stop at the level and once with a stop one-half ATR beyond it — keeping the rupee risk constant. Note the quantity difference.
@@ -91,7 +91,7 @@ Clusters appear at the same kinds of places — prior day high/low, the opening 
     summary: 'Identify break of structure, change of character, order blocks, fair value gaps and inducement on a chart, and explain precisely which parts are mechanical definitions and which are untested interpretation.',
     evidence: 'subjective',
     sections: [
-      { h: 'Beginner view', md: `**Smart Money Concepts (SMC)** is a popular online vocabulary for describing price action. It grew largely out of retail trading education in the late 2010s, drawing on older ideas about supply and demand zones and market structure. It claims to show where "smart money" (banks, funds) placed orders.
+      { h: 'Beginner view', md: `**Smart Money Concepts (SMC)** is a popular online vocabulary for describing price action. It grew largely out of retail trading education in the 2010s (much of the vocabulary is commonly traced to the online educator known as "ICT"; there is no single authoritative textbook or standard definition set), drawing on older ideas about supply and demand zones and market structure. It claims to show where "smart money" (banks, funds) placed orders.
 
 > [!evidence] Subjective framework. SMC terms can be defined mechanically, but there is no robust independent evidence that order blocks, fair value gaps or inducement identify institutional orders or produce an edge after costs. Treat SMC as a *descriptive language* for swings and imbalances, not as a window into who is trading.
 
@@ -139,11 +139,34 @@ Strip it to rules, then test. For example: "On Nifty 5-min, after a BOS with a s
 Bullish FVG exists at bar t if Low(t+1) > High(t−1)
 Gap zone = [High(t−1), Low(t+1)]
 Gap size = Low(t+1) − High(t−1)
+Bearish FVG exists at bar t if High(t+1) < Low(t−1); zone = [High(t+1), Low(t−1)]
 :::
+
+Here bar t is the middle (large) bar; the gap can only be known once bar t+1 has closed, so any rule using it must act at bar t+2 or later.
 
 **Worked example.** Nifty 5-min bars: bar 1 high 24,212; bar 2 range 24,205–24,268; bar 3 low 24,231. Low(3) 24,231 > High(1) 24,212, so the gap zone is 24,212–24,231, size 19 points. With ATR(14) on 5-min at 22 points, the gap is about 0.86 ATR — a filter some traders use is "gap ≥ 0.5 ATR".
 
-Trade plan: limit buy at the gap midpoint 24,221.5, stop at 24,212 − 0.3 × 22 = 24,205.4, risk 16.1 points. One lot (65): risk ₹1,047. Target 2R = 24,253.7. Costs and slippage on round trip of one Nifty futures lot are small relative to this, but on options the same structure can be eaten by spread.` },
+Trade plan: limit buy at the gap midpoint 24,221.5, stop at 24,212 − 0.3 × 22 = 24,205.4, risk 16.1 points. One lot (65): risk ₹1,047. Target 2R = 24,253.7.
+
+**Now add costs — they are not small here.** Round-trip charges on one Nifty futures lot at these prices are about ₹940 ([[widget:charges-india]], as of Nov 2026: STT alone is 0.05% of the sell value ≈ ₹790). That is about 14.4 points — roughly 0.9R on a 16-point stop. Net of charges the "2R" winner is about (32.2 − 14.4) ÷ 16.1 ≈ +1.1R and a stopped loser about (−16.1 − 14.4) ÷ 16.1 ≈ −1.9R, before any slippage. Tight structure-based stops on index futures are often dominated by costs; on options the spread adds further drag. Always compute R net of charges before judging an SMC setup.` },
+      { h: 'Professional notes', md: `### Testable definitions (fix every parameter before testing)
+| Term | Mechanical definition you can code | Parameters to fix |
+|---|---|---|
+| Swing high / low | Bar whose high (low) is strictly above (below) the N bars on each side | N; confirmed only N bars later |
+| BOS (bullish) | A bar **closes** above the most recent confirmed swing high, in the direction of the current structure | Close vs wick; N |
+| CHoCH (bearish, in an uptrend) | First **close** below the swing low that preceded the most recent bullish BOS (the low that "protected" the trend) | Which low counts; close vs wick |
+| Displacement | A bar or run of bars whose range is at least k × ATR(14) | k (e.g. 1.5) |
+| Order block (bullish) | The last down-close bar before a displacement that produces a bullish BOS; zone = that bar's high–low (or open–low) | Body or wick; maximum age in bars |
+| FVG (bullish) | Low(t+1) > High(t−1) around a displacement bar t | Minimum size (e.g. ≥ 0.5 ATR) |
+| Liquidity sweep (of a low) | Price trades below a marked level (prior swing low, PDL, equal lows) by at least x, then closes back above it within m bars | x (points or ATR fraction), m |
+| Mitigation | First return of price into an OB or FVG zone | Touch vs trade-through |
+
+### Two traps that silently invalidate SMC backtests
+- **Swing confirmation lag.** A swing high defined with N = 3 cannot be known until three bars after it prints. If your code marks the swing on the bar itself and then trades a BOS of it, the test contains look-ahead ([[link:l3-biases]]). Charting tools that draw swings and zig-zags "repaint" in the same way.
+- **Choosing the order block after the outcome.** If several candles qualify and you pick the one price later reacted to, the test is meaningless. The rule must pick exactly one zone, in real time.
+
+### Evidence status, plainly
+The definitions above are just pattern descriptions. As of Nov 2026 we know of no peer-reviewed study showing that SMC zones predict reactions better than matched control levels after costs. If you test it, report the result against a control and net of charges; most published "results" for SMC are marketing examples, not tests.` },
       { h: 'India', md: `> [!india] SMC is very widely marketed to Indian retail traders, often in the context of Nifty and Bank Nifty options. Be wary of courses that show only winning examples, sell signals or claim to reveal "operator" activity. SEBI has repeatedly cautioned investors against unregistered advisers and finfluencers offering trading tips; check registration on sebi.gov.in.
 
 When using SMC labels on Nifty options, remember that option premiums move non-linearly and decay; an OB drawn on the underlying does not translate one-for-one into a premium level. Draw structure on the underlying or the future, and size via the option delta.` },

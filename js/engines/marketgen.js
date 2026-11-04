@@ -37,7 +37,7 @@
       const regime = (regimes && regimes[dayIdx]) || ['trend-up', 'trend-down', 'range', 'range', 'breakout', 'reversal', 'volatile'][Math.floor(r() * 7)];
       // overnight gap
       if (dayIdx > 0 && P.minutes < 1440) price *= 1 + gauss(r) * P.dayVol * 0.35 + (regime === 'gap-up' ? 0.012 : regime === 'gap-down' ? -0.012 : 0);
-      const dayOpen = price; let localSig = sigma * (regime === 'volatile' ? 1.8 : regime === 'range' ? 0.8 : 1);
+      const dayOpen = price; let localSig = sigma * (regime === 'volatile' ? 1.8 : regime === 'range' ? 0.8 : regime === 'low-vol' ? 0.4 : 1); const shockAt = regime === 'news' ? Math.floor(P.minutes * (0.25 + r() * 0.4)) : -1, shockDir = r() < 0.5 ? 1 : -1;
       // Drifts are expressed as a multiple of the DAILY volatility spread over the session,
       // so a trend day moves roughly 1–1.5 daily sigmas, not 10%.
       const perMin = P.dayVol / P.minutes, dirSign = r() < 0.5 ? 1 : -1;
@@ -50,7 +50,9 @@
         if (regime === 'breakout' && frac > 0.4) mu += dirSign * 1.6 * perMin / 0.6;   // ~1.6σ move after midday
         if (regime === 'reversal') mu += dirSign * (frac < 0.45 ? 1.1 / 0.45 : -1.7 / 0.55) * perMin;
         // volatility clustering (GARCH-like)
-        localSig = Math.max(sigma * 0.4, Math.min(sigma * 4, localSig * 0.97 + sigma * 0.03 + Math.abs(gauss(r)) * sigma * 0.05));
+        const base = regime === 'low-vol' ? 0.4 : 1;
+        localSig = Math.max(sigma * 0.4 * base, Math.min(sigma * 4, localSig * 0.97 + sigma * 0.03 * base + Math.abs(gauss(r)) * sigma * 0.05 * base));
+        if (m === shockAt) { price *= 1 + shockDir * 1.5 * P.dayVol; localSig = sigma * 4; } // news shock: ~1.5 daily sigmas in one bar, then elevated volatility
         const uShape = 1 + 1.6 * (Math.exp(-frac * 12) + Math.exp(-(1 - frac) * 14));
         const o = price; let h = o, l = o, p = o;
         for (let k = 0; k < 4; k++) { p *= 1 + mu / 4 + gauss(r) * localSig * Math.sqrt(uShape) / 2; h = Math.max(h, p); l = Math.min(l, p); }

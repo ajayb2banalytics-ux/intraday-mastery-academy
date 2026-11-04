@@ -150,5 +150,21 @@
   }
   function breakevenMove(chargesTotal, qty) { return qty > 0 ? chargesTotal / qty : null; }
 
-  IA.risk = { positionSize, rrTargets, riskReward, atrStop, expectancy, tradeStats, cumulative, maxDrawdown, lossesToRecover, riskOfRuinFormula, compounding, leverageMargin, futuresExposure, portfolioRisk, kelly, convert, indiaCharges, usCharges, breakevenMove, r2 };
+  // Exact probability of at least one run of >= k consecutive losses in n independent trades (loss prob q). DP on current run length.
+  function streakProb(n, k, q) {
+    if (!(n >= 0) || !(k >= 1) || !(q >= 0 && q <= 1)) return fail('Need n ≥ 0, k ≥ 1, loss probability 0–1.');
+    let st = new Array(k).fill(0); st[0] = 1; let hit = 0;
+    for (let t = 0; t < n; t++) { const nx = new Array(k).fill(0); for (let r = 0; r < k; r++) { const p = st[r]; if (!p) continue; nx[0] += p * (1 - q); if (r + 1 >= k) hit += p * q; else nx[r + 1] += p * q; } st = nx; }
+    return { p: hit };
+  }
+  function expectedMaxStreak(n, q) { let e = 0; for (let k = 1; k <= n; k++) { const pk = streakProb(n, k, q).p; if (pk < 1e-12) break; e += pk; } return e; } // E[max run] = Σ_k P(max ≥ k)
+  // Option position scenario grid: P&L for spot moves × IV shifts, now (after `daysPassed`) — Black–Scholes repricing.
+  function optionsScenario(legs, { S, ivPct, days, r = 6.5, spotSteps = [-5, -3, -2, -1, 0, 1, 2, 3, 5], ivSteps = [-5, 0, 5, 10], daysPassed = 0 } = {}) {
+    const T = Math.max(1e-6, (days - daysPassed) / 365);
+    const val = (Sx, iv) => legs.reduce((a, l) => a + (l.type === 'stock' || l.type === 'future' ? l.side * (Sx - l.K) * l.qty : l.side * (IA.opt.bs({ S: Sx, K: l.K, T, r: r / 100, sigma: Math.max(0.01, iv) / 100, type: l.type }).price - l.premium) * l.qty), 0);
+    const grid = ivSteps.map((dv) => ({ dv, row: spotSteps.map((ds) => ({ ds, pnl: val(S * (1 + ds / 100), ivPct + dv) })) }));
+    let worst = Infinity, best = -Infinity; grid.forEach((g) => g.row.forEach((c) => { worst = Math.min(worst, c.pnl); best = Math.max(best, c.pnl); }));
+    return { grid, worst, best };
+  }
+  IA.risk = { streakProb, expectedMaxStreak, optionsScenario, positionSize, rrTargets, riskReward, atrStop, expectancy, tradeStats, cumulative, maxDrawdown, lossesToRecover, riskOfRuinFormula, compounding, leverageMargin, futuresExposure, portfolioRisk, kelly, convert, indiaCharges, usCharges, breakevenMove, r2 };
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -193,7 +193,7 @@ If VWAP were at 24,830 instead, reward = 25 points, R ≈ 0.8 — skip, even tho
 - With a ₹5,000 risk budget: 5,000 ÷ 7.50 = 666 shares (≈ ₹9.35 lakh notional — check your intraday margin).
 - Target: opening-range high ₹1,419 = ₹15 reward, 2R.
 
-> [!india] Option strikes act as visible magnets: Nifty strikes in 50-point steps and Bank Nifty in 100-point steps often line up with intraday S/R because option hedging flows concentrate there. Treat this as context, not a signal.` },
+> [!india] Option strikes act as visible reference points: Nifty strikes in 50-point steps and Bank Nifty in 100-point steps (strike intervals as of Nov 2026 — verify on nseindia.com) often line up with intraday S/R, plausibly because round numbers attract attention and option hedging flows can concentrate near large open interest. Treat this as context, not a signal.` },
       { h: 'US & global', md: `On NVDA (illustrative), the prior day's high of $186.40 and the $185 round number create a zone. A clean break and hold above $186.40 in the first hour often attracts momentum participants; a fast rejection back below $185 often traps them. On SPY, whole-dollar and 5-dollar levels (580, 585) often coincide with heavy option open interest. In both cases, check the room to the next level before entering.` },
       { h: 'Common misconceptions', md: `- **"Support is a floor."** It is an area where buyers previously outnumbered sellers. Conditions change.
 - **"More touches = stronger."** Sometimes. Repeated tests can also exhaust buyers, and the fifth test breaks.
@@ -371,7 +371,7 @@ If you win 40% of breakout trades at +1.7R and lose 60% at −1R, expectancy = 0
 - Measured target ₹1,418 + 8 = ₹1,426 — only ₹4 away, under 1R. The next level, the previous day high at ₹1,431, gives ₹9 reward: 1.45R.
 - Decision: valid but marginal; take half size, or wait for a retest of ₹1,418.
 
-> [!india] Many NSE stocks have price bands; near the upper circuit, a "breakout" can be halted, and you may not be able to exit. Check the band before trading a breakout near it.` },
+> [!india] Many NSE stocks have fixed price bands (circuit limits); near the upper circuit, trading can freeze with only buyers or only sellers, and you may not be able to exit. Stocks in the F&O segment instead use dynamic price bands that the exchange can widen. Check the applicable band on nseindia.com before trading a breakout near it.` },
       { h: 'US & global', md: `NVDA (illustrative) breaks the previous day's high of $186.40 at 09:45 ET with strong volume, runs to $188.10, then by 10:15 is back at $185.90 — inside the prior range. That is a textbook failed breakout. A fade short below $185.80 with a stop above $188.20 risks $2.40 per share; the previous day low near $181.50 is a target $4.30 away (≈1.8R). In SPY the same patterns occur around the opening range and the previous day's high and low; liquidity is deep, so slippage is lower than in single stocks.` },
       { h: 'Common misconceptions', md: `- **"Volume confirms every breakout."** Volume helps but must be compared with the same time of day.
 - **"Retests always happen."** Many of the strongest breakouts never retest.
@@ -393,7 +393,7 @@ If you win 40% of breakout trades at +1.7R and lose 60% at −1R, expectancy = 0
       { q: 'NVDA breaks yesterday\'s high, then closes back inside the range 20 minutes later. Which plan reflects the mechanics?', o: ['Buy more; it will break again', 'Consider a fade below the failure bar with a stop above the failed high', 'Assume manipulation and stop trading', 'Hold the long because volume was high'], a: 1, why: 'Trapped breakout buyers and their stops can fuel a move back through the range. That is the failed-breakout setup, with a defined stop.' },
       { q: 'What is the main trade-off of retest entries compared with stop-buy breakout entries?', o: ['Retests have wider stops', 'Retests give better price and tighter stops but miss breakouts that never pull back', 'Retests are always more profitable', 'There is no difference'], a: 1, why: 'Waiting improves location but reduces participation in the strongest moves.' },
     ],
-    refs: ['Linda Bradford Raschke and Laurence Connors — Street Smarts (book)', 'Thomas Bulkowski — Encyclopedia of Chart Patterns (book)', 'Larry Harris — Trading and Exchanges (book)'],
+    refs: ['Linda Bradford Raschke and Laurence Connors — Street Smarts (book)', 'Thomas Bulkowski — Encyclopedia of Chart Patterns (book)', 'Larry Harris — Trading and Exchanges (book)', 'Carol Osler — Currency Orders and Exchange Rate Dynamics: An Explanation for the Predictive Success of Technical Analysis, Journal of Finance (2003)'],
   },
   {
     id: 'l2-phases', module: 'L2-M1', level: 2, track: 'ta', title: 'Market phases: accumulation, markup, distribution, markdown', mins: 15,
@@ -427,7 +427,7 @@ Practical checks:
 - Is Bollinger Band width contracting? (see [[link:l2-volatility]])
 
 ### Intraday version
-A single session often follows a mini-cycle: opening range (range), a trend leg, a midday range, and sometimes an afternoon trend. Bank Nifty frequently trends in the first 60–90 minutes and ranges through lunch.
+A single session often follows a mini-cycle: opening range (range), a trend leg, a midday range, and sometimes an afternoon trend. Practitioners often observe Bank Nifty trending in the first 60–90 minutes and ranging through lunch; this matches the well-documented U-shaped pattern of intraday volume and volatility (high at open and close), but it is a tendency, not a schedule.
 
 [[chart:MIDCAP:58:ema20,adx,vol]]
 
@@ -546,7 +546,7 @@ Why it matters: these levels are watched by a very large number of participants,
 A narrow OR (say less than 40% of the 14-day average daily range) suggests the open was balanced and leaves room for expansion. A wide OR suggests a lot of the day's range may already be used. Professionals size and select ORB trades using this ratio, not the raw OR.
 
 ### Pre-open auction in India
-NSE's pre-open session (09:00–09:08 IST order entry) sets the equilibrium opening price for stocks and indices. A large gap discovered in pre-open often comes with a burst of volatility at 09:15. Many traders wait until at least 09:20 or 09:30 to let the first auction settle.
+NSE's pre-open call auction (09:00–09:08 IST order entry, then order matching before the 09:15 open) sets the equilibrium opening price for stocks in the cash segment; the index's opening value is computed from those constituent prices. Check nseindia.com for which F&O contracts currently have a pre-open session (as of Nov 2026 — verify). A large gap discovered in pre-open often comes with a burst of volatility at 09:15. Many traders wait until at least 09:20 or 09:30 to let the first auction settle.
 
 ### Gaps and information
 A gap caused by company-specific news (results, block deal) behaves differently from a gap caused by global cues alone. News gaps in single stocks may extend; macro gaps in the index sometimes partially retrace once local participants take over. Treat both as hypotheses to record in your journal — not rules.
@@ -589,7 +589,7 @@ The numbers show why levels must be checked against R before entering — a narr
       { h: 'When it fails', md: `- Wide OR days: stops too wide, targets too close.
 - Days with news scheduled mid-morning (RBI policy at 10:00 IST).
 - Range days where the OR is broken both ways.
-- **Losing example.** Nifty OR 24,880–24,920. Long on a close above 24,920 at 24,923, stop 24,900. Price pokes to 24,935, then reverses through OR low by 10:20. Stopped for −23 × 65 = −₹1,495 per lot, plus about ₹100–150 in charges. Later the short side of the OR works; you were not wrong to take the first trade, but if you skipped the opposite trigger out of frustration, you missed the plan's other half.` },
+- **Losing example.** Nifty OR 24,880–24,920. Long on a close above 24,920 at 24,923, stop 24,900. Price pokes to 24,935, then reverses through OR low by 10:20. Stopped for −23 × 65 = −₹1,495 per lot, plus roughly ₹950–1,000 in charges (mostly STT on the futures sell leg at Nov 2026 rates — check with [[widget:charges-india]]). Later the short side of the OR works; you were not wrong to take the first trade, but if you skipped the opposite trigger out of frustration, you missed the plan's other half.` },
       { h: 'Exercise', md: `1. Before the open in the simulator, write PDH, PDL, PDC and the expected gap for NIFTY.
 2. After 15 simulated minutes, record OR high, low and relative OR width.
 3. Plan both ORB triggers, stops and targets; compute R with [[widget:rr]].
@@ -721,7 +721,7 @@ Analogy: a heat map of footprints in a shop. The busiest aisle is the POC. The e
       { h: 'Intermediate view', md: `### Reading the shape
 | Shape | Interpretation (descriptive) |
 |---|---|
-| Single bell (P/D balanced) | Balanced, rotational session |
+| D-shape (single bell, POC near the middle) | Balanced, rotational session |
 | P-shape (fat top) | Rally then acceptance high; often short covering or late buying |
 | b-shape (fat bottom) | Decline then acceptance low; often long liquidation |
 | Double distribution | Two balance areas with an LVN between — a trend day with a pause |
@@ -755,7 +755,12 @@ A previous session's POC that price has not revisited is called a "naked" or "vi
 2. Target = 0.70 × total volume.
 3. Start at POC. Compare the volume of the next two bins above with the next two below.
 4. Add the larger pair to the value area. Repeat until accumulated volume ≥ target.
+5. If one side has run out of bins, keep adding from the other side.
 :::
+
+Why 70%? It is a convention borrowed from the normal distribution, where about 68% of observations lie within one standard deviation of the mean. It is not a law; some platforms let you set 68% or 80%.
+
+> [!note] Implementations differ. The two-rows-at-a-time comparison above is the traditional Market Profile (CBOT) method. The app's own engine (js/engines/indicators.js) compares **one bin** above with one bin below at each step, and it spreads each bar's volume evenly across that bar's high–low range. On this example both methods give the same value area; on other profiles the VAH or VAL can differ by a bin.
 
 ### Worked example (Nifty futures, 10-point bins, volumes in thousands of contracts — illustrative)
 | Price | Vol |
@@ -832,7 +837,7 @@ Why it matters: it gives a structured language for describing the day — balanc
 | Normal variation | Moderate | One side, up to about 2× IB | Trade with the extension |
 | Trend | Narrow | Strong, one side, closes near extreme | Buy/sell pullbacks; do not fade |
 | Double distribution | Narrow | A late break forming a second balance | Trade the break; single prints separate the two |
-| Neutral | Moderate | Both sides | Fade extremes; expect close near middle |
+| Neutral | Moderate | Both sides | Neutral-centre: close near the middle, fade extremes. Neutral-extreme: close near one extreme — stronger signal for that side |
 | Non-trend | Very narrow | None | Low volatility; often stand aside |
 
 [[chart:SPY:93:vp,vwap,vol]]
@@ -852,7 +857,7 @@ Steidlmayer's view: the market is a two-way auction seeking a price that facilit
 You do not know the day type at 10:15. A normal-variation morning can become a trend afternoon. Professionals hold a working hypothesis and update it as range extension does or does not happen. The value is in **switching tactics**, for example stopping fades once range extension exceeds 1.5× IB.
 
 ### Indian adaptation
-NSE's 375-minute session produces 13 periods (12 full 30-minute periods plus a final 15-minute period). The last period overlaps closing-price formation (the closing price is computed from trades in the last 30 minutes), so late letters can behave differently.` },
+NSE's 375-minute session produces 13 periods (12 full 30-minute periods plus a final 15-minute period). The last period overlaps closing-price formation (as of Nov 2026, NSE's cash-market closing price is the volume-weighted average of trades in the last 30 minutes — verify on nseindia.com, as SEBI has consulted on a closing auction mechanism), so late letters can behave differently.` },
       { h: 'The maths', md: `:::formula
 IB width              = IB high − IB low
 Range extension (up)  = Session high − IB high   (if > 0)
@@ -943,7 +948,10 @@ RSI and Stochastic both answer "where is the close relative to the recent past?"
 ### Divergence
 - **Regular bearish divergence**: price makes a higher high; the oscillator makes a lower high. Momentum is fading.
 - **Regular bullish divergence**: price lower low; oscillator higher low.
-- **Hidden bullish divergence**: price higher low; oscillator lower low — often read as trend continuation.
+- **Hidden bullish divergence**: price higher low; oscillator lower low — often read as uptrend continuation.
+- **Hidden bearish divergence**: price lower high; oscillator higher high — often read as downtrend continuation.
+
+All four are practitioner conventions (hidden divergence in particular is popular in trading education with little formal testing); label them **subjective** in your journal.
 
 [[chart:NIFTY:105:rsi,stoch,ema20]]
 
@@ -979,8 +987,11 @@ Worked (Nifty 5-minute, illustrative): previous AvgGain 12.0, AvgLoss 8.0. New b
 :::formula
 %K = (Close − Lowest low N) ÷ (Highest high N − Lowest low N) × 100
 %D = 3-period SMA of %K
-Williams %R = %K − 100
+Williams %R = %K − 100      (using the raw, unsmoothed %K)
+Slow Stochastic (14,3,3): smooth raw %K with a 3-bar SMA first, then %D = 3-bar SMA of that
 :::
+
+The Chart Lab's stoch pane plots the **slow** (14,3,3) version, so its %K will lag the raw %K you compute by hand by a bar or two.
 
 Worked: 14-bar high 24,950, low 24,850, close 24,930.
 - %K = (24,930 − 24,850) ÷ (24,950 − 24,850) × 100 = 80 ÷ 100 × 100 = 80
@@ -1052,6 +1063,8 @@ Analogy: road conditions. ATR is how bumpy the road is. Bands and channels are t
 ### The squeeze
 When Bollinger Bands contract **inside** Keltner Channels, volatility of closes has fallen below average range — a squeeze (popularised by John Carter). Volatility clustering suggests expansion may follow; **direction is unknown**.
 
+The squeeze depends on the multipliers. Carter's version compares Bollinger (20, 2) with a Keltner of 1.5 × ATR; the app's kc overlay uses 2 × ATR10, which flags a squeeze more often. State which you use.
+
 [[chart:BANKNIFTY:118:bb,kc,atr]]` },
       { h: 'Advanced view', md: `### Intraday ATR and time of day
 A 14-bar ATR on a 5-minute chart at 09:45 IST includes the opening burst; at 13:00 it still reflects the morning. Some professionals use a **time-of-day-adjusted** volatility — average range of the same 5-minute slot over previous sessions — to avoid stops that are too wide at lunch and too tight at the open.
@@ -1070,7 +1083,7 @@ The same band tag supports opposite strategies: fade it (mean reversion) in rang
       { h: 'The maths', md: `:::formula
 True Range TR = max(High − Low, |High − PrevClose|, |Low − PrevClose|)
 ATR(t)        = (13 × ATR(t−1) + TR(t)) ÷ 14      (Wilder)
-Bollinger     = SMA20 ± 2 × SD20(closes)
+Bollinger     = SMA20 ± 2 × SD20(closes)   (population SD, divide by n — Bollinger's specification and the app's engine)
 %B            = (Close − Lower) ÷ (Upper − Lower)
 Bandwidth     = (Upper − Lower) ÷ Middle
 Keltner       = EMA20 ± 2 × ATR10
@@ -1094,7 +1107,7 @@ EMA20 = 24,900, ATR10 = 20 → Keltner 24,860 / 24,940. Bollinger (±50) is outs
 Same rupee risk, very different share counts. This is the single most useful application of ATR.
 
 For India VIX-driven days (high implied volatility), expect wider ATR at the open. Check that your stops scale with it rather than using fixed point stops.` },
-      { h: 'US & global', md: `SPY's 5-minute ATR might be around $0.60 on a quiet day and double on CPI day. NVDA's might be several dollars. A Donchian(20) breakout on a 5-minute NVDA chart during a high-ATR session needs a wider stop; use ATR-based sizing so a breakout trade on NVDA risks the same dollars as one on SPY. Gold and Bitcoin presets in the Chart Lab show how 24-hour markets have no opening gap but still cluster volatility around major sessions.` },
+      { h: 'US & global', md: `SPY's 5-minute ATR might be around $0.60 on a quiet day and double on CPI day. NVDA's might be several dollars. A Donchian(20) breakout on a 5-minute NVDA chart during a high-ATR session needs a wider stop; use ATR-based sizing so a breakout trade on NVDA risks the same dollars as one on SPY. Gold and Bitcoin presets in the Chart Lab show how near-continuous markets have few or no session gaps (Bitcoin trades 24/7; gold futures still have a short daily break and a weekend gap) but still cluster volatility around major sessions.` },
       { h: 'Common misconceptions', md: `- **"High ATR is bearish."** ATR has no direction.
 - **"Touching the lower Bollinger Band is a buy signal."** In a downtrend price can walk the lower band.
 - **"A squeeze tells you which way it will break."** It does not.
@@ -1153,7 +1166,7 @@ Analogy: different instruments on a ship's bridge. A compass (direction), a spee
 
 ### Ichimoku (9, 26, 52)
 - Tenkan (conversion), Kijun (base), Senkou A and B (the cloud, plotted 26 bars ahead), Chikou (close plotted 26 bars back).
-- Use: price above a rising cloud with Tenkan above Kijun = trend up. The original settings came from a six-day Japanese trading week; many intraday traders keep them anyway.
+- Use: price above a rising cloud with Tenkan above Kijun = trend up. The default settings are commonly said to reflect an older six-day Japanese trading week (9 ≈ one and a half weeks, 26 ≈ one month); whatever their origin, they are conventions, and many intraday traders keep them anyway.
 
 [[chart:NIFTY:127:macd,adx,st]]
 
@@ -1196,6 +1209,7 @@ Worked: +DI 28, −DI 14 → DX = 100 × 14 ÷ 42 = 33.3. If yesterday's ADX was
 :::formula
 Basic upper = (H + L) ÷ 2 + m × ATR;  Basic lower = (H + L) ÷ 2 − m × ATR
 In an uptrend the line = max(previous line, basic lower); flip when close < line
+(Reset: if the previous close was already below the previous line, the line restarts at the basic lower band)
 :::
 Worked (Nifty 5-minute): H 24,960, L 24,920, ATR(10) 20, m = 3 → mid 24,940; lower = 24,880. If the previous line was 24,870, new line = max(24,870, 24,880) = 24,880.
 
@@ -1204,6 +1218,8 @@ Worked (Nifty 5-minute): H 24,960, L 24,920, ATR(10) 20, m = 3 → mid 24,940; l
 SAR(next) = SAR + AF × (EP − SAR);  AF starts 0.02, +0.02 per new extreme, max 0.20
 :::
 Worked: SAR 24,850, EP 24,950, AF 0.04 → 24,850 + 0.04 × 100 = 24,854.
+
+Two rules complete Wilder's method (both are in the app's engine): in an uptrend the new SAR may not sit above the lows of the previous two bars (if it would, it is set to the lower of them), and when price trades through the SAR it flips — the new SAR starts at the prior extreme point and AF resets to 0.02.
 
 ### Ichimoku
 Tenkan = (9-bar high + 9-bar low) ÷ 2. With 9-bar high 24,980 and low 24,880, Tenkan = 24,930. Kijun (26-bar) with high 25,000, low 24,800 = 24,900. Senkou A = (24,930 + 24,900) ÷ 2 = 24,915, plotted 26 bars ahead.` },
@@ -1300,7 +1316,7 @@ Worked:
 - EMA9: (9 − 1) ÷ 2 = 4 bars = 20 minutes on 5-minute.
 
 ### Why redundancy matters for probability
-If three signals were truly independent and each were right 55% of the time, requiring all three to agree would raise your confidence substantially. If they are near-perfectly correlated, the combined accuracy is still about 55% — you have just added lag. (These percentages are illustrative, not measured.)
+If three signals were truly independent and each were right 55% of the time, then when all three agree the chance they are right is 0.55³ ÷ (0.55³ + 0.45³) ≈ 65% — a real improvement, though you would also get fewer signals because they agree less often. If they are near-perfectly correlated, the combined accuracy is still about 55% — you have just added lag. (These percentages are illustrative, not measured.)
 
 ### Confluence score example
 Bank Nifty long setup:
@@ -1371,7 +1387,7 @@ Camarilla, Woodie and Fibonacci pivots each use different formulas. More variant
 
 On the chart, draw retracements from the morning swing and compare where price actually paused with VWAP and prior swing levels.` },
       { h: 'Advanced view', md: `### The density problem
-A 400-point Nifty swing with five Fibonacci levels has lines roughly 40–60 points apart. Add seven pivot levels and CPR, and you may have a line every 25–35 points — similar to a single 5-minute ATR. Price will touch some line on almost every pullback by chance. That is why "it bounced off the 61.8" is weak evidence; you would have said the same about the 50 or the 38.2.
+A 400-point Nifty swing with five Fibonacci levels has lines roughly 47–67 points apart (23.6→38.2% is 58 points, 38.2→50% and 50→61.8% are 47 points each, 61.8→78.6% is 67 points). Add seven pivot levels and CPR, and you may have a line every 25–35 points — similar to a single 5-minute ATR. Price will touch some line on almost every pullback by chance. That is why "it bounced off the 61.8" is weak evidence; you would have said the same about the 50 or the 38.2.
 
 ### Testing honestly
 To test Fibonacci, fix the swing-selection rule in advance (for example, the last confirmed N = 3 swing on the 15-minute chart), then record reactions at **all** levels and at random levels with the same spacing. If the Fibonacci levels do not beat random lines, you have learned something useful.
@@ -1407,7 +1423,7 @@ Worked: yesterday H 25,010, L 24,830, C 24,950.
 - R2 = 24,930 + 180 = 25,110; S2 = 24,930 − 180 = 24,750
 - BC = 49,840 ÷ 2 = 24,920; TC = 49,860 − 24,920 = 24,940 → CPR width 20 points (0.08%).
 
-Count the lines between 24,750 and 25,110: S2, S1, BC, P, TC, R1, R2 = 7 lines in 360 points — one every ~51 points on average, and three within 20 points of each other at the centre.` },
+Count the lines between 24,750 and 25,110: S2, S1, BC, P, TC, R1, R2 = 7 lines in 360 points — six gaps averaging 60 points, and three lines within 20 points of each other at the centre.` },
       { h: 'India', md: `CPR is heavily discussed in Indian trading communities. Illustrative Bank Nifty plan: CPR 56,080–56,120 (narrow vs the last five days), PDH 56,260, R1 56,300.
 
 - Opens 56,150 above TC. First pullback holds 56,120 (TC) and VWAP together — the VWAP is the stronger independent fact.
@@ -1415,7 +1431,7 @@ Count the lines between 24,750 and 25,110: S2, S1, BC, P, TC, R1, R2 = 7 lines i
 - Target: PDH 56,260 (115 points, 1.6R); R1 56,300 for a runner.
 
 Notice that every decision anchor here could be justified without CPR (VWAP, PDH). Ask yourself what CPR added.` },
-      { h: 'US & global', md: `Floor pivots originated with exchange floor traders in Chicago futures pits and are still printed by many US platforms. On SPY, R1/S1 frequently sit near whole-dollar levels and option strikes, which may explain some reactions. NVDA Fibonacci retracements after a large earnings move are popular on social media; the 38.2–61.8% zone is wide enough on a $20 swing ($7.60 to $12.36 of retracement) that "price bounced in the zone" carries little information.` },
+      { h: 'US & global', md: `Floor pivots are usually attributed to exchange floor traders in the Chicago futures pits and are still printed by many US platforms. On SPY, R1/S1 frequently sit near whole-dollar levels and option strikes, which may explain some reactions. NVDA Fibonacci retracements after a large earnings move are popular on social media; the 38.2–61.8% zone is wide enough on a $20 swing ($7.64 to $12.36 of retracement) that "price bounced in the zone" carries little information.` },
       { h: 'Common misconceptions', md: `- **"Fibonacci ratios are natural laws of markets."** No established mechanism; reactions are better explained by attention and liquidity.
 - **"The 61.8% is the golden level."** Lore, not measured fact.
 - **"Narrow CPR means trend day."** A heuristic; test it.
@@ -1475,7 +1491,7 @@ Why it matters: many intraday losses come from trading a 5-minute signal straigh
 | 5-minute | Entry trigger and stop | Rejection candle? VWAP reclaim? Stop below which swing? |
 | 1-minute | Fine execution (optional) | Avoid buying into a spike; refine fills |
 
-A common rule of thumb (associated with Alexander Elder's triple-screen idea) is a factor of about 4–6 between timeframes: daily → 60-minute → 15-minute → 5-minute, or 15-minute → 5-minute → 1-minute for scalpers.
+A common rule of thumb (from Alexander Elder's triple-screen idea, which suggests a factor of about five) is a ratio of roughly 4–6 between timeframes, for example 60-minute → 15-minute → 3- or 5-minute, or 15-minute → 3-minute → 1-minute for scalpers. In practice many traders use daily → 60-minute → 15-minute → 5-minute even though the last step is only 3×; the point is that each screen should show clearly different detail.
 
 ### The top-down routine (about 10 minutes before the open)
 1. **Daily**: label trend (HH/HL or LH/LL), mark PDH/PDL/PDC, last two major swings, round numbers.
@@ -1501,7 +1517,7 @@ The best use of the higher timeframe is often not direction but **distance**: ho
 A 60-minute EMA20 has an average lag of 9.5 hours of trading (about 1.5 Indian sessions). A trend "flip" on the 60-minute is therefore late by intraday standards. Use structure (swing highs/lows) on the higher timeframe rather than slow indicators, so you are not working with yesterday's information.
 
 ### The current higher-timeframe bar is unfinished
-At 11:00 IST, the current daily bar is only a third complete and the current 60-minute bar may be minutes old. Do not read an unfinished higher-timeframe candle as a pattern. Use completed bars plus where price currently sits relative to their levels.
+At 11:00 IST, the current daily bar is only just over a quarter complete (105 of 375 minutes) and the current 60-minute bar may be minutes old. Do not read an unfinished higher-timeframe candle as a pattern. Use completed bars plus where price currently sits relative to their levels.
 
 ### Time-of-day overlay
 Intraday, time is a timeframe of its own. The same 5-minute setup has different expected follow-through at 09:30, 12:30 and 15:00 IST. Add time of day as a context layer.
@@ -1567,7 +1583,7 @@ Decision: either skip, or take a small scalp to ₹1,434 with a tight stop. A sh
   {
     id: 'l2-chart-reading', module: 'L2-M4', level: 2, track: 'ta', title: 'A repeatable chart-reading routine', mins: 17,
     summary: 'Apply a fixed, written chart-reading routine — context, structure, levels, participation, trigger, risk — that turns everything in Level 2 into a checklist you can journal and review.',
-    evidence: 'established',
+    evidence: 'mixed',
     sections: [
       { h: 'Beginner view', md: `By now you know many tools. The danger is using them randomly — a trendline today, an RSI signal tomorrow, a Fibonacci level when you are bored. A **routine** is a fixed order of questions you ask every time you look at a chart, so your decisions are consistent and can be reviewed.
 
@@ -1624,8 +1640,8 @@ Expectancy per trade = Win% × Avg win R − Loss% × Avg loss R
 6. Risk: stop 24,893 (below pullback low 24,899 minus 6-point buffer, ATR 24). Entry 24,920.
    - Risk = 27 points; target PDH 24,985 → reward 65 points; R = 2.4.
    - Risk budget ₹4,000; per lot risk 27 × 65 = ₹1,755 → 2 lots (₹3,510).
-   - Charges for 2 lots round trip (illustrative, verify with [[widget:charges-india]]): roughly ₹150–250 including brokerage, STT, exchange fees, GST and stamp duty.
-   - If the target hits: gross = 65 × 130 = ₹8,450; net ≈ ₹8,250; net R = 8,250 ÷ 3,510 ≈ 2.35R.
+   - Charges for 2 lots round trip (computed with the app's cost engine at the Nov 2026 rates in [[widget:charges-india]] — verify current rates on nseindia.com and with your broker): about ₹1,880 in total. Most of it is STT at 0.05% of the sell value (about ₹1,620 on ₹32.5 lakh); the rest is brokerage, exchange fees, SEBI fee, GST and stamp duty.
+   - If the target hits: gross = 65 × 130 = ₹8,450; net ≈ ₹6,570; net R = 6,570 ÷ 3,510 ≈ 1.87R. Costs took about half an R off a 2.4R plan — this is why the risk step must include charges.
 
 Over 30 trades with 45% winners at +2.2R and 55% losers at −1.05R (including costs): expectancy = 0.99 − 0.58 = +0.41R. These numbers are hypothetical, to show the calculation — your journal supplies the real ones.` },
       { h: 'India', md: `A sample pre-market card for a Tuesday (Nifty weekly expiry as of Nov 2026 — verify on nseindia.com):
@@ -1640,7 +1656,7 @@ Over 30 trades with 45% winners at +2.2R and 55% losers at −1.05R (including c
 | If-then 2 | Rejection at 25,000 + VWAP loss → short to VWAP/OR low |
 
 The card fits on a phone screen and takes about five minutes to fill.` },
-      { h: 'US & global', md: `For SPY or NVDA, the same routine applies with US-specific context: premarket high/low as levels, economic releases at 08:30 or 10:00 ET, FOMC at 14:00 ET, and the earnings calendar. US traders with broker accounts affected by the April 2026 SEC approval to remove the pattern-day-trader minimum should still apply their own daily trade limits — the routine's risk step is where that rule lives (verify broker implementation).` },
+      { h: 'US & global', md: `For SPY or NVDA, the same routine applies with US-specific context: premarket high/low as levels, economic releases at 08:30 or 10:00 ET, FOMC at 14:00 ET, and the earnings calendar. In April 2026 the SEC approved FINRA's proposal to replace the pattern-day-trader rule and its $25,000 minimum with risk-based intraday margin standards; broker implementation timing varies (as of Nov 2026 — verify on finra.org and with your broker). Either way, apply your own daily trade and loss limits — the routine's risk step is where that rule lives.` },
       { h: 'Common misconceptions', md: `- **"Routines are for beginners."** Professionals rely on them most.
 - **"A routine guarantees winning trades."** It guarantees consistent, reviewable decisions.
 - **"More steps = better routine."** If it is too long you will skip it in live conditions.
@@ -1664,13 +1680,13 @@ The card fits on a phone screen and takes about five minutes to fill.` },
   );
   IA.content.questions.push(
   { id: 'L2-M4-q01', module: 'L2-M4', d: 1, q: 'What is the first step of top-down analysis?', o: ['Find a 1-minute entry', 'Add more indicators', 'Choose a lot size', 'Read the higher-timeframe context (daily trend and major levels)'], a: 3, why: 'Top-down starts from the widest view so lower-timeframe trades fit inside it.' },
-  { id: 'L2-M4-q02', module: 'L2-M4', d: 2, q: 'Which timeframe stack best fits a roughly 4–6× ratio for an intraday trader?', o: ['Daily → 60-min → 15-min → 5-min', 'Monthly → 1-min', '5-min → 4-min → 3-min', 'Daily → 1-min only'], a: 0, why: 'Daily to 60-minute (~6×), 60 to 15 (4×), 15 to 5 (3×) keeps each step meaningful.' },
+  { id: 'L2-M4-q02', module: 'L2-M4', d: 2, q: 'Which timeframe stack best fits a roughly 4–6× ratio for an intraday trader?', o: ['Daily → 60-min → 15-min → 5-min', 'Monthly → 1-min', '5-min → 4-min → 3-min', 'Daily → 1-min only'], a: 0, why: 'Daily to 60-minute (about 6× on a 375-minute NSE session) and 60 to 15 (4×) fit; 15 to 5 (3×) is a little below the range but common in practice. The other stacks either jump too far or barely change the view.' },
   { id: 'L2-M4-q03', module: 'L2-M4', d: 2, q: 'Bank Nifty 5-min long: entry 56,265, stop 56,205, PDH 56,420. What is R to PDH?', o: ['1.5', '2.0', '2.6', '3.2'], a: 2, why: 'Reward 155 ÷ risk 60 = 2.58 ≈ 2.6.' },
   { id: 'L2-M4-q04', module: 'L2-M4', d: 3, q: 'Daily downtrend, 60-min downtrend, a 5-min long trigger at a major daily support. How should this be handled?', o: ['Normal size', 'Opposed trade: only at a major level, half size and quick targets — or skip', 'Double size because it is cheap', 'It is aligned'], a: 1, why: 'Counter-trend trades are possible at major levels but warrant reduced size and nearer targets.' },
   { id: 'L2-M4-q05', module: 'L2-M4', d: 2, q: 'At 11:00 IST, today\'s daily candle looks like a hammer. What is the issue?', o: ['The daily bar is unfinished; it is not yet a pattern', 'None', 'Hammers only work weekly', 'It must be bearish'], a: 0, why: 'Higher-timeframe candles should be read once complete.' },
   { id: 'L2-M4-q06', module: 'L2-M4', d: 2, q: 'What is "timeframe shopping"?', o: ['Buying data feeds', 'Looking through timeframes until one supports the trade you already want', 'Using a fixed stack', 'Trading only one timeframe'], a: 1, why: 'It is a confirmation-bias trap; fix your stack in advance.' },
   { id: 'L2-M4-q07', module: 'L2-M4', d: 1, q: 'In the C-S-L-P-T-R routine, what does P stand for?', o: ['Profit', 'Pivot', 'Participation', 'Prediction'], a: 2, why: 'Participation: relative volume and index/sector agreement.' },
-  { id: 'L2-M4-q08', module: 'L2-M4', d: 3, q: 'Nifty long: entry 24,920, stop 24,893, 2 lots of 65, target 24,985. Charges ₹200 round trip. Net P&L if target hits?', o: ['₹8,450', '₹4,025', '₹8,250', '₹7,250'], a: 2, why: 'Gross 65 points × 130 = ₹8,450; minus ₹200 = ₹8,250.' },
+  { id: 'L2-M4-q08', module: 'L2-M4', d: 3, q: 'Nifty long: entry 24,920, stop 24,893, 2 lots of 65, target 24,985. Charges ₹1,900 round trip (mostly STT on the sell leg). Net P&L if target hits?', o: ['₹8,450', '₹4,025', '₹6,550', '₹7,250'], a: 2, why: 'Gross 65 points × 130 = ₹8,450; minus ₹1,900 = ₹6,550. On futures, STT at 0.05% of the sell value is the largest single cost.' },
   { id: 'L2-M4-q09', module: 'L2-M4', d: 2, q: 'Which is a well-formed kill criterion?', o: ['"If I feel nervous, exit"', '"A 15-minute close below the opening-range low cancels my long bias for the day"', '"Never lose"', '"Exit when RSI looks high"'], a: 1, why: 'It is specific, observable and pre-committed.' },
   { id: 'L2-M4-q10', module: 'L2-M4', d: 3, q: 'Over 30 trades: 40% win at +2.5R, 60% lose at −1.1R (after costs). Expectancy?', o: ['+0.34R', '+1.00R', '−0.16R', '+0.04R'], a: 0, why: '0.4 × 2.5 − 0.6 × 1.1 = 1.00 − 0.66 = +0.34R. Thirty trades is still a small sample.' },
   { id: 'L2-M4-q11', module: 'L2-M4', d: 2, q: 'Why split analysis (pre-market) from execution (in-session)?', o: ['It looks professional', 'Exchanges require it', 'It increases leverage', 'It separates slow deliberate thinking from fast decisions, reducing impulsive trades'], a: 3, why: 'Pre-committed plans are easier to follow and review than in-the-moment analysis.' },

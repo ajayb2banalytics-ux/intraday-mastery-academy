@@ -8,7 +8,7 @@
   const icon = (k) => { const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); s.setAttribute('viewBox', '0 0 24 24'); const p = document.createElementNS('http://www.w3.org/2000/svg', 'path'); p.setAttribute('d', I[k] || I.dash); p.setAttribute('stroke-linecap', 'round'); p.setAttribute('stroke-linejoin', 'round'); s.append(p); return s; };
   IA.icon = icon;
   const NAV = [
-    ['dashboard', 'Dashboard', 'dash'], ['academy', 'Learning Academy', 'book'], ['technical', 'Technical Analysis', 'ta'], ['chartlab', 'Chart Laboratory', 'chart'],
+    ['dashboard', 'Dashboard', 'dash'], ['academy', 'Learning Academy', 'book'], ['technical', 'Technical Analysis', 'ta'], ['chartlab', 'Chart Laboratory', 'chart'], ['data', 'Historical Data', 'journal'], ['concepts', 'Concepts Lab', 'ta'],
     ['markets', 'Market Intelligence', 'globe'], ['strategies', 'Strategy Academy', 'target'], ['derivatives', 'Derivatives Academy', 'layers'], ['risk', 'Risk Management', 'shield'],
     ['simulator', 'Trading Simulator', 'play'], ['journal', 'Trading Journal', 'journal'], ['quant', 'Quantitative Research', 'flask'], ['calculators', 'Calculators', 'calc'],
     ['psychology', 'Psychology', 'brain'], ['workflow', 'Daily Workflow', 'list'], ['library', 'Research Library', 'lib'], ['assessments', 'Assessments', 'check'], ['settings', 'Settings & Data', 'gear'],
@@ -17,7 +17,7 @@
   IA.NAV = NAV;
 
   function shell() {
-    const side = h('aside', { class: 'sidebar' }, h('div', { class: 'brand' }, logo(), h('div', null, 'Intraday Mastery', h('small', null, 'Global Trading Academy'))), h('nav', { class: 'nav' }, NAV.map(([k, l, ic], i) => [i === 4 || i === 9 || i === 14 ? h('div', { class: 'sep' }) : null, h('a', { href: '#/' + k, 'data-nav': k }, icon(ic), l)])));
+    const side = h('aside', { class: 'sidebar' }, h('div', { class: 'brand' }, logo(), h('div', null, 'Intraday Mastery', h('small', null, 'Global Trading Academy'))), h('nav', { class: 'nav' }, NAV.map(([k, l, ic], i) => [i === 6 || i === 11 || i === 16 ? h('div', { class: 'sep' }) : null, h('a', { href: '#/' + k, 'data-nav': k }, icon(ic), l)])));
     const search = h('input', { type: 'search', placeholder: 'Search lessons, indicators, strategies…', 'aria-label': 'Search', id: 'gsearch' });
     search.addEventListener('keydown', (e) => { if (e.key === 'Enter' && search.value.trim()) { location.hash = '#/search/' + encodeURIComponent(search.value.trim()); search.blur(); } });
     const top = h('header', { class: 'topbar' }, h('h1', { id: 'title' }, ''), h('div', { class: 'search' }, icon('search'), search), h('span', { class: 'offline-pill', id: 'netpill' }, 'offline-ready'));
@@ -30,7 +30,7 @@
 
   const ROUTES = [
     [/^$/, 'dashboard'], [/^dashboard$/, 'dashboard'], [/^academy$/, 'academy'], [/^module\/(.+)$/, 'module'], [/^lesson\/(.+)$/, 'lesson'],
-    [/^technical(?:\/(\w+))?$/, 'technical'], [/^indicator\/(.+)$/, 'indicator'], [/^pattern\/(.+)$/, 'pattern'], [/^chartlab$/, 'chartlab'],
+    [/^technical(?:\/(\w+))?$/, 'technical'], [/^indicator\/(.+)$/, 'indicator'], [/^pattern\/(.+)$/, 'pattern'], [/^chartlab$/, 'chartlab'], [/^data$/, 'data'], [/^concepts(?:\/([\w-]+))?$/, 'concepts'],
     [/^markets(?:\/(\w+))?$/, 'markets'], [/^strategies$/, 'strategies'], [/^strategy\/(.+)$/, 'strategy'], [/^derivatives(?:\/(\w+))?$/, 'derivatives'],
     [/^risk$/, 'risk'], [/^simulator(?:\/(\w+))?$/, 'simulator'], [/^journal(?:\/(\w+))?$/, 'journal'], [/^quant(?:\/(\w+))?$/, 'quant'], [/^calculators(?:\/([\w-]+))?$/, 'calculators'],
     [/^psychology(?:\/([\w-]+))?$/, 'psychology'], [/^workflow$/, 'workflow'], [/^library(?:\/(\w+))?$/, 'library'], [/^assessments$/, 'assessments'], [/^assess\/(.+)$/, 'assess'],

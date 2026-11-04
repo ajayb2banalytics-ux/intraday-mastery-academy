@@ -77,6 +77,7 @@ p{margin:.55em 0} code{font-family:var(--mono);font-size:.88em;background:var(--
 .bar{height:6px;background:var(--panel2);border-radius:99px;overflow:hidden;border:1px solid var(--line)}
 .bar>i{display:block;height:100%;background:var(--accent);border-radius:99px}
 .bar.up>i{background:var(--up)}
+.synthetic-badge.hist{color:var(--cyan);border-color:color-mix(in srgb,var(--cyan) 50%,transparent)}
 .synthetic-badge{font:600 .66rem var(--mono);letter-spacing:.08em;color:var(--warn);border:1px solid color-mix(in srgb,var(--warn) 50%,transparent);padding:1px 6px;border-radius:4px}
 
 /* Buttons & forms */

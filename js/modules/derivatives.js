@@ -3,7 +3,7 @@
   const IA = (root.IA = root.IA || {});
   const { h, prose, table, num, money } = IA.ui;
   IA.views.derivatives = (el, tab = 'overview') => {
-    const tabs = [['overview', 'Overview'], ['payoff', 'Strategy builder'], ['matrix', 'Strategy matrix'], ['greeks', 'Greeks lab'], ['chain', 'Option chain'], ['futures', 'Futures lab']];
+    const tabs = [['overview', 'Overview'], ['payoff', 'Strategy builder'], ['risk', 'Scenario risk'], ['matrix', 'Strategy matrix'], ['greeks', 'Greeks lab'], ['chain', 'Option chain'], ['futures', 'Futures lab']];
     el.append(h('div', { class: 'tabs' }, tabs.map(([k, l]) => h('button', { class: k === tab ? 'on' : '', onclick: () => (location.hash = '#/derivatives/' + k) }, l))));
     if (tab === 'overview') {
       const ls = IA.content.lessonIndex().filter((l) => l.track === 'deriv'), written = new Set(IA.content.lessons.map((l) => l.id));
@@ -15,6 +15,7 @@ Derivatives magnify both skill and mistakes. Work through the lessons in order, 
 > [!india] Indian index options (Nifty, Bank Nifty, Sensex) are European-style and cash-settled. Indian stock options are physically settled if in-the-money at expiry — you may have to take or give delivery of shares worth many times the premium. US equity and ETF options are American-style and can be assigned early.`), h('div', { class: 'card lesson-list' }, ls.map((l) => h('a', { href: written.has(l.id) ? '#/lesson/' + l.id : null }, h('span', { class: 'dot' + (IA.progress.isDone(l.id) ? ' done' : '') }), h('span', { style: { flex: 1 } }, l.title), h('span', { class: 'tiny dim' }, l.module)))));
     } else if (tab === 'payoff') el.append(IA.widgets['options-payoff']());
     else if (tab === 'greeks') greeksLab(el);
+    else if (tab === 'risk') el.append(IA.widgets['options-risk']());
     else if (tab === 'matrix') matrix(el);
     else if (tab === 'chain') chain(el);
     else if (tab === 'futures') { el.append(IA.widgets['futures-exposure'](), h('div', { style: { height: '12px' } }), basisLab()); }
